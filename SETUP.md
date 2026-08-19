@@ -5,21 +5,22 @@ Five files, one small job on GitHub, then a bookmark on each TV.
 ## 1. Put the files on GitHub Pages
 
 Add these files to a repo that has GitHub Pages enabled — keep `foyer.html`,
-`foyer-vertical.html` and `foyer-content.json` all in the **same folder**,
+`foyervertical.html` and `foyer-content.json` all in the **same folder**,
 since both foyer pages fetch `foyer-content.json` by a relative path:
 
 ```
 timetable.html            → Salah times screensaver — landscape TVs
-timetable-vertical.html    → Salah times screensaver — portrait TVs
+timetablevertical.html     → Salah times screensaver — portrait TVs
 foyer.html                  → foyer display — landscape TVs
-foyer-vertical.html          → foyer display — portrait TVs
+foyervertical.html           → foyer display — portrait TVs
 foyer-content.json            → editable text for both foyer pages — see section 3
 ```
 
 Once pushed, they'll be reachable at something like:
 `https://yameenbux.github.io/<repo-name>/timetable.html`
 `https://yameenbux.github.io/<repo-name>/foyer.html`
-(and the same with `-vertical` for the portrait screens)
+(and the same with `vertical` appended for the portrait screens, e.g.
+`timetablevertical.html`)
 
 ## 2. Point each TV at the right page
 
@@ -27,10 +28,10 @@ Once pushed, they'll be reachable at something like:
   `timetable.html`'s URL, go fullscreen (double-click the screen, or press F
   if a keyboard's plugged in), bookmark it or set it as the browser's home
   page.
-- **Any of those mounted in portrait instead:** use `timetable-vertical.html`
+- **Any of those mounted in portrait instead:** use `timetablevertical.html`
   on that TV instead of `timetable.html` — same content, laid out as a
   vertical list rather than a row of cards.
-- **Foyer (2 TVs):** `foyer.html` if landscape, `foyer-vertical.html` if
+- **Foyer (2 TVs):** `foyer.html` if landscape, `foyervertical.html` if
   portrait.
 
 Do this once per TV. See the reliability checklist below — there are a
@@ -83,7 +84,7 @@ nothing running in a browser tab can survive the TV itself losing power. So:
 
 ## 5. Next year's Salah timetable
 
-`timetable.html` and `timetable-vertical.html` both have the whole year's
+`timetable.html` and `timetablevertical.html` both have the whole year's
 timetable embedded directly in the file (for maximum reliability — zero
 network needed once loaded, unlike the foyer pages). When the masjid
 publishes next year's times, regenerate `timetable-2026.json`-equivalent
