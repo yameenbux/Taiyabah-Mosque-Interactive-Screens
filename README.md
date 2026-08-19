@@ -1,1 +1,0 @@
-# Taiyabah-Mosque-Interactive-Screens
