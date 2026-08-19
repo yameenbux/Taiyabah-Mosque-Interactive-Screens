@@ -68,55 +68,103 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
    screen — see fitToViewport() below — so its own size is unconstrained
    (no min-height, no viewport clipping) regardless of panel resolution. */
 .content{display:flex;flex-direction:column;align-items:center;
-  gap:clamp(10px,1.8vh,22px);text-align:center;transform-origin:center center;}
-#live{display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2vh,24px);width:100%}
+  gap:clamp(14px,2.4vh,32px);text-align:center;transform-origin:center center;}
+#live{display:flex;flex-direction:column;align-items:center;gap:clamp(16px,2.6vh,34px);width:100%}
 
-.brand{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1vh,10px);opacity:.95}
-.brand img{height:clamp(38px,6vw,72px);width:auto;display:block}
+/* ---- corner widgets: Sunrise (left) + Sunset (right) — sized for a
+   narrow portrait panel and pinned to the stage itself so fit-to-viewport
+   scaling (which only applies to .content) doesn't touch them. Jumu'ah
+   used to share the right corner but now has its own banner below the
+   table (see .jbanner). ---- */
+.corner{
+  position:absolute;top:clamp(10px,1.8vh,20px);
+  display:flex;align-items:center;gap:clamp(6px,1.6vw,12px);
+  background:rgba(252,250,243,.07);
+  border:1px solid rgba(198,162,76,.28);
+  border-radius:14px;
+  padding:clamp(8px,1.6vw,16px) clamp(10px,2.4vw,20px);
+  animation:drift 150s ease-in-out infinite;
+}
+.corner-left{left:clamp(10px,2.4vw,20px)}
+.corner-right{right:clamp(10px,2.4vw,20px)}
+.corner-icon{width:clamp(14px,3.4vw,24px);height:clamp(14px,3.4vw,24px);color:var(--gold-bright);flex:0 0 auto}
+.corner-text{display:flex;flex-direction:column;align-items:flex-start;gap:.15em}
+.corner-k{font-size:clamp(8px,1.8vw,11px);font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright)}
+.corner-v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(12px,3vw,18px);color:var(--paper)}
+
+.brand{display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.3vh,14px);opacity:.95}
+.brand img{height:clamp(46px,7.4vw,96px);width:auto;display:block}
 .brand-text{text-align:center;line-height:1.35}
-.brand-text .name{font-size:clamp(14px,2.1vw,20px);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
-.brand-text .sub{font-size:clamp(10px,1.5vw,14px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85;margin-top:.25em}
+.brand-text .name{font-size:clamp(17px,2.6vw,26px);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.brand-text .sub{font-size:clamp(12px,1.9vw,18px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85;margin-top:.25em}
 
 .clock{display:flex;align-items:flex-start;gap:.4vw}
-.clock .hm{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(46px,15vw,112px);line-height:1;letter-spacing:-.01em}
-.clock .ss{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:clamp(16px,4vw,30px);color:var(--gold-bright);margin-top:clamp(6px,1.6vw,14px)}
-.dates{font-size:clamp(12px,2.6vw,17px);color:var(--paper);opacity:.92;display:flex;flex-direction:column;align-items:center;gap:.25em}
+.clock .hm{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(54px,17vw,150px);line-height:1;letter-spacing:-.01em}
+.clock .ss{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:clamp(18px,4.6vw,38px);color:var(--gold-bright);margin-top:clamp(8px,1.9vw,18px)}
+.dates{font-size:clamp(14px,3vw,22px);color:var(--paper);opacity:.92;display:flex;flex-direction:column;align-items:center;gap:.25em}
 .dates .sep{display:none}
-.hijri{font-size:clamp(11px,2.2vw,15px);color:var(--gold-bright);opacity:.9}
+.hijri{font-size:clamp(13px,2.6vw,19px);color:var(--gold-bright);opacity:.9}
 
-.next-card{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.2vh,14px);
+.next-card{display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.6vh,18px);
   background:linear-gradient(180deg, rgba(252,250,243,.09), rgba(252,250,243,.04));
   border:1px solid rgba(198,162,76,.35);border-radius:20px;
-  padding:clamp(12px,2vh,24px) clamp(16px,5vw,34px);width:100%;max-width:600px;
+  padding:clamp(16px,2.6vh,32px) clamp(20px,5.6vw,42px);width:100%;max-width:680px;
   box-shadow:0 20px 60px -30px rgba(0,0,0,.6);}
-.next-label{font-size:clamp(10px,2.2vw,13px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
+.next-label{font-size:clamp(12px,2.6vw,16px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
 .next-name{display:flex;align-items:baseline;gap:.5em;justify-content:center}
-.next-name .en{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(22px,6.5vw,40px)}
-.next-name .ar{font-family:"Amiri",serif;font-size:clamp(16px,4.6vw,28px);color:var(--gold-bright)}
-.next-time{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(28px,7.6vw,50px)}
+.next-name .en{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(26px,7.4vw,50px)}
+.next-name .ar{font-family:"Amiri",serif;font-size:clamp(18px,5.2vw,34px);color:var(--gold-bright)}
+.next-time{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(32px,8.6vw,62px)}
 .next-divider{width:60%;height:1px;background:rgba(198,162,76,.35)}
 .next-countdown{display:flex;flex-direction:column;align-items:center;gap:.3em}
-.next-countdown .k{font-size:clamp(10px,2.2vw,13px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
-.next-countdown .v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(20px,5.4vw,34px)}
+.next-countdown .k{font-size:clamp(12px,2.6vw,16px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
+.next-countdown .v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(24px,6.2vw,42px)}
 
-/* ---- today's list (vertical rows, not a row of cards) ---- */
-.list{display:flex;flex-direction:column;gap:clamp(6px,1.1vh,12px);width:100%;max-width:640px}
-.row-item{display:flex;align-items:center;justify-content:space-between;gap:clamp(8px,2.6vw,18px);
-  background:rgba(252,250,243,.06);border:1px solid rgba(252,250,243,.14);border-radius:14px;
-  padding:clamp(8px,1.3vh,14px) clamp(12px,3.4vw,22px);}
-.row-item.active{background:linear-gradient(90deg, rgba(198,162,76,.28), rgba(198,162,76,.1));border-color:var(--gold)}
-.row-item.next{border-color:rgba(198,162,76,.6)}
-.name-block{display:flex;flex-direction:column;align-items:flex-start;text-align:left;flex:0 0 auto;min-width:24vw}
-.name-block .en{font-size:clamp(12px,3vw,17px);font-weight:600}
-.name-block .ar{font-family:"Amiri",serif;font-size:clamp(10px,2.6vw,14px);color:var(--gold-bright);margin-top:.15em}
-.times-block{display:flex;gap:clamp(10px,3.4vw,24px);align-items:center;justify-content:flex-end;flex:1 1 auto}
-.time-col{display:flex;flex-direction:column;align-items:center;min-width:56px}
-.time-col .lab{font-size:clamp(8px,1.8vw,10px);font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(245,241,232,.62);margin-bottom:.3em}
-.time-col .begins-v{font-family:"Fraunces",Georgia,serif;font-size:clamp(13px,3.2vw,18px);font-weight:500;color:var(--paper)}
-.time-col .jamaat-v{font-family:"Fraunces",Georgia,serif;font-size:clamp(15px,3.6vw,20px);font-weight:600;color:var(--gold-bright)}
+/* ---- today's prayer table: a bordered plaque with a header row and one
+   row per prayer — same pattern as the landscape page, stacked as a
+   narrower single column here. ---- */
+.ptable{width:100%;max-width:720px;
+  border:1px solid rgba(198,162,76,.4);border-radius:16px;overflow:hidden;
+  background:rgba(252,250,243,.045);}
+.ptable-head{display:flex;align-items:center;
+  padding:clamp(8px,1.5vw,14px) clamp(14px,3.8vw,26px);
+  background:rgba(198,162,76,.1);
+  border-bottom:1px solid rgba(198,162,76,.32);}
+.ptable-head span{font-size:clamp(8px,1.9vw,12px);font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright)}
+.ptable-head .c-starts{flex:0 0 22vw;text-align:left}
+.ptable-head .c-name{flex:1 1 auto;text-align:left}
+.ptable-head .c-jamaah{flex:0 0 26vw;text-align:right}
+.prow{display:flex;align-items:center;
+  padding:clamp(10px,1.9vw,18px) clamp(14px,3.8vw,26px);}
+.prow:nth-child(even){background:rgba(252,250,243,.03)}
+.prow + .prow{border-top:1px solid rgba(252,250,243,.09)}
+.prow.active{background:linear-gradient(90deg, rgba(198,162,76,.26), rgba(198,162,76,.08))}
+.prow .starts{flex:0 0 22vw;text-align:left;
+  font-family:"Fraunces",Georgia,serif;font-size:clamp(13px,3.2vw,19px);color:var(--paper);opacity:.92}
+.prow .starts .dash{opacity:.4;font-weight:400}
+.prow .pname{flex:1 1 auto;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:.1em}
+.prow .pname .en{font-size:clamp(14px,3.3vw,20px);font-weight:600;letter-spacing:.02em}
+.prow .pname .ar{font-family:"Amiri",serif;color:var(--gold-bright);font-size:clamp(11px,2.8vw,16px)}
+.prow .jamaah{flex:0 0 26vw;display:flex;flex-direction:column;align-items:flex-end;gap:.1em}
+.prow .jamaah .jline{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(15px,3.7vw,23px);color:var(--gold-bright)}
+.prow .jamaah .dash{font-family:"Fraunces",Georgia,serif;font-weight:400;font-size:clamp(15px,3.7vw,23px);color:var(--gold-bright);opacity:.4}
 
-.footer{font-size:clamp(8px,1.9vw,11px);color:var(--paper);opacity:.55;letter-spacing:.02em;
+/* ---- Jumu'ah banner: a standing fixture below the table, visible every
+   day (not just Fridays), matching the landscape page ---- */
+.jbanner{width:100%;max-width:720px;
+  display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.2vw,10px);
+  background:linear-gradient(90deg, rgba(198,162,76,.22), rgba(198,162,76,.08));
+  border:1px solid rgba(198,162,76,.4);border-radius:16px;
+  padding:clamp(12px,2.2vw,22px) clamp(16px,3.8vw,28px);}
+.jbanner-label{display:flex;align-items:center;gap:clamp(6px,1.6vw,12px)}
+.jbanner-label .jb-k{font-size:clamp(11px,2.6vw,15px);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-bright)}
+.jbanner-label .jb-ar{font-family:"Amiri",serif;font-size:clamp(14px,3.4vw,20px);color:var(--paper)}
+.jbanner-times{display:flex;align-items:baseline;gap:clamp(18px,4.6vw,32px)}
+.jbanner-time{display:flex;flex-direction:column;align-items:center;gap:.15em}
+.jbanner-time .lab{font-size:clamp(8px,1.8vw,10px);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,241,232,.6)}
+.jbanner-time .v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(18px,4.4vw,30px);color:var(--paper)}
+
+.footer{font-size:clamp(9px,2.1vw,13px);color:var(--paper);opacity:.55;letter-spacing:.02em;
   display:flex;flex-direction:column;align-items:center;gap:.4em}
 .footer .dot{display:none}
 
@@ -127,6 +175,15 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
 <body>
 <div class="backdrop"></div>
 <div class="stage">
+  <div class="corner corner-left" id="corner-sun">
+    <svg class="corner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>
+    <div class="corner-text"><span class="corner-k">Sunrise</span><span class="corner-v tnum" id="sunrise-time">—</span></div>
+  </div>
+  <div class="corner corner-right" id="corner-sunset">
+    <svg class="corner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg>
+    <div class="corner-text"><span class="corner-k">Sunset</span><span class="corner-v tnum" id="sunset-time">—</span></div>
+  </div>
+
  <div class="drift">
   <div class="content" id="content">
   <div class="brand">
@@ -156,7 +213,24 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
       </div>
     </div>
 
-    <div class="list" id="grid"></div>
+    <div class="ptable">
+      <div class="ptable-head">
+        <span class="c-starts">Starts</span>
+        <span class="c-name"></span>
+        <span class="c-jamaah">Jamā&#703;ah</span>
+      </div>
+      <div id="grid"></div>
+    </div>
+
+    <div class="jbanner" id="jbanner" hidden>
+      <div class="jbanner-label">
+        <span class="jb-k">Jumu&#703;ah</span><span class="jb-ar arabic">الجمعة</span>
+      </div>
+      <div class="jbanner-times">
+        <div class="jbanner-time"><span class="lab">1st</span><span class="v tnum" id="jbanner-time-1">—</span></div>
+        <div class="jbanner-time" id="jbanner-time-2-wrap" hidden><span class="lab">2nd</span><span class="v tnum" id="jbanner-time-2">—</span></div>
+      </div>
+    </div>
 
     <div class="footer">
       <span>31a Draycott Street, Bolton BL1 8HD</span>
@@ -226,14 +300,37 @@ const els = {
   nextTime: document.getElementById("next-time"),
   nextCountdown: document.getElementById("next-countdown"),
   sourceLine: document.getElementById("source-line"),
+  cornerSun: document.getElementById("corner-sun"),
+  sunrise: document.getElementById("sunrise-time"),
+  cornerSunset: document.getElementById("corner-sunset"),
+  sunset: document.getElementById("sunset-time"),
+  jbanner: document.getElementById("jbanner"),
+  jbannerTime1: document.getElementById("jbanner-time-1"),
+  jbannerTime2Wrap: document.getElementById("jbanner-time-2-wrap"),
+  jbannerTime2: document.getElementById("jbanner-time-2"),
 };
 els.sourceLine.textContent = DATA.source || "";
 
-function renderList(rec, now, isFri, activeKey, nextKey){
+// finds the next Jumu'ah times to show in the banner — today's, if
+// today is Friday, otherwise the coming Friday's. Shown every day of the
+// week (not just Fridays) since it's a standing fixture people plan around,
+// same as a printed Jumu'ah times plaque in the foyer.
+function findJummah(now){
+  for(let i = 0; i < 8; i++){
+    const d = new Date(now);
+    d.setDate(d.getDate() + i);
+    if(d.getDay() !== 5) continue;
+    const r = dayRecord(d);
+    if(r && r.jummah) return r.jummah;
+  }
+  return null;
+}
+
+function renderTable(rec, now, isFri, activeKey, nextKey){
   els.grid.innerHTML = "";
   PRAYERS.forEach(p => {
     const row = document.createElement("div");
-    row.className = "row-item";
+    row.className = "prow";
     if(p.key === activeKey) row.classList.add("active");
     if(p.key === nextKey) row.classList.add("next");
 
@@ -241,22 +338,23 @@ function renderList(rec, now, isFri, activeKey, nextKey){
     const enLabel = showJumuah ? "Jumuʿah" : p.en;
     const arLabel = showJumuah ? "الجمعة" : p.ar;
 
-    let timesHtml = "";
+    let startsHtml, jamaahHtml;
     if(p.key === "sunrise"){
-      timesHtml = `<div class="time-col"><span class="lab">Begins</span><span class="begins-v tnum">${hm12(rec.begins.sunrise)}</span></div>`;
+      startsHtml = hm12(rec.begins.sunrise);
+      jamaahHtml = `<span class="dash">—</span>`;
     } else if(showJumuah){
-      timesHtml =
-        `<div class="time-col"><span class="lab">1st Jumuʿah</span><span class="jamaat-v tnum">${hm12(rec.jummah.first)}</span></div>` +
-        (rec.jummah.second ? `<div class="time-col"><span class="lab">2nd Jumuʿah</span><span class="jamaat-v tnum">${hm12(rec.jummah.second)}</span></div>` : "");
+      startsHtml = `<span class="dash">—</span>`;
+      jamaahHtml = `<span class="jline tnum">${hm12(rec.jummah.first)}</span>` +
+        (rec.jummah.second ? `<span class="jline tnum">${hm12(rec.jummah.second)}</span>` : "");
     } else {
-      timesHtml =
-        `<div class="time-col"><span class="lab">Begins</span><span class="begins-v tnum">${hm12(rec.begins[p.key])}</span></div>` +
-        `<div class="time-col"><span class="lab">Jamāʿah</span><span class="jamaat-v tnum">${hm12(rec.jamaat[p.key])}</span></div>`;
+      startsHtml = hm12(rec.begins[p.key]);
+      jamaahHtml = `<span class="jline tnum">${hm12(rec.jamaat[p.key])}</span>`;
     }
 
     row.innerHTML =
-      `<div class="name-block"><span class="en">${enLabel}</span><span class="ar arabic">${arLabel}</span></div>` +
-      `<div class="times-block">${timesHtml}</div>`;
+      `<div class="starts tnum">${startsHtml}</div>` +
+      `<div class="pname"><span class="en">${enLabel}</span><span class="ar arabic">${arLabel}</span></div>` +
+      `<div class="jamaah">${jamaahHtml}</div>`;
     els.grid.appendChild(row);
   });
 }
@@ -277,11 +375,29 @@ function tick(){
     els.live.hidden = true;
     els.fallback.hidden = false;
     els.hijri.textContent = "";
+    els.cornerSun.hidden = true;
+    els.cornerSunset.hidden = true;
+    els.jbanner.hidden = true;
     return;
   }
   els.fallback.hidden = true;
   els.live.hidden = false;
   els.hijri.textContent = rec.hijri || "";
+
+  els.cornerSun.hidden = false;
+  els.cornerSunset.hidden = false;
+  els.sunrise.textContent = hm12(rec.begins.sunrise);
+  els.sunset.textContent = hm12(rec.begins.maghrib);
+
+  const jummah = findJummah(now);
+  if(jummah){
+    els.jbanner.hidden = false;
+    els.jbannerTime1.textContent = hm12(jummah.first);
+    if(jummah.second){ els.jbannerTime2Wrap.hidden = false; els.jbannerTime2.textContent = hm12(jummah.second); }
+    else { els.jbannerTime2Wrap.hidden = true; }
+  } else {
+    els.jbanner.hidden = true;
+  }
 
   const isFri = now.getDay() === 5;
 
@@ -336,7 +452,7 @@ function tick(){
   }
 
   const nextIsToday = next && next.time.toDateString() === now.toDateString();
-  renderList(rec, now, isFri, activeKey, nextIsToday ? next.key : null);
+  renderTable(rec, now, isFri, activeKey, nextIsToday ? next.key : null);
 
   fitToViewport();
 }
