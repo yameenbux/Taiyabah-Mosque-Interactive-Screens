@@ -44,13 +44,17 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
 .arabic{font-family:"Amiri",serif}
 .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 
+/* Identical recipe on all four pages (landscape + portrait, timetable +
+   foyer) so the six TVs read as one building regardless of orientation.
+   background-size is in vmin (not vw) so the star tile is the same visual
+   density on a tall portrait panel as a wide landscape one. */
 .backdrop{position:fixed;inset:0;
   background:
-    radial-gradient(140% 40% at 50% -6%, rgba(198,162,76,.16), transparent 60%),
-    radial-gradient(90% 50% at 50% 115%, rgba(119,33,87,.55), transparent 60%),
-    linear-gradient(190deg, var(--brand-900), var(--brand-800) 55%, var(--brand-700));}
+    radial-gradient(130% 55% at 50% -8%, rgba(198,162,76,.16), transparent 60%),
+    radial-gradient(90% 55% at 50% 112%, rgba(119,33,87,.55), transparent 60%),
+    linear-gradient(175deg, var(--brand-900), var(--brand-800) 55%, var(--brand-700));}
 .backdrop::after{content:"";position:absolute;inset:0;opacity:.05;
-  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon fill='%23C6A24C' points='50,2 57.3,32.4 83.9,16.1 67.6,42.7 98,50 67.6,57.3 83.9,83.9 57.3,67.6 50,98 42.7,67.6 16.1,83.9 32.4,57.3 2,50 32.4,42.7 16.1,16.1 42.7,32.4'/></svg>");background-size:14vw 14vw;background-repeat:repeat;}
+  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon fill='%23C6A24C' points='50,2 57.3,32.4 83.9,16.1 67.6,42.7 98,50 67.6,57.3 83.9,83.9 57.3,67.6 50,98 42.7,67.6 16.1,83.9 32.4,57.3 2,50 32.4,42.7 16.1,16.1 42.7,32.4'/></svg>");background-size:9vmin 9vmin;background-repeat:repeat;}
 
 .stage{position:fixed;inset:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:clamp(10px,1.6vh,20px) clamp(16px,5vw,32px);}
@@ -77,20 +81,20 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
    used to share the right corner but now has its own banner below the
    table (see .jbanner). ---- */
 .corner{
-  position:absolute;top:clamp(10px,1.8vh,20px);
-  display:flex;align-items:center;gap:clamp(6px,1.6vw,12px);
-  background:rgba(252,250,243,.07);
-  border:1px solid rgba(198,162,76,.28);
-  border-radius:14px;
-  padding:clamp(8px,1.6vw,16px) clamp(10px,2.4vw,20px);
+  position:absolute;top:clamp(22px,3.4vh,48px);
+  display:flex;align-items:center;gap:clamp(9px,2.2vw,16px);
+  background:rgba(252,250,243,.08);
+  border:1px solid rgba(198,162,76,.35);
+  border-radius:16px;
+  padding:clamp(12px,2.4vw,22px) clamp(14px,3.4vw,26px);
   animation:drift 150s ease-in-out infinite;
 }
-.corner-left{left:clamp(10px,2.4vw,20px)}
-.corner-right{right:clamp(10px,2.4vw,20px)}
-.corner-icon{width:clamp(14px,3.4vw,24px);height:clamp(14px,3.4vw,24px);color:var(--gold-bright);flex:0 0 auto}
-.corner-text{display:flex;flex-direction:column;align-items:flex-start;gap:.15em}
-.corner-k{font-size:clamp(8px,1.8vw,11px);font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright)}
-.corner-v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(12px,3vw,18px);color:var(--paper)}
+.corner-left{left:clamp(14px,3.2vw,28px)}
+.corner-right{right:clamp(14px,3.2vw,28px)}
+.corner-icon{width:clamp(20px,4.6vw,32px);height:clamp(20px,4.6vw,32px);color:var(--gold-bright);flex:0 0 auto}
+.corner-text{display:flex;flex-direction:column;align-items:flex-start;gap:.18em}
+.corner-k{font-size:clamp(10px,2.3vw,14px);font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-bright)}
+.corner-v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(16px,3.9vw,24px);color:var(--paper)}
 
 .brand{display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.3vh,14px);opacity:.95}
 .brand img{height:clamp(46px,7.4vw,96px);width:auto;display:block}
