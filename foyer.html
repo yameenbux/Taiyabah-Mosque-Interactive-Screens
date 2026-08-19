@@ -78,8 +78,8 @@ body{
 .stage{
   position:fixed;inset:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:clamp(14px,2.2vh,28px);
-  padding:clamp(22px,3.6vh,48px) clamp(28px,4vw,72px);
+  gap:clamp(24px,3.6vh,44px);
+  padding:clamp(28px,4.5vh,60px) clamp(32px,4.5vw,84px);
   animation:drift 150s ease-in-out infinite;
 }
 @keyframes drift{
@@ -112,35 +112,35 @@ body{
 .needs{display:flex;flex-wrap:wrap;gap:8px;margin-top:clamp(10px,1.4vh,16px)}
 .needs span{font-size:clamp(10px,1.1vh,13px);border:1px solid rgba(252,250,243,.25);border-radius:999px;padding:.35em 1em;opacity:.85}
 
-.timeline{margin-top:clamp(16px,2.2vh,26px);display:flex;flex-direction:column;gap:clamp(8px,1.1vh,12px)}
-.t-row{display:flex;align-items:baseline;gap:.7em;font-size:clamp(11px,1.25vh,14px)}
-.t-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:var(--muted)}
+.timeline{margin-top:clamp(20px,2.8vh,32px);display:flex;flex-direction:column;gap:clamp(11px,1.5vh,16px)}
+.t-row{display:flex;align-items:baseline;gap:.7em;font-size:clamp(12px,1.35vh,15px)}
+.t-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:rgba(245,241,232,.4)}
 .t-row.done .t-dot{background:var(--good)}
 .t-row.active .t-dot{background:var(--gold-bright);box-shadow:0 0 0 3px rgba(198,162,76,.25)}
 .t-date{color:var(--gold-bright);opacity:.9;min-width:11ch}
 .t-title{font-weight:600}
-.t-row.upcoming{opacity:.6}
+.t-row.upcoming{opacity:.65}
 
 /* ---- give card ---- */
 .give-card{
   background:linear-gradient(180deg, rgba(252,250,243,.09), rgba(252,250,243,.04));
   border:1px solid rgba(198,162,76,.35);border-radius:22px;
-  padding:clamp(16px,2vh,26px) clamp(18px,2vw,28px);
-  display:flex;flex-direction:column;gap:clamp(10px,1.3vh,14px);
+  padding:clamp(22px,2.8vh,34px) clamp(24px,2.6vw,36px);
+  display:flex;flex-direction:column;gap:clamp(16px,2vh,22px);
 }
-.give-head{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(15px,1.8vh,20px)}
-.qr-wrap{display:flex;gap:clamp(14px,1.8vw,20px);align-items:center}
-.qr-box{width:clamp(84px,10vh,130px);height:clamp(84px,10vh,130px);border-radius:12px;overflow:hidden;flex:0 0 auto;
+.give-head{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(16px,1.9vh,21px)}
+.qr-wrap{display:flex;gap:clamp(16px,2vw,22px);align-items:center}
+.qr-box{width:clamp(90px,10.5vh,136px);height:clamp(90px,10.5vh,136px);border-radius:12px;overflow:hidden;flex:0 0 auto;
   box-shadow:0 10px 24px -12px rgba(0,0,0,.5)}
 .qr-box svg{width:100%;height:100%;display:block}
-.qr-label{font-size:clamp(12px,1.3vh,15px);font-weight:600}
-.qr-sub{font-size:clamp(10px,1.1vh,13px);opacity:.7;margin-top:.3em;max-width:26ch;line-height:1.4}
+.qr-label{font-size:clamp(13px,1.4vh,16px);font-weight:600}
+.qr-sub{font-size:clamp(11px,1.2vh,14px);color:rgba(245,241,232,.7);margin-top:.4em;max-width:26ch;line-height:1.5}
 .give-divider{height:1px;background:rgba(198,162,76,.3)}
-.bank-rows{display:flex;flex-direction:column;gap:clamp(6px,.9vh,10px)}
-.bank-row{display:flex;justify-content:space-between;font-size:clamp(11px,1.25vh,14px)}
-.bank-k{color:var(--muted);opacity:.9}
+.bank-rows{display:flex;flex-direction:column;gap:clamp(9px,1.2vh,13px)}
+.bank-row{display:flex;justify-content:space-between;gap:1em;font-size:clamp(12px,1.3vh,15px)}
+.bank-k{color:rgba(245,241,232,.62);font-weight:600;letter-spacing:.02em}
 .bank-v{font-weight:600;font-variant-numeric:tabular-nums}
-.give-note{font-size:clamp(9px,1vh,12px);opacity:.65;line-height:1.5;margin-top:.2em}
+.give-note{font-size:clamp(10px,1.05vh,12px);opacity:.65;line-height:1.5;margin-top:.3em}
 
 /* ---- occasion overlay ---- */
 .occasion{display:none;flex-direction:column;align-items:center;text-align:center;gap:clamp(10px,1.6vh,18px)}

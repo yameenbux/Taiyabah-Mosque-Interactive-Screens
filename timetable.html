@@ -75,11 +75,15 @@ body{
 .stage{
   position:fixed;inset:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:clamp(14px,2.4vh,32px);
-  padding:clamp(24px,4vh,56px) clamp(24px,4vw,80px);
+  gap:clamp(22px,3.6vh,46px);
+  padding:clamp(28px,4.5vh,64px) clamp(28px,4.5vw,88px);
   text-align:center;
   animation:drift 150s ease-in-out infinite;
 }
+/* the live-times wrapper needs its own gap — without this, the next-jama'ah
+   card, the grid and the footer sit flush against each other with nothing
+   between them */
+#live{display:flex;flex-direction:column;align-items:center;gap:clamp(22px,3.4vh,42px);width:100%}
 @keyframes drift{
   0%{transform:translate(0,0)}
   25%{transform:translate(6px,-5px)}
@@ -89,59 +93,60 @@ body{
 }
 
 /* ---- brand row ---- */
-.brand{display:flex;align-items:center;gap:14px;opacity:.92}
-.brand img{height:clamp(34px,4.4vh,56px);width:auto;display:block}
-.brand-text{text-align:left;line-height:1.25}
+.brand{display:flex;align-items:center;gap:clamp(12px,1.6vw,20px);opacity:.92}
+.brand img{height:clamp(32px,4.2vh,52px);width:auto;display:block}
+.brand-text{text-align:left;line-height:1.4}
 .brand-text .name{font-size:clamp(13px,1.5vh,18px);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
-.brand-text .sub{font-size:clamp(10px,1.1vh,13px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85}
+.brand-text .sub{font-size:clamp(10px,1.1vh,13px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85;margin-top:.2em}
 
 /* ---- clock ---- */
-.clock{display:flex;align-items:flex-start;gap:.35vw}
-.clock .hm{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(64px,13vh,168px);line-height:1;letter-spacing:-.01em}
-.clock .ss{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:clamp(20px,3.4vh,44px);color:var(--gold-bright);margin-top:clamp(10px,1.6vh,22px)}
-.dates{font-size:clamp(15px,2vh,22px);color:var(--paper);opacity:.92}
-.dates .sep{color:var(--gold);margin:0 .5em}
-.hijri{font-size:clamp(13px,1.7vh,18px);color:var(--gold-bright);opacity:.9}
+.clock{display:flex;align-items:flex-start;gap:.4vw}
+.clock .hm{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(72px,14vh,180px);line-height:1;letter-spacing:-.01em}
+.clock .ss{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:clamp(22px,3.6vh,46px);color:var(--gold-bright);margin-top:clamp(12px,1.8vh,24px)}
+.dates{font-size:clamp(16px,2.1vh,23px);color:var(--paper);opacity:.92;display:flex;align-items:baseline;gap:.15em;margin-top:clamp(2px,.6vh,8px)}
+.dates .sep{color:var(--gold);margin:0 .35em}
+.hijri{font-size:clamp(14px,1.8vh,19px);color:var(--gold-bright);opacity:.9}
 
 /* ---- next jama'ah card ---- */
 .next-card{
-  display:flex;align-items:center;gap:clamp(16px,3vw,40px);
+  display:flex;align-items:center;gap:clamp(22px,3.6vw,48px);
   background:linear-gradient(180deg, rgba(252,250,243,.09), rgba(252,250,243,.04));
   border:1px solid rgba(198,162,76,.35);
   border-radius:22px;
-  padding:clamp(14px,2.2vh,26px) clamp(24px,4vw,52px);
+  padding:clamp(20px,3vh,34px) clamp(30px,4.6vw,60px);
   box-shadow:0 20px 60px -30px rgba(0,0,0,.6);
 }
-.next-label{font-size:clamp(11px,1.2vh,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:.35em}
+.next-label{font-size:clamp(12px,1.3vh,15px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:.55em}
 .next-name{display:flex;align-items:baseline;gap:.5em}
-.next-name .en{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(28px,4.6vh,54px)}
+.next-name .en{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(30px,4.8vh,56px)}
 .next-name .ar{font-family:"Amiri",serif;font-size:clamp(20px,3.4vh,38px);color:var(--gold-bright)}
-.next-time{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(34px,5.6vh,64px)}
+.next-time{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(36px,5.8vh,66px)}
 .next-divider{width:1px;align-self:stretch;background:rgba(198,162,76,.35)}
-.next-countdown .k{font-size:clamp(11px,1.2vh,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:.35em}
-.next-countdown .v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(26px,4.2vh,48px)}
+.next-countdown .k{font-size:clamp(12px,1.3vh,15px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:.55em}
+.next-countdown .v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(28px,4.4vh,50px)}
 
 /* ---- today's grid ---- */
-.grid{display:flex;gap:clamp(6px,1.1vw,18px);width:100%;max-width:1400px;justify-content:center}
+.grid{display:flex;gap:clamp(14px,2vw,26px);width:100%;max-width:1600px;justify-content:center}
 .cell{
   flex:1 1 0;min-width:0;
-  background:rgba(252,250,243,.05);
-  border:1px solid rgba(252,250,243,.12);
-  border-radius:16px;
-  padding:clamp(10px,1.6vh,18px) clamp(6px,1vw,14px);
+  background:rgba(252,250,243,.06);
+  border:1px solid rgba(252,250,243,.14);
+  border-radius:18px;
+  padding:clamp(16px,2.4vh,26px) clamp(10px,1.4vw,18px);
 }
 .cell.active{background:linear-gradient(180deg, rgba(198,162,76,.28), rgba(198,162,76,.12));border-color:var(--gold)}
 .cell.next{border-color:rgba(198,162,76,.6)}
-.cell .en{font-size:clamp(12px,1.5vh,17px);font-weight:600;letter-spacing:.02em}
-.cell .ar{font-family:"Amiri",serif;font-size:clamp(12px,1.5vh,16px);color:var(--gold-bright);display:block;margin-top:2px}
-.cell .row{margin-top:clamp(8px,1.2vh,14px);font-size:clamp(11px,1.3vh,14px);color:var(--paper);opacity:.75}
-.cell .row .lab{display:block;font-size:clamp(8px,.9vh,10px);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);opacity:.9;margin-bottom:2px}
-.cell .row + .row{margin-top:clamp(6px,.9vh,10px)}
-.cell .begins-v{font-family:"Fraunces",Georgia,serif;font-size:clamp(15px,1.9vh,20px);font-weight:500;opacity:.95}
-.cell .jamaat-v{font-family:"Fraunces",Georgia,serif;font-size:clamp(17px,2.2vh,24px);font-weight:600;color:var(--gold-bright)}
+.cell .en{font-size:clamp(13px,1.6vh,18px);font-weight:600;letter-spacing:.02em}
+.cell .ar{font-family:"Amiri",serif;font-size:clamp(12px,1.5vh,16px);color:var(--gold-bright);display:block;margin-top:.3em}
+.cell .row{margin-top:clamp(14px,1.9vh,20px);font-size:clamp(11px,1.3vh,14px);color:var(--paper)}
+.cell .row .lab{display:block;font-size:clamp(10px,1.05vh,12px);font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(245,241,232,.62);margin-bottom:.4em}
+.cell .row + .row{margin-top:clamp(10px,1.4vh,16px)}
+.cell .begins-v{font-family:"Fraunces",Georgia,serif;font-size:clamp(17px,2.1vh,22px);font-weight:500;color:var(--paper);opacity:.98}
+.cell .jamaat-v{font-family:"Fraunces",Georgia,serif;font-size:clamp(19px,2.4vh,26px);font-weight:600;color:var(--gold-bright)}
 
 /* ---- footer ---- */
-.footer{font-size:clamp(10px,1.1vh,13px);color:var(--paper);opacity:.55;letter-spacing:.02em}
+.footer{font-size:clamp(10px,1.1vh,13px);color:var(--paper);opacity:.55;letter-spacing:.02em;margin-top:clamp(4px,.8vh,10px)}
 .footer .dot{margin:0 .6em;opacity:.7}
 
 /* ---- fallback (data missing for this date) ---- */
