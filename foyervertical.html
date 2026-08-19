@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <!--
-  Taiyabah Masjid — foyer display
-  Default: the New Build appeal. Automatically swaps to a Ramadan/Eid
-  greeting on the right Islamic dates, then reverts on its own.
-
-  Editable copy lives in foyer-content.json, fetched at runtime — edit that
-  file on GitHub and every foyer TV picks it up within a day (see the daily
-  reload below). If that fetch ever fails, this page falls back to the copy
-  baked in further down so the screen never goes blank.
+  Taiyabah Masjid — foyer display (portrait / vertical screens)
+  Same content and logic as foyer.html, stacked into a single column for a
+  tall narrow panel instead of the two-column layout.
 
   Bolton Central Islamic Society · Registered charity 1041569
   31a Draycott Street, Bolton BL1 8HD
@@ -37,87 +32,64 @@
 
 
 :root{
-  --brand-900:#3C0B2A;
-  --brand-800:#4B1136;
-  --brand-700:#5E1844;
-  --brand-600:#772157;
-  --gold:#C6A24C;
-  --gold-bright:#DCBB63;
-  --paper:#F5F1E8;
-  --card:#FCFAF3;
-  --ink:#261B22;
-  --muted:#7C6E77;
-  --line:#E4DECF;
-  --good:#4C9A6A;
+  --brand-900:#3C0B2A; --brand-800:#4B1136; --brand-700:#5E1844; --brand-600:#772157;
+  --gold:#C6A24C; --gold-bright:#DCBB63; --paper:#F5F1E8; --card:#FCFAF3;
+  --ink:#261B22; --muted:#7C6E77; --line:#E4DECF; --good:#4C9A6A;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:var(--brand-900)}
-body{
-  font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;
-  color:var(--paper);
-  -webkit-font-smoothing:antialiased;
-  cursor:none;
-}
+html,body{width:100%;height:100%;background:var(--brand-900)}
+body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(--paper);
+  -webkit-font-smoothing:antialiased;cursor:none;overflow-y:auto;overflow-x:hidden}
 .display{font-family:"Fraunces",Georgia,serif}
 .arabic{font-family:"Amiri",serif}
 .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 
-.backdrop{
-  position:fixed;inset:0;
+.backdrop{position:fixed;inset:0;z-index:-1;
   background:
-    radial-gradient(120% 70% at 50% -10%, rgba(198,162,76,.16), transparent 60%),
-    radial-gradient(90% 60% at 85% 110%, rgba(119,33,87,.55), transparent 60%),
-    linear-gradient(160deg, var(--brand-900), var(--brand-800) 55%, var(--brand-700));
-}
-.backdrop::after{
-  content:"";position:absolute;inset:0;opacity:.05;
-  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon fill='%23C6A24C' points='50,2 57.3,32.4 83.9,16.1 67.6,42.7 98,50 67.6,57.3 83.9,83.9 57.3,67.6 50,98 42.7,67.6 16.1,83.9 32.4,57.3 2,50 32.4,42.7 16.1,16.1 42.7,32.4'/></svg>");
-  background-size:92px 92px;background-repeat:repeat;
-}
+    radial-gradient(140% 40% at 50% -6%, rgba(198,162,76,.16), transparent 60%),
+    radial-gradient(90% 50% at 50% 115%, rgba(119,33,87,.55), transparent 60%),
+    linear-gradient(190deg, var(--brand-900), var(--brand-800) 55%, var(--brand-700));}
+.backdrop::after{content:"";position:absolute;inset:0;opacity:.05;
+  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon fill='%23C6A24C' points='50,2 57.3,32.4 83.9,16.1 67.6,42.7 98,50 67.6,57.3 83.9,83.9 57.3,67.6 50,98 42.7,67.6 16.1,83.9 32.4,57.3 2,50 32.4,42.7 16.1,16.1 42.7,32.4'/></svg>");background-size:14vw 14vw;background-repeat:repeat;}
 
-.stage{
-  position:fixed;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:clamp(24px,3.6vh,44px);
-  padding:clamp(28px,4.5vh,60px) clamp(32px,4.5vw,84px);
-  animation:drift 150s ease-in-out infinite;
-}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  gap:clamp(22px,2.8vh,36px);padding:clamp(28px,4vh,52px) clamp(20px,5.5vw,40px);
+  text-align:center;animation:drift 150s ease-in-out infinite;}
 @keyframes drift{
-  0%{transform:translate(0,0)} 25%{transform:translate(6px,-5px)}
-  50%{transform:translate(-4px,4px)} 75%{transform:translate(-6px,-3px)}
-  100%{transform:translate(0,0)}
-}
+  0%{transform:translate(0,0)} 25%{transform:translate(5px,-6px)}
+  50%{transform:translate(-4px,5px)} 75%{transform:translate(-5px,-4px)}
+  100%{transform:translate(0,0)}}
 
-.brand{display:flex;align-items:center;gap:clamp(16px,2vw,24px);opacity:.95}
-.brand img{height:clamp(50px,6.6vh,84px);width:auto;display:block}
-.brand-text{text-align:left;line-height:1.3}
-.brand-text .name{font-size:clamp(15px,1.7vh,20px);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
-.brand-text .sub{font-size:clamp(11px,1.2vh,14px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85;margin-top:.2em}
+.brand{display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1.4vh,16px);opacity:.95}
+.brand img{height:clamp(52px,6vw,88px);width:auto;display:block}
+.brand-text{text-align:center;line-height:1.3}
+.brand-text .name{font-size:clamp(15px,2.1vw,20px);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.brand-text .sub{font-size:clamp(11px,1.6vw,15px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85;margin-top:.25em}
 
-/* ---- new build layout ---- */
-.nb-wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(20px,3vw,48px);width:100%;max-width:1680px;text-align:left}
-.nb-eyebrow{font-size:clamp(11px,1.2vh,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
-.nb-heading{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(26px,3.6vh,44px);line-height:1.12;margin-top:.3em}
-.nb-tagline{font-size:clamp(13px,1.5vh,17px);color:var(--paper);opacity:.85;margin-top:.6em;max-width:52ch;line-height:1.5}
+/* ---- new build layout: single column ---- */
+.nb-wrap{display:flex;flex-direction:column;gap:clamp(22px,3vh,36px);width:100%;max-width:720px;text-align:left}
+.nb-head{text-align:center}
+.nb-eyebrow{font-size:clamp(11px,2.4vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
+.nb-heading{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(24px,6vw,34px);line-height:1.18;margin-top:.35em}
+.nb-tagline{font-size:clamp(13px,2.8vw,16px);color:var(--paper);opacity:.85;margin-top:.6em;line-height:1.55}
 
 .phase-card{
-  margin-top:clamp(14px,2vh,22px);
   background:rgba(252,250,243,.06);border:1px solid rgba(198,162,76,.3);border-radius:18px;
-  padding:clamp(14px,1.8vh,22px) clamp(16px,2vw,26px);
+  padding:clamp(18px,2.6vh,26px) clamp(18px,4.5vw,28px);
 }
-.phase-tag{display:inline-block;font-size:clamp(10px,1.1vh,12px);letter-spacing:.1em;text-transform:uppercase;
-  color:var(--brand-900);background:var(--gold-bright);border-radius:999px;padding:.3em .9em;font-weight:600}
-.phase-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(18px,2.2vh,26px);margin-top:.5em}
-.phase-desc{font-size:clamp(12px,1.3vh,15px);opacity:.85;margin-top:.35em;max-width:56ch;line-height:1.5}
-.needs{display:flex;flex-wrap:wrap;gap:8px;margin-top:clamp(10px,1.4vh,16px)}
-.needs span{font-size:clamp(10px,1.1vh,13px);border:1px solid rgba(252,250,243,.25);border-radius:999px;padding:.35em 1em;opacity:.85}
+.phase-tag{display:inline-block;font-size:clamp(10px,2.2vw,12px);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--brand-900);background:var(--gold-bright);border-radius:999px;padding:.35em 1em;font-weight:600}
+.phase-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(19px,4.6vw,25px);margin-top:.55em}
+.phase-desc{font-size:clamp(13px,2.8vw,15px);opacity:.85;margin-top:.4em;line-height:1.55}
+.needs{display:flex;flex-wrap:wrap;gap:8px;margin-top:clamp(12px,1.8vh,18px)}
+.needs span{font-size:clamp(11px,2.4vw,13px);border:1px solid rgba(252,250,243,.25);border-radius:999px;padding:.4em 1.1em;opacity:.85}
 
-.timeline{margin-top:clamp(20px,2.8vh,32px);display:flex;flex-direction:column;gap:clamp(11px,1.5vh,16px)}
-.t-row{display:flex;align-items:baseline;gap:.7em;font-size:clamp(12px,1.35vh,15px)}
+.timeline{display:flex;flex-direction:column;gap:clamp(12px,1.8vh,18px)}
+.t-row{display:flex;align-items:baseline;gap:.7em;font-size:clamp(13px,2.8vw,15px)}
 .t-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:rgba(245,241,232,.4)}
 .t-row.done .t-dot{background:var(--good)}
 .t-row.active .t-dot{background:var(--gold-bright);box-shadow:0 0 0 3px rgba(198,162,76,.25)}
-.t-date{color:var(--gold-bright);opacity:.9;min-width:11ch}
+.t-date{color:var(--gold-bright);opacity:.9;min-width:12ch}
 .t-title{font-weight:600}
 .t-row.upcoming{opacity:.65}
 
@@ -125,33 +97,34 @@ body{
 .give-card{
   background:linear-gradient(180deg, rgba(252,250,243,.09), rgba(252,250,243,.04));
   border:1px solid rgba(198,162,76,.35);border-radius:22px;
-  padding:clamp(22px,2.8vh,34px) clamp(24px,2.6vw,36px);
-  display:flex;flex-direction:column;gap:clamp(16px,2vh,22px);
+  padding:clamp(22px,3vh,32px) clamp(20px,4.5vw,32px);
+  display:flex;flex-direction:column;gap:clamp(16px,2.2vh,22px);
 }
-.give-head{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(16px,1.9vh,21px)}
-.qr-wrap{display:flex;gap:clamp(16px,2vw,22px);align-items:center}
-.qr-box{width:clamp(90px,10.5vh,136px);height:clamp(90px,10.5vh,136px);border-radius:12px;overflow:hidden;flex:0 0 auto;
+.give-head{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(17px,3.6vw,21px)}
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:clamp(14px,2vh,18px);text-align:center}
+.qr-box{width:clamp(120px,32vw,180px);height:clamp(120px,32vw,180px);border-radius:14px;overflow:hidden;flex:0 0 auto;
   box-shadow:0 10px 24px -12px rgba(0,0,0,.5)}
 .qr-box svg{width:100%;height:100%;display:block}
-.qr-label{font-size:clamp(13px,1.4vh,16px);font-weight:600}
-.qr-sub{font-size:clamp(11px,1.2vh,14px);color:rgba(245,241,232,.7);margin-top:.4em;max-width:26ch;line-height:1.5}
+.qr-label{font-size:clamp(14px,3vw,17px);font-weight:600}
+.qr-sub{font-size:clamp(12px,2.6vw,14px);color:rgba(245,241,232,.7);margin-top:.4em;line-height:1.5}
 .give-divider{height:1px;background:rgba(198,162,76,.3)}
-.bank-rows{display:flex;flex-direction:column;gap:clamp(9px,1.2vh,13px)}
-.bank-row{display:flex;justify-content:space-between;gap:1em;font-size:clamp(12px,1.3vh,15px)}
+.bank-rows{display:flex;flex-direction:column;gap:clamp(9px,1.4vh,13px)}
+.bank-row{display:flex;justify-content:space-between;gap:1em;font-size:clamp(12px,2.7vw,15px)}
 .bank-k{color:rgba(245,241,232,.62);font-weight:600;letter-spacing:.02em}
-.bank-v{font-weight:600;font-variant-numeric:tabular-nums}
-.give-note{font-size:clamp(10px,1.05vh,12px);opacity:.65;line-height:1.5;margin-top:.3em}
+.bank-v{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+.give-note{font-size:clamp(10px,2.2vw,12px);opacity:.65;line-height:1.5;margin-top:.3em}
 
 /* ---- occasion overlay ---- */
-.occasion{display:none;flex-direction:column;align-items:center;text-align:center;gap:clamp(10px,1.6vh,18px)}
+.occasion{display:none;flex-direction:column;align-items:center;text-align:center;gap:clamp(12px,1.8vh,20px);
+  flex:1 1 auto;justify-content:center}
 .occasion.show{display:flex}
-.occasion .o-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(54px,9vh,120px);line-height:1}
-.occasion .o-arabic{font-family:"Amiri",serif;color:var(--gold-bright);font-size:clamp(30px,5vh,64px)}
-.occasion .o-message{font-size:clamp(15px,2vh,22px);opacity:.9;max-width:56ch;line-height:1.6;margin-top:.4em}
+.occasion .o-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(46px,12vw,84px);line-height:1.05}
+.occasion .o-arabic{font-family:"Amiri",serif;color:var(--gold-bright);font-size:clamp(28px,7.5vw,48px)}
+.occasion .o-message{font-size:clamp(14px,3.4vw,19px);opacity:.9;max-width:80vw;line-height:1.6;margin-top:.4em}
 .nb-wrap.hide{display:none}
 
-.footer{font-size:clamp(10px,1.1vh,13px);color:var(--paper);opacity:.55;letter-spacing:.02em;margin-top:clamp(8px,1.2vh,16px)}
-.footer .dot{margin:0 .6em;opacity:.7}
+.footer{font-size:clamp(9px,2.2vw,12px);color:var(--paper);opacity:.55;letter-spacing:.02em;
+  display:flex;flex-direction:column;align-items:center;gap:.4em;margin-top:auto;padding-top:clamp(8px,1.2vh,16px)}
 [hidden]{display:none !important}
 </style>
 </head>
@@ -167,20 +140,20 @@ body{
   </div>
 
   <div class="nb-wrap" id="nb-wrap">
-    <div>
+    <div class="nb-head">
       <div class="nb-eyebrow" id="nb-eyebrow">The New Build</div>
       <div class="nb-heading" id="nb-heading">—</div>
       <div class="nb-tagline" id="nb-tagline"></div>
-
-      <div class="phase-card">
-        <span class="phase-tag" id="phase-tag">—</span>
-        <div class="phase-title" id="phase-title"></div>
-        <div class="phase-desc" id="phase-desc"></div>
-        <div class="needs" id="needs"></div>
-      </div>
-
-      <div class="timeline" id="timeline"></div>
     </div>
+
+    <div class="phase-card">
+      <span class="phase-tag" id="phase-tag">—</span>
+      <div class="phase-title" id="phase-title"></div>
+      <div class="phase-desc" id="phase-desc"></div>
+      <div class="needs" id="needs"></div>
+    </div>
+
+    <div class="timeline" id="timeline"></div>
 
     <div class="give-card">
       <div class="give-head">Give online</div>
@@ -192,7 +165,7 @@ body{
         </div>
       </div>
       <div class="give-divider"></div>
-      <div class="give-head" id="bank-heading" style="font-size:clamp(13px,1.5vh,17px)">Or transfer directly</div>
+      <div class="give-head" id="bank-heading" style="font-size:clamp(14px,3vw,17px)">Or transfer directly</div>
       <div class="bank-rows" id="bank-rows"></div>
       <div class="give-note" id="give-note"></div>
     </div>
@@ -205,7 +178,7 @@ body{
   </div>
 
   <div class="footer">
-    <span>31a Draycott Street, Bolton BL1 8HD</span><span class="dot">&bull;</span>
+    <span>31a Draycott Street, Bolton BL1 8HD</span>
     <span>Registered charity 1041569</span>
   </div>
 </div>
@@ -2511,17 +2484,10 @@ var qrcode = function() {
 
 </script>
 <script>
-// per-day Hijri lookup only (kept slim — this page doesn't need Salah times),
-// generated from the same yearly timetable used on the Salah screensaver.
 const HIJRI = {"2026-01-01":"12 Rajab 1447 AH","2026-01-02":"13 Rajab 1447 AH","2026-01-03":"14 Rajab 1447 AH","2026-01-04":"15 Rajab 1447 AH","2026-01-05":"16 Rajab 1447 AH","2026-01-06":"17 Rajab 1447 AH","2026-01-07":"18 Rajab 1447 AH","2026-01-08":"19 Rajab 1447 AH","2026-01-09":"20 Rajab 1447 AH","2026-01-10":"21 Rajab 1447 AH","2026-01-11":"22 Rajab 1447 AH","2026-01-12":"23 Rajab 1447 AH","2026-01-13":"24 Rajab 1447 AH","2026-01-14":"25 Rajab 1447 AH","2026-01-15":"26 Rajab 1447 AH","2026-01-16":"27 Rajab 1447 AH","2026-01-17":"28 Rajab 1447 AH","2026-01-18":"29 Rajab 1447 AH","2026-01-19":"30 Rajab 1447 AH","2026-01-20":"1 Sha'ban 1447 AH","2026-01-21":"2 Sha'ban 1447 AH","2026-01-22":"3 Sha'ban 1447 AH","2026-01-23":"4 Sha'ban 1447 AH","2026-01-24":"5 Sha'ban 1447 AH","2026-01-25":"6 Sha'ban 1447 AH","2026-01-26":"7 Sha'ban 1447 AH","2026-01-27":"8 Sha'ban 1447 AH","2026-01-28":"9 Sha'ban 1447 AH","2026-01-29":"10 Sha'ban 1447 AH","2026-01-30":"11 Sha'ban 1447 AH","2026-01-31":"12 Sha'ban 1447 AH","2026-02-01":"13 Sha'ban 1447 AH","2026-02-02":"14 Sha'ban 1447 AH","2026-02-03":"15 Sha'ban 1447 AH","2026-02-04":"16 Sha'ban 1447 AH","2026-02-05":"17 Sha'ban 1447 AH","2026-02-06":"18 Sha'ban 1447 AH","2026-02-07":"19 Sha'ban 1447 AH","2026-02-08":"20 Sha'ban 1447 AH","2026-02-09":"21 Sha'ban 1447 AH","2026-02-10":"22 Sha'ban 1447 AH","2026-02-11":"23 Sha'ban 1447 AH","2026-02-12":"24 Sha'ban 1447 AH","2026-02-13":"25 Sha'ban 1447 AH","2026-02-14":"26 Sha'ban 1447 AH","2026-02-15":"27 Sha'ban 1447 AH","2026-02-16":"28 Sha'ban 1447 AH","2026-02-17":"29 Sha'ban 1447 AH","2026-02-18":"1 Ramadan 1447 AH","2026-02-19":"2 Ramadan 1447 AH","2026-02-20":"3 Ramadan 1447 AH","2026-02-21":"4 Ramadan 1447 AH","2026-02-22":"5 Ramadan 1447 AH","2026-02-23":"6 Ramadan 1447 AH","2026-02-24":"7 Ramadan 1447 AH","2026-02-25":"8 Ramadan 1447 AH","2026-02-26":"9 Ramadan 1447 AH","2026-02-27":"10 Ramadan 1447 AH","2026-02-28":"11 Ramadan 1447 AH","2026-03-01":"12 Ramadan 1447 AH","2026-03-02":"13 Ramadan 1447 AH","2026-03-03":"14 Ramadan 1447 AH","2026-03-04":"15 Ramadan 1447 AH","2026-03-05":"16 Ramadan 1447 AH","2026-03-06":"17 Ramadan 1447 AH","2026-03-07":"18 Ramadan 1447 AH","2026-03-08":"19 Ramadan 1447 AH","2026-03-09":"20 Ramadan 1447 AH","2026-03-10":"21 Ramadan 1447 AH","2026-03-11":"22 Ramadan 1447 AH","2026-03-12":"23 Ramadan 1447 AH","2026-03-13":"24 Ramadan 1447 AH","2026-03-14":"25 Ramadan 1447 AH","2026-03-15":"26 Ramadan 1447 AH","2026-03-16":"27 Ramadan 1447 AH","2026-03-17":"28 Ramadan 1447 AH","2026-03-18":"29 Ramadan 1447 AH","2026-03-19":"30 Ramadan 1447 AH","2026-03-20":"1 Shawwal 1447 AH","2026-03-21":"2 Shawwal 1447 AH","2026-03-22":"3 Shawwal 1447 AH","2026-03-23":"4 Shawwal 1447 AH","2026-03-24":"5 Shawwal 1447 AH","2026-03-25":"6 Shawwal 1447 AH","2026-03-26":"7 Shawwal 1447 AH","2026-03-27":"8 Shawwal 1447 AH","2026-03-28":"9 Shawwal 1447 AH","2026-03-29":"10 Shawwal 1447 AH","2026-03-30":"11 Shawwal 1447 AH","2026-03-31":"12 Shawwal 1447 AH","2026-04-01":"13 Shawwal 1447 AH","2026-04-02":"14 Shawwal 1447 AH","2026-04-03":"15 Shawwal 1447 AH","2026-04-04":"16 Shawwal 1447 AH","2026-04-05":"17 Shawwal 1447 AH","2026-04-06":"18 Shawwal 1447 AH","2026-04-07":"19 Shawwal 1447 AH","2026-04-08":"20 Shawwal 1447 AH","2026-04-09":"21 Shawwal 1447 AH","2026-04-10":"22 Shawwal 1447 AH","2026-04-11":"23 Shawwal 1447 AH","2026-04-12":"24 Shawwal 1447 AH","2026-04-13":"25 Shawwal 1447 AH","2026-04-14":"26 Shawwal 1447 AH","2026-04-15":"27 Shawwal 1447 AH","2026-04-16":"28 Shawwal 1447 AH","2026-04-17":"29 Shawwal 1447 AH","2026-04-18":"1 Dhul Qa'dah 1447 AH","2026-04-19":"2 Dhul Qa'dah 1447 AH","2026-04-20":"3 Dhul Qa'dah 1447 AH","2026-04-21":"4 Dhul Qa'dah 1447 AH","2026-04-22":"5 Dhul Qa'dah 1447 AH","2026-04-23":"6 Dhul Qa'dah 1447 AH","2026-04-24":"7 Dhul Qa'dah 1447 AH","2026-04-25":"8 Dhul Qa'dah 1447 AH","2026-04-26":"9 Dhul Qa'dah 1447 AH","2026-04-27":"10 Dhul Qa'dah 1447 AH","2026-04-28":"11 Dhul Qa'dah 1447 AH","2026-04-29":"12 Dhul Qa'dah 1447 AH","2026-04-30":"13 Dhul Qa'dah 1447 AH","2026-05-01":"14 Dhul Qa'dah 1447 AH","2026-05-02":"15 Dhul Qa'dah 1447 AH","2026-05-03":"16 Dhul Qa'dah 1447 AH","2026-05-04":"17 Dhul Qa'dah 1447 AH","2026-05-05":"18 Dhul Qa'dah 1447 AH","2026-05-06":"19 Dhul Qa'dah 1447 AH","2026-05-07":"20 Dhul Qa'dah 1447 AH","2026-05-08":"21 Dhul Qa'dah 1447 AH","2026-05-09":"22 Dhul Qa'dah 1447 AH","2026-05-10":"23 Dhul Qa'dah 1447 AH","2026-05-11":"24 Dhul Qa'dah 1447 AH","2026-05-12":"25 Dhul Qa'dah 1447 AH","2026-05-13":"26 Dhul Qa'dah 1447 AH","2026-05-14":"27 Dhul Qa'dah 1447 AH","2026-05-15":"28 Dhul Qa'dah 1447 AH","2026-05-16":"29 Dhul Qa'dah 1447 AH","2026-05-17":"30 Dhul Qa'dah 1447 AH","2026-05-18":"1 Dhul Hijjah 1447 AH","2026-05-19":"2 Dhul Hijjah 1447 AH","2026-05-20":"3 Dhul Hijjah 1447 AH","2026-05-21":"4 Dhul Hijjah 1447 AH","2026-05-22":"5 Dhul Hijjah 1447 AH","2026-05-23":"6 Dhul Hijjah 1447 AH","2026-05-24":"7 Dhul Hijjah 1447 AH","2026-05-25":"8 Dhul Hijjah 1447 AH","2026-05-26":"9 Dhul Hijjah 1447 AH","2026-05-27":"10 Dhul Hijjah 1447 AH","2026-05-28":"11 Dhul Hijjah 1447 AH","2026-05-29":"12 Dhul Hijjah 1447 AH","2026-05-30":"13 Dhul Hijjah 1447 AH","2026-05-31":"14 Dhul Hijjah 1447 AH","2026-06-01":"15 Dhul Hijjah 1447 AH","2026-06-02":"16 Dhul Hijjah 1447 AH","2026-06-03":"17 Dhul Hijjah 1447 AH","2026-06-04":"18 Dhul Hijjah 1447 AH","2026-06-05":"19 Dhul Hijjah 1447 AH","2026-06-06":"20 Dhul Hijjah 1447 AH","2026-06-07":"21 Dhul Hijjah 1447 AH","2026-06-08":"22 Dhul Hijjah 1447 AH","2026-06-09":"23 Dhul Hijjah 1447 AH","2026-06-10":"24 Dhul Hijjah 1447 AH","2026-06-11":"25 Dhul Hijjah 1447 AH","2026-06-12":"26 Dhul Hijjah 1447 AH","2026-06-13":"27 Dhul Hijjah 1447 AH","2026-06-14":"28 Dhul Hijjah 1447 AH","2026-06-15":"29 Dhul Hijjah 1447 AH","2026-06-16":"1 Muharram 1448 AH","2026-06-17":"2 Muharram 1448 AH","2026-06-18":"3 Muharram 1448 AH","2026-06-19":"4 Muharram 1448 AH","2026-06-20":"5 Muharram 1448 AH","2026-06-21":"6 Muharram 1448 AH","2026-06-22":"7 Muharram 1448 AH","2026-06-23":"8 Muharram 1448 AH","2026-06-24":"9 Muharram 1448 AH","2026-06-25":"10 Muharram 1448 AH","2026-06-26":"11 Muharram 1448 AH","2026-06-27":"12 Muharram 1448 AH","2026-06-28":"13 Muharram 1448 AH","2026-06-29":"14 Muharram 1448 AH","2026-06-30":"15 Muharram 1448 AH","2026-07-01":"16 Muharram 1448 AH","2026-07-02":"17 Muharram 1448 AH","2026-07-03":"18 Muharram 1448 AH","2026-07-04":"19 Muharram 1448 AH","2026-07-05":"20 Muharram 1448 AH","2026-07-06":"21 Muharram 1448 AH","2026-07-07":"22 Muharram 1448 AH","2026-07-08":"23 Muharram 1448 AH","2026-07-09":"24 Muharram 1448 AH","2026-07-10":"25 Muharram 1448 AH","2026-07-11":"26 Muharram 1448 AH","2026-07-12":"27 Muharram 1448 AH","2026-07-13":"28 Muharram 1448 AH","2026-07-14":"29 Muharram 1448 AH","2026-07-15":"1 Safar 1448 AH","2026-07-16":"2 Safar 1448 AH","2026-07-17":"3 Safar 1448 AH","2026-07-18":"4 Safar 1448 AH","2026-07-19":"5 Safar 1448 AH","2026-07-20":"6 Safar 1448 AH","2026-07-21":"7 Safar 1448 AH","2026-07-22":"8 Safar 1448 AH","2026-07-23":"9 Safar 1448 AH","2026-07-24":"10 Safar 1448 AH","2026-07-25":"11 Safar 1448 AH","2026-07-26":"12 Safar 1448 AH","2026-07-27":"13 Safar 1448 AH","2026-07-28":"14 Safar 1448 AH","2026-07-29":"15 Safar 1448 AH","2026-07-30":"16 Safar 1448 AH","2026-07-31":"17 Safar 1448 AH","2026-08-01":"18 Safar 1448 AH","2026-08-02":"19 Safar 1448 AH","2026-08-03":"20 Safar 1448 AH","2026-08-04":"21 Safar 1448 AH","2026-08-05":"22 Safar 1448 AH","2026-08-06":"23 Safar 1448 AH","2026-08-07":"24 Safar 1448 AH","2026-08-08":"25 Safar 1448 AH","2026-08-09":"26 Safar 1448 AH","2026-08-10":"27 Safar 1448 AH","2026-08-11":"28 Safar 1448 AH","2026-08-12":"29 Safar 1448 AH","2026-08-13":"30 Safar 1448 AH","2026-08-14":"1 Rabi al-Awwal 1448 AH","2026-08-15":"2 Rabi al-Awwal 1448 AH","2026-08-16":"3 Rabi al-Awwal 1448 AH","2026-08-17":"4 Rabi al-Awwal 1448 AH","2026-08-18":"5 Rabi al-Awwal 1448 AH","2026-08-19":"6 Rabi al-Awwal 1448 AH","2026-08-20":"7 Rabi al-Awwal 1448 AH","2026-08-21":"8 Rabi al-Awwal 1448 AH","2026-08-22":"9 Rabi al-Awwal 1448 AH","2026-08-23":"10 Rabi al-Awwal 1448 AH","2026-08-24":"11 Rabi al-Awwal 1448 AH","2026-08-25":"12 Rabi al-Awwal 1448 AH","2026-08-26":"13 Rabi al-Awwal 1448 AH","2026-08-27":"14 Rabi al-Awwal 1448 AH","2026-08-28":"15 Rabi al-Awwal 1448 AH","2026-08-29":"16 Rabi al-Awwal 1448 AH","2026-08-30":"17 Rabi al-Awwal 1448 AH","2026-08-31":"18 Rabi al-Awwal 1448 AH","2026-09-01":"19 Rabi al-Awwal 1448 AH","2026-09-02":"20 Rabi al-Awwal 1448 AH","2026-09-03":"21 Rabi al-Awwal 1448 AH","2026-09-04":"22 Rabi al-Awwal 1448 AH","2026-09-05":"23 Rabi al-Awwal 1448 AH","2026-09-06":"24 Rabi al-Awwal 1448 AH","2026-09-07":"25 Rabi al-Awwal 1448 AH","2026-09-08":"26 Rabi al-Awwal 1448 AH","2026-09-09":"27 Rabi al-Awwal 1448 AH","2026-09-10":"28 Rabi al-Awwal 1448 AH","2026-09-11":"29 Rabi al-Awwal 1448 AH","2026-09-12":"1 Rabi al-Thani 1448 AH","2026-09-13":"2 Rabi al-Thani 1448 AH","2026-09-14":"3 Rabi al-Thani 1448 AH","2026-09-15":"4 Rabi al-Thani 1448 AH","2026-09-16":"5 Rabi al-Thani 1448 AH","2026-09-17":"6 Rabi al-Thani 1448 AH","2026-09-18":"7 Rabi al-Thani 1448 AH","2026-09-19":"8 Rabi al-Thani 1448 AH","2026-09-20":"9 Rabi al-Thani 1448 AH","2026-09-21":"10 Rabi al-Thani 1448 AH","2026-09-22":"11 Rabi al-Thani 1448 AH","2026-09-23":"12 Rabi al-Thani 1448 AH","2026-09-24":"13 Rabi al-Thani 1448 AH","2026-09-25":"14 Rabi al-Thani 1448 AH","2026-09-26":"15 Rabi al-Thani 1448 AH","2026-09-27":"16 Rabi al-Thani 1448 AH","2026-09-28":"17 Rabi al-Thani 1448 AH","2026-09-29":"18 Rabi al-Thani 1448 AH","2026-09-30":"19 Rabi al-Thani 1448 AH","2026-10-01":"20 Rabi al-Thani 1448 AH","2026-10-02":"21 Rabi al-Thani 1448 AH","2026-10-03":"22 Rabi al-Thani 1448 AH","2026-10-04":"23 Rabi al-Thani 1448 AH","2026-10-05":"24 Rabi al-Thani 1448 AH","2026-10-06":"25 Rabi al-Thani 1448 AH","2026-10-07":"26 Rabi al-Thani 1448 AH","2026-10-08":"27 Rabi al-Thani 1448 AH","2026-10-09":"28 Rabi al-Thani 1448 AH","2026-10-10":"29 Rabi al-Thani 1448 AH","2026-10-11":"30 Rabi al-Thani 1448 AH","2026-10-12":"1 Jumada al-Awwal 1448 AH","2026-10-13":"2 Jumada al-Awwal 1448 AH","2026-10-14":"3 Jumada al-Awwal 1448 AH","2026-10-15":"4 Jumada al-Awwal 1448 AH","2026-10-16":"5 Jumada al-Awwal 1448 AH","2026-10-17":"6 Jumada al-Awwal 1448 AH","2026-10-18":"7 Jumada al-Awwal 1448 AH","2026-10-19":"8 Jumada al-Awwal 1448 AH","2026-10-20":"9 Jumada al-Awwal 1448 AH","2026-10-21":"10 Jumada al-Awwal 1448 AH","2026-10-22":"11 Jumada al-Awwal 1448 AH","2026-10-23":"12 Jumada al-Awwal 1448 AH","2026-10-24":"13 Jumada al-Awwal 1448 AH","2026-10-25":"14 Jumada al-Awwal 1448 AH","2026-10-26":"15 Jumada al-Awwal 1448 AH","2026-10-27":"16 Jumada al-Awwal 1448 AH","2026-10-28":"17 Jumada al-Awwal 1448 AH","2026-10-29":"18 Jumada al-Awwal 1448 AH","2026-10-30":"19 Jumada al-Awwal 1448 AH","2026-10-31":"20 Jumada al-Awwal 1448 AH","2026-11-01":"21 Jumada al-Awwal 1448 AH","2026-11-02":"22 Jumada al-Awwal 1448 AH","2026-11-03":"23 Jumada al-Awwal 1448 AH","2026-11-04":"24 Jumada al-Awwal 1448 AH","2026-11-05":"25 Jumada al-Awwal 1448 AH","2026-11-06":"26 Jumada al-Awwal 1448 AH","2026-11-07":"27 Jumada al-Awwal 1448 AH","2026-11-08":"28 Jumada al-Awwal 1448 AH","2026-11-09":"29 Jumada al-Awwal 1448 AH","2026-11-10":"30 Jumada al-Awwal 1448 AH","2026-11-11":"1 Jumada al-Thani 1448 AH","2026-11-12":"2 Jumada al-Thani 1448 AH","2026-11-13":"3 Jumada al-Thani 1448 AH","2026-11-14":"4 Jumada al-Thani 1448 AH","2026-11-15":"5 Jumada al-Thani 1448 AH","2026-11-16":"6 Jumada al-Thani 1448 AH","2026-11-17":"7 Jumada al-Thani 1448 AH","2026-11-18":"8 Jumada al-Thani 1448 AH","2026-11-19":"9 Jumada al-Thani 1448 AH","2026-11-20":"10 Jumada al-Thani 1448 AH","2026-11-21":"11 Jumada al-Thani 1448 AH","2026-11-22":"12 Jumada al-Thani 1448 AH","2026-11-23":"13 Jumada al-Thani 1448 AH","2026-11-24":"14 Jumada al-Thani 1448 AH","2026-11-25":"15 Jumada al-Thani 1448 AH","2026-11-26":"16 Jumada al-Thani 1448 AH","2026-11-27":"17 Jumada al-Thani 1448 AH","2026-11-28":"18 Jumada al-Thani 1448 AH","2026-11-29":"19 Jumada al-Thani 1448 AH","2026-11-30":"20 Jumada al-Thani 1448 AH","2026-12-01":"21 Jumada al-Thani 1448 AH","2026-12-02":"22 Jumada al-Thani 1448 AH","2026-12-03":"23 Jumada al-Thani 1448 AH","2026-12-04":"24 Jumada al-Thani 1448 AH","2026-12-05":"25 Jumada al-Thani 1448 AH","2026-12-06":"26 Jumada al-Thani 1448 AH","2026-12-07":"27 Jumada al-Thani 1448 AH","2026-12-08":"28 Jumada al-Thani 1448 AH","2026-12-09":"29 Jumada al-Thani 1448 AH","2026-12-10":"1 Rajab 1448 AH","2026-12-11":"2 Rajab 1448 AH","2026-12-12":"3 Rajab 1448 AH","2026-12-13":"4 Rajab 1448 AH","2026-12-14":"5 Rajab 1448 AH","2026-12-15":"6 Rajab 1448 AH","2026-12-16":"7 Rajab 1448 AH","2026-12-17":"8 Rajab 1448 AH","2026-12-18":"9 Rajab 1448 AH","2026-12-19":"10 Rajab 1448 AH","2026-12-20":"11 Rajab 1448 AH","2026-12-21":"12 Rajab 1448 AH","2026-12-22":"13 Rajab 1448 AH","2026-12-23":"14 Rajab 1448 AH","2026-12-24":"15 Rajab 1448 AH","2026-12-25":"16 Rajab 1448 AH","2026-12-26":"17 Rajab 1448 AH","2026-12-27":"18 Rajab 1448 AH","2026-12-28":"19 Rajab 1448 AH","2026-12-29":"20 Rajab 1448 AH","2026-12-30":"21 Rajab 1448 AH","2026-12-31":"22 Rajab 1448 AH"};
-
-// fallback copy, used only if foyer-content.json can't be fetched (e.g. the
-// mosque's Wi-Fi is briefly down at the nightly reload) — kept in sync with
-// that file at build time so the screen never goes blank.
 const FALLBACK_CONTENT = {"_instructions":"Edit the text values below directly on GitHub (pencil icon on this file → edit → commit). Don't touch the field names (the part before each colon), only the text after it. The foyer screens re-fetch this file once a day (2am) plus on every full reload, so a change here reaches both foyer TVs within a day without touching the TVs themselves. Keep this a valid JSON file — if GitHub shows a red warning when you commit, something's broken (usually a missing comma or a stray quote mark) and the screens will fall back to the last-known-good content instead of using your edit.","newBuild":{"eyebrow":"The New Build","heading":"Building a lasting home for Taiyabah Masjid.","tagline":"A purpose-built centre for prayer, learning and community life — designed with the community, funded by the community.","phaseTag":"Current appeal · Phase 3.3","phaseTitle":"Internal fixtures & fittings","phaseDescription":"Help make the masjid ready for salah, Qur'an and remembrance for generations to come.","needs":["Tiling","Carpets","Heating","Lighting","Electrical","Decor"],"timeline":[{"date":"2018 – Ramadhan 2019","title":"Phase 1","status":"done"},{"date":"December 2021","title":"Phase 2","status":"done"},{"date":"2022","title":"Community fundraiser","status":"done"},{"date":"Now · Phase 3.3","title":"Internal fixtures & fittings","status":"active"},{"date":"What's next","title":"Full facilities complete","status":"upcoming"}],"give":{"scanLabel":"Scan to give any amount","otherAmountUrl":"https://www.taiyabahmasjid.com/product/dome-donation/","giftAidNote":"If you're a UK taxpayer, please add Gift Aid — it adds 25p to every £1 at no cost to you.","bankHeading":"Or transfer directly","bank":{"accountName":"Bolton Central Islamic Society (BCIS)","bankName":"HSBC","sortCode":"40-04-15","accountNumber":"02320258"},"note":"Bolton Central Islamic Society · Registered charity 1041569."}},"occasions":{"ramadan":{"enabled":true,"title":"Ramadan Mubarak","arabic":"رَمَضَان مُبَارَك","message":"May this blessed month bring peace, patience and closeness to Allah for you and your family."},"eidFitr":{"enabled":true,"title":"Eid Mubarak","arabic":"عِيد مُبَارَك","message":"Taqabbal Allahu minna wa minkum — may Allah accept it from us and from you.","durationDays":3},"eidAdha":{"enabled":true,"title":"Eid Mubarak","arabic":"عِيد مُبَارَك","message":"Taqabbal Allahu minna wa minkum — may Allah accept it from us and from you.","durationDays":4}}};
 
 function parseHijri(str){
-  // "5 Rabi al-Awwal 1448 AH" -> {day:5, month:"Rabi al-Awwal", year:1448}
   const m = str.match(/^(\d+)\s+(.+?)\s+(\d+)\s+AH$/);
   if(!m) return null;
   return { day: parseInt(m[1],10), month: m[2], year: parseInt(m[3],10) };
@@ -2532,7 +2498,6 @@ function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; 
 
 function activeOccasion(content, now){
   const occ = content.occasions || {};
-  // walk backwards a few days so a multi-day Eid window is caught on day 2/3 too
   for(let back = 0; back <= 4; back++){
     const d = addDays(now, -back);
     const h = HIJRI[dateKey(d)];
@@ -2647,9 +2612,8 @@ fetch("foyer-content.json", {cache:"no-store"})
   .catch(() => { CONTENT = FALLBACK_CONTENT; applyContent(); });
 
 applyContent();
-setInterval(applyContent, 60000); // re-check the calendar every minute (occasion boundaries only, not per-second)
+setInterval(applyContent, 60000);
 
-// ---- unattended-signage reliability net (same pattern as the Salah screen) ----
 let lastAliveAt = Date.now();
 setInterval(() => { lastAliveAt = Date.now(); }, 1000);
 

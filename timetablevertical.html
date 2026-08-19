@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <!--
-  Taiyabah Masjid — foyer display
-  Default: the New Build appeal. Automatically swaps to a Ramadan/Eid
-  greeting on the right Islamic dates, then reverts on its own.
-
-  Editable copy lives in foyer-content.json, fetched at runtime — edit that
-  file on GitHub and every foyer TV picks it up within a day (see the daily
-  reload below). If that fetch ever fails, this page falls back to the copy
-  baked in further down so the screen never goes blank.
+  Taiyabah Masjid — Salah times TV screensaver (portrait / vertical screens)
+  Same data and logic as timetable.html, laid out for a tall narrow panel —
+  today's times run as a vertical list rather than a row of cards.
 
   Bolton Central Islamic Society · Registered charity 1041569
   31a Draycott Street, Bolton BL1 8HD
@@ -17,7 +12,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#3C0B2A" />
-<title>Taiyabah Masjid — New Build Appeal</title>
+<title>Taiyabah Masjid — Salah Times</title>
 <style>
 
 @font-face{font-family:"Hanken Grotesk";font-style:normal;font-weight:400;font-display:swap;
@@ -37,121 +32,85 @@
 
 
 :root{
-  --brand-900:#3C0B2A;
-  --brand-800:#4B1136;
-  --brand-700:#5E1844;
-  --brand-600:#772157;
-  --gold:#C6A24C;
-  --gold-bright:#DCBB63;
-  --paper:#F5F1E8;
-  --card:#FCFAF3;
-  --ink:#261B22;
-  --muted:#7C6E77;
-  --line:#E4DECF;
-  --good:#4C9A6A;
+  --brand-900:#3C0B2A; --brand-800:#4B1136; --brand-700:#5E1844; --brand-600:#772157;
+  --gold:#C6A24C; --gold-bright:#DCBB63; --paper:#F5F1E8; --card:#FCFAF3;
+  --ink:#261B22; --muted:#7C6E77; --line:#E4DECF;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--brand-900)}
-body{
-  font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;
-  color:var(--paper);
-  -webkit-font-smoothing:antialiased;
-  cursor:none;
-}
+body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(--paper);
+  -webkit-font-smoothing:antialiased;cursor:none}
 .display{font-family:"Fraunces",Georgia,serif}
 .arabic{font-family:"Amiri",serif}
 .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 
-.backdrop{
-  position:fixed;inset:0;
+.backdrop{position:fixed;inset:0;
   background:
-    radial-gradient(120% 70% at 50% -10%, rgba(198,162,76,.16), transparent 60%),
-    radial-gradient(90% 60% at 85% 110%, rgba(119,33,87,.55), transparent 60%),
-    linear-gradient(160deg, var(--brand-900), var(--brand-800) 55%, var(--brand-700));
-}
-.backdrop::after{
-  content:"";position:absolute;inset:0;opacity:.05;
-  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon fill='%23C6A24C' points='50,2 57.3,32.4 83.9,16.1 67.6,42.7 98,50 67.6,57.3 83.9,83.9 57.3,67.6 50,98 42.7,67.6 16.1,83.9 32.4,57.3 2,50 32.4,42.7 16.1,16.1 42.7,32.4'/></svg>");
-  background-size:92px 92px;background-repeat:repeat;
-}
+    radial-gradient(140% 40% at 50% -6%, rgba(198,162,76,.16), transparent 60%),
+    radial-gradient(90% 50% at 50% 115%, rgba(119,33,87,.55), transparent 60%),
+    linear-gradient(190deg, var(--brand-900), var(--brand-800) 55%, var(--brand-700));}
+.backdrop::after{content:"";position:absolute;inset:0;opacity:.05;
+  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon fill='%23C6A24C' points='50,2 57.3,32.4 83.9,16.1 67.6,42.7 98,50 67.6,57.3 83.9,83.9 57.3,67.6 50,98 42.7,67.6 16.1,83.9 32.4,57.3 2,50 32.4,42.7 16.1,16.1 42.7,32.4'/></svg>");background-size:14vw 14vw;background-repeat:repeat;}
 
-.stage{
-  position:fixed;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:clamp(24px,3.6vh,44px);
-  padding:clamp(28px,4.5vh,60px) clamp(32px,4.5vw,84px);
-  animation:drift 150s ease-in-out infinite;
-}
+.stage{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(18px,2.6vh,34px);padding:clamp(24px,3.4vh,48px) clamp(20px,5vw,40px);
+  text-align:center;animation:drift 150s ease-in-out infinite;}
 @keyframes drift{
-  0%{transform:translate(0,0)} 25%{transform:translate(6px,-5px)}
-  50%{transform:translate(-4px,4px)} 75%{transform:translate(-6px,-3px)}
-  100%{transform:translate(0,0)}
-}
+  0%{transform:translate(0,0)} 25%{transform:translate(5px,-6px)}
+  50%{transform:translate(-4px,5px)} 75%{transform:translate(-5px,-4px)}
+  100%{transform:translate(0,0)}}
+#live{display:flex;flex-direction:column;align-items:center;gap:clamp(20px,2.8vh,36px);width:100%}
 
-.brand{display:flex;align-items:center;gap:clamp(16px,2vw,24px);opacity:.95}
-.brand img{height:clamp(50px,6.6vh,84px);width:auto;display:block}
-.brand-text{text-align:left;line-height:1.3}
-.brand-text .name{font-size:clamp(15px,1.7vh,20px);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
-.brand-text .sub{font-size:clamp(11px,1.2vh,14px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85;margin-top:.2em}
+.brand{display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1.4vh,16px);opacity:.95}
+.brand img{height:clamp(60px,7vw,100px);width:auto;display:block}
+.brand-text{text-align:center;line-height:1.4}
+.brand-text .name{font-size:clamp(16px,2.3vw,22px);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.brand-text .sub{font-size:clamp(12px,1.7vw,16px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85;margin-top:.3em}
 
-/* ---- new build layout ---- */
-.nb-wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(20px,3vw,48px);width:100%;max-width:1680px;text-align:left}
-.nb-eyebrow{font-size:clamp(11px,1.2vh,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
-.nb-heading{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(26px,3.6vh,44px);line-height:1.12;margin-top:.3em}
-.nb-tagline{font-size:clamp(13px,1.5vh,17px);color:var(--paper);opacity:.85;margin-top:.6em;max-width:52ch;line-height:1.5}
+.clock{display:flex;align-items:flex-start;gap:.4vw}
+.clock .hm{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(64px,17vw,130px);line-height:1;letter-spacing:-.01em}
+.clock .ss{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:clamp(20px,4.6vw,36px);color:var(--gold-bright);margin-top:clamp(10px,2vw,18px)}
+.dates{font-size:clamp(15px,3vw,20px);color:var(--paper);opacity:.92;display:flex;flex-direction:column;align-items:center;gap:.3em}
+.dates .sep{display:none}
+.hijri{font-size:clamp(13px,2.6vw,17px);color:var(--gold-bright);opacity:.9}
 
-.phase-card{
-  margin-top:clamp(14px,2vh,22px);
-  background:rgba(252,250,243,.06);border:1px solid rgba(198,162,76,.3);border-radius:18px;
-  padding:clamp(14px,1.8vh,22px) clamp(16px,2vw,26px);
-}
-.phase-tag{display:inline-block;font-size:clamp(10px,1.1vh,12px);letter-spacing:.1em;text-transform:uppercase;
-  color:var(--brand-900);background:var(--gold-bright);border-radius:999px;padding:.3em .9em;font-weight:600}
-.phase-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(18px,2.2vh,26px);margin-top:.5em}
-.phase-desc{font-size:clamp(12px,1.3vh,15px);opacity:.85;margin-top:.35em;max-width:56ch;line-height:1.5}
-.needs{display:flex;flex-wrap:wrap;gap:8px;margin-top:clamp(10px,1.4vh,16px)}
-.needs span{font-size:clamp(10px,1.1vh,13px);border:1px solid rgba(252,250,243,.25);border-radius:999px;padding:.35em 1em;opacity:.85}
-
-.timeline{margin-top:clamp(20px,2.8vh,32px);display:flex;flex-direction:column;gap:clamp(11px,1.5vh,16px)}
-.t-row{display:flex;align-items:baseline;gap:.7em;font-size:clamp(12px,1.35vh,15px)}
-.t-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:rgba(245,241,232,.4)}
-.t-row.done .t-dot{background:var(--good)}
-.t-row.active .t-dot{background:var(--gold-bright);box-shadow:0 0 0 3px rgba(198,162,76,.25)}
-.t-date{color:var(--gold-bright);opacity:.9;min-width:11ch}
-.t-title{font-weight:600}
-.t-row.upcoming{opacity:.65}
-
-/* ---- give card ---- */
-.give-card{
+.next-card{display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1.6vh,18px);
   background:linear-gradient(180deg, rgba(252,250,243,.09), rgba(252,250,243,.04));
   border:1px solid rgba(198,162,76,.35);border-radius:22px;
-  padding:clamp(22px,2.8vh,34px) clamp(24px,2.6vw,36px);
-  display:flex;flex-direction:column;gap:clamp(16px,2vh,22px);
-}
-.give-head{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(16px,1.9vh,21px)}
-.qr-wrap{display:flex;gap:clamp(16px,2vw,22px);align-items:center}
-.qr-box{width:clamp(90px,10.5vh,136px);height:clamp(90px,10.5vh,136px);border-radius:12px;overflow:hidden;flex:0 0 auto;
-  box-shadow:0 10px 24px -12px rgba(0,0,0,.5)}
-.qr-box svg{width:100%;height:100%;display:block}
-.qr-label{font-size:clamp(13px,1.4vh,16px);font-weight:600}
-.qr-sub{font-size:clamp(11px,1.2vh,14px);color:rgba(245,241,232,.7);margin-top:.4em;max-width:26ch;line-height:1.5}
-.give-divider{height:1px;background:rgba(198,162,76,.3)}
-.bank-rows{display:flex;flex-direction:column;gap:clamp(9px,1.2vh,13px)}
-.bank-row{display:flex;justify-content:space-between;gap:1em;font-size:clamp(12px,1.3vh,15px)}
-.bank-k{color:rgba(245,241,232,.62);font-weight:600;letter-spacing:.02em}
-.bank-v{font-weight:600;font-variant-numeric:tabular-nums}
-.give-note{font-size:clamp(10px,1.05vh,12px);opacity:.65;line-height:1.5;margin-top:.3em}
+  padding:clamp(22px,3vh,34px) clamp(20px,5vw,40px);width:100%;max-width:640px;
+  box-shadow:0 20px 60px -30px rgba(0,0,0,.6);}
+.next-label{font-size:clamp(12px,2.6vw,15px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
+.next-name{display:flex;align-items:baseline;gap:.5em;justify-content:center}
+.next-name .en{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(30px,7.5vw,48px)}
+.next-name .ar{font-family:"Amiri",serif;font-size:clamp(20px,5.4vw,34px);color:var(--gold-bright)}
+.next-time{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(38px,9vw,60px)}
+.next-divider{width:60%;height:1px;background:rgba(198,162,76,.35)}
+.next-countdown{display:flex;flex-direction:column;align-items:center;gap:.4em}
+.next-countdown .k{font-size:clamp(12px,2.6vw,15px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
+.next-countdown .v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(26px,6.4vw,42px)}
 
-/* ---- occasion overlay ---- */
-.occasion{display:none;flex-direction:column;align-items:center;text-align:center;gap:clamp(10px,1.6vh,18px)}
-.occasion.show{display:flex}
-.occasion .o-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(54px,9vh,120px);line-height:1}
-.occasion .o-arabic{font-family:"Amiri",serif;color:var(--gold-bright);font-size:clamp(30px,5vh,64px)}
-.occasion .o-message{font-size:clamp(15px,2vh,22px);opacity:.9;max-width:56ch;line-height:1.6;margin-top:.4em}
-.nb-wrap.hide{display:none}
+/* ---- today's list (vertical rows, not a row of cards) ---- */
+.list{display:flex;flex-direction:column;gap:clamp(10px,1.5vh,16px);width:100%;max-width:680px}
+.row-item{display:flex;align-items:center;justify-content:space-between;gap:clamp(10px,3vw,20px);
+  background:rgba(252,250,243,.06);border:1px solid rgba(252,250,243,.14);border-radius:16px;
+  padding:clamp(12px,1.8vh,18px) clamp(16px,4vw,26px);}
+.row-item.active{background:linear-gradient(90deg, rgba(198,162,76,.28), rgba(198,162,76,.1));border-color:var(--gold)}
+.row-item.next{border-color:rgba(198,162,76,.6)}
+.name-block{display:flex;flex-direction:column;align-items:flex-start;text-align:left;flex:0 0 auto;min-width:26vw}
+.name-block .en{font-size:clamp(14px,3.4vw,19px);font-weight:600}
+.name-block .ar{font-family:"Amiri",serif;font-size:clamp(12px,3vw,16px);color:var(--gold-bright);margin-top:.2em}
+.times-block{display:flex;gap:clamp(14px,4vw,28px);align-items:center;justify-content:flex-end;flex:1 1 auto}
+.time-col{display:flex;flex-direction:column;align-items:center;min-width:64px}
+.time-col .lab{font-size:clamp(9px,2.1vw,11px);font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(245,241,232,.62);margin-bottom:.35em}
+.time-col .begins-v{font-family:"Fraunces",Georgia,serif;font-size:clamp(15px,3.6vw,20px);font-weight:500;color:var(--paper)}
+.time-col .jamaat-v{font-family:"Fraunces",Georgia,serif;font-size:clamp(17px,4vw,23px);font-weight:600;color:var(--gold-bright)}
 
-.footer{font-size:clamp(10px,1.1vh,13px);color:var(--paper);opacity:.55;letter-spacing:.02em;margin-top:clamp(8px,1.2vh,16px)}
-.footer .dot{margin:0 .6em;opacity:.7}
+.footer{font-size:clamp(9px,2.2vw,12px);color:var(--paper);opacity:.55;letter-spacing:.02em;
+  display:flex;flex-direction:column;align-items:center;gap:.4em}
+.footer .dot{display:none}
+
+.fallback{max-width:90vw;font-size:clamp(15px,3.6vw,20px);color:var(--gold-bright);line-height:1.6}
 [hidden]{display:none !important}
 </style>
 </head>
@@ -166,2492 +125,209 @@ body{
     </div>
   </div>
 
-  <div class="nb-wrap" id="nb-wrap">
-    <div>
-      <div class="nb-eyebrow" id="nb-eyebrow">The New Build</div>
-      <div class="nb-heading" id="nb-heading">—</div>
-      <div class="nb-tagline" id="nb-tagline"></div>
+  <div class="clock">
+    <span class="hm tnum" id="hm">--:--</span><span class="ss tnum" id="ss">--</span>
+  </div>
+  <div class="dates">
+    <span id="greg-date">—</span><span class="hijri" id="hijri-date">—</span>
+  </div>
 
-      <div class="phase-card">
-        <span class="phase-tag" id="phase-tag">—</span>
-        <div class="phase-title" id="phase-title"></div>
-        <div class="phase-desc" id="phase-desc"></div>
-        <div class="needs" id="needs"></div>
+  <div id="live" hidden>
+    <div class="next-card">
+      <div class="next-label" id="next-label">Next Jamā&#703;ah</div>
+      <div class="next-name"><span class="en" id="next-en">—</span><span class="ar arabic" id="next-ar"></span></div>
+      <div class="next-time tnum" id="next-time">—</div>
+      <div class="next-divider"></div>
+      <div class="next-countdown">
+        <div class="k">In</div>
+        <div class="v tnum" id="next-countdown">—</div>
       </div>
-
-      <div class="timeline" id="timeline"></div>
     </div>
 
-    <div class="give-card">
-      <div class="give-head">Give online</div>
-      <div class="qr-wrap">
-        <div class="qr-box" id="qr-box"></div>
-        <div>
-          <div class="qr-label" id="qr-label">Scan to give any amount</div>
-          <div class="qr-sub" id="qr-sub"></div>
-        </div>
-      </div>
-      <div class="give-divider"></div>
-      <div class="give-head" id="bank-heading" style="font-size:clamp(13px,1.5vh,17px)">Or transfer directly</div>
-      <div class="bank-rows" id="bank-rows"></div>
-      <div class="give-note" id="give-note"></div>
+    <div class="list" id="grid"></div>
+
+    <div class="footer">
+      <span>31a Draycott Street, Bolton BL1 8HD</span>
+      <span>Registered charity 1041569 &bull; <span id="source-line">Official 2026 Salah Timetable</span></span>
     </div>
   </div>
 
-  <div class="occasion" id="occasion">
-    <div class="o-title" id="o-title"></div>
-    <div class="o-arabic arabic" id="o-arabic"></div>
-    <div class="o-message" id="o-message"></div>
-  </div>
-
-  <div class="footer">
-    <span>31a Draycott Street, Bolton BL1 8HD</span><span class="dot">&bull;</span>
-    <span>Registered charity 1041569</span>
+  <div class="fallback" id="fallback" hidden>
+    This screen doesn&rsquo;t have a timetable loaded for today&rsquo;s date yet.
+    Whoever maintains this screensaver needs to embed the next year&rsquo;s
+    timetable &mdash; see the comment at the top of the file.
   </div>
 </div>
 
 <script>
-//---------------------------------------------------------------------
-//
-// QR Code Generator for JavaScript
-//
-// Copyright (c) 2009 Kazuhiko Arase
-//
-// URL: http://www.d-project.com/
-//
-// Licensed under the MIT license:
-//  http://www.opensource.org/licenses/mit-license.php
-//
-// The word 'QR Code' is registered trademark of
-// DENSO WAVE INCORPORATED
-//  http://www.denso-wave.com/qrcode/faqpatent-e.html
-//
-//---------------------------------------------------------------------
+const DATA = {"masjid":"Taiyabah Masjid (Bolton Central Islamic Society)","year":2026,"source":"Official 2026 Salah Timetable (1447\u20131448 AH)","timezone":"Europe/London","notes":{"bst_start":"2026-03-29","bst_end":"2026-10-25","maghrib":"begins == jamaat (prayed at listed time)"},"days":{"2026-01-01":{"hijri":"12 Rajab 1447 AH","begins":{"fajr":"06:36","sunrise":"08:26","zuhr":"12:20","asr":"14:13","maghrib":"16:06","isha":"17:48"},"jamaat":{"fajr":"07:45","zuhr":"12:45","asr":"14:45","maghrib":"16:06","isha":"18:30"}},"2026-01-02":{"hijri":"13 Rajab 1447 AH","begins":{"fajr":"06:36","sunrise":"08:26","zuhr":"12:21","asr":"14:14","maghrib":"16:07","isha":"17:49"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:07","isha":"18:30"},"jummah":{"first":"12:45","second":"13:40"}},"2026-01-03":{"hijri":"14 Rajab 1447 AH","begins":{"fajr":"06:36","sunrise":"08:26","zuhr":"12:21","asr":"14:15","maghrib":"16:08","isha":"17:50"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:08","isha":"18:30"}},"2026-01-04":{"hijri":"15 Rajab 1447 AH","begins":{"fajr":"06:36","sunrise":"08:25","zuhr":"12:22","asr":"14:17","maghrib":"16:09","isha":"17:52"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:09","isha":"18:30"}},"2026-01-05":{"hijri":"16 Rajab 1447 AH","begins":{"fajr":"06:36","sunrise":"08:25","zuhr":"12:22","asr":"14:18","maghrib":"16:11","isha":"17:53"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:11","isha":"19:30"}},"2026-01-06":{"hijri":"17 Rajab 1447 AH","begins":{"fajr":"06:35","sunrise":"08:25","zuhr":"12:23","asr":"14:19","maghrib":"16:12","isha":"17:55"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:12","isha":"19:30"}},"2026-01-07":{"hijri":"18 Rajab 1447 AH","begins":{"fajr":"06:35","sunrise":"08:24","zuhr":"12:23","asr":"14:20","maghrib":"16:13","isha":"17:56"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:13","isha":"19:30"}},"2026-01-08":{"hijri":"19 Rajab 1447 AH","begins":{"fajr":"06:35","sunrise":"08:24","zuhr":"12:24","asr":"14:22","maghrib":"16:15","isha":"17:57"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:15","isha":"19:30"}},"2026-01-09":{"hijri":"20 Rajab 1447 AH","begins":{"fajr":"06:34","sunrise":"08:23","zuhr":"12:24","asr":"14:23","maghrib":"16:16","isha":"17:59"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:16","isha":"19:30"},"jummah":{"first":"12:45","second":"13:50"}},"2026-01-10":{"hijri":"21 Rajab 1447 AH","begins":{"fajr":"06:34","sunrise":"08:22","zuhr":"12:24","asr":"14:25","maghrib":"16:18","isha":"18:01"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:18","isha":"18:30"}},"2026-01-11":{"hijri":"22 Rajab 1447 AH","begins":{"fajr":"06:33","sunrise":"08:22","zuhr":"12:25","asr":"14:26","maghrib":"16:19","isha":"18:02"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:19","isha":"18:30"}},"2026-01-12":{"hijri":"23 Rajab 1447 AH","begins":{"fajr":"06:33","sunrise":"08:21","zuhr":"12:25","asr":"14:28","maghrib":"16:21","isha":"18:04"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:21","isha":"19:30"}},"2026-01-13":{"hijri":"24 Rajab 1447 AH","begins":{"fajr":"06:32","sunrise":"08:20","zuhr":"12:25","asr":"14:29","maghrib":"16:22","isha":"18:05"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:22","isha":"19:30"}},"2026-01-14":{"hijri":"25 Rajab 1447 AH","begins":{"fajr":"06:31","sunrise":"08:19","zuhr":"12:26","asr":"14:31","maghrib":"16:24","isha":"18:07"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:24","isha":"19:30"}},"2026-01-15":{"hijri":"26 Rajab 1447 AH","begins":{"fajr":"06:31","sunrise":"08:18","zuhr":"12:26","asr":"14:32","maghrib":"16:26","isha":"18:09"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:26","isha":"19:30"}},"2026-01-16":{"hijri":"27 Rajab 1447 AH","begins":{"fajr":"06:30","sunrise":"08:17","zuhr":"12:27","asr":"14:34","maghrib":"16:27","isha":"18:11"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:27","isha":"19:30"},"jummah":{"first":"12:45","second":"14:00"}},"2026-01-17":{"hijri":"28 Rajab 1447 AH","begins":{"fajr":"06:29","sunrise":"08:16","zuhr":"12:27","asr":"14:35","maghrib":"16:29","isha":"18:12"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:29","isha":"18:30"}},"2026-01-18":{"hijri":"29 Rajab 1447 AH","begins":{"fajr":"06:28","sunrise":"08:15","zuhr":"12:27","asr":"14:37","maghrib":"16:31","isha":"18:14"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:31","isha":"18:30"}},"2026-01-19":{"hijri":"30 Rajab 1447 AH","begins":{"fajr":"06:28","sunrise":"08:14","zuhr":"12:28","asr":"14:39","maghrib":"16:33","isha":"18:16"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:33","isha":"19:30"}},"2026-01-20":{"hijri":"1 Sha'ban 1447 AH","begins":{"fajr":"06:27","sunrise":"08:13","zuhr":"12:28","asr":"14:40","maghrib":"16:34","isha":"18:18"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:34","isha":"19:30"}},"2026-01-21":{"hijri":"2 Sha'ban 1447 AH","begins":{"fajr":"06:26","sunrise":"08:11","zuhr":"12:28","asr":"14:42","maghrib":"16:36","isha":"18:19"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:36","isha":"19:30"}},"2026-01-22":{"hijri":"3 Sha'ban 1447 AH","begins":{"fajr":"06:25","sunrise":"08:10","zuhr":"12:28","asr":"14:44","maghrib":"16:38","isha":"18:22"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:00","maghrib":"16:38","isha":"19:30"}},"2026-01-23":{"hijri":"4 Sha'ban 1447 AH","begins":{"fajr":"06:24","sunrise":"08:09","zuhr":"12:29","asr":"14:46","maghrib":"16:40","isha":"18:23"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:30","maghrib":"16:40","isha":"19:30"},"jummah":{"first":"12:45","second":"14:10"}},"2026-01-24":{"hijri":"5 Sha'ban 1447 AH","begins":{"fajr":"06:22","sunrise":"08:07","zuhr":"12:29","asr":"14:47","maghrib":"16:42","isha":"18:25"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:30","maghrib":"16:42","isha":"18:45"}},"2026-01-25":{"hijri":"6 Sha'ban 1447 AH","begins":{"fajr":"06:21","sunrise":"08:06","zuhr":"12:29","asr":"14:49","maghrib":"16:44","isha":"18:27"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:30","maghrib":"16:44","isha":"18:45"}},"2026-01-26":{"hijri":"7 Sha'ban 1447 AH","begins":{"fajr":"06:20","sunrise":"08:04","zuhr":"12:29","asr":"14:51","maghrib":"16:46","isha":"18:29"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:30","maghrib":"16:46","isha":"19:30"}},"2026-01-27":{"hijri":"8 Sha'ban 1447 AH","begins":{"fajr":"06:19","sunrise":"08:03","zuhr":"12:30","asr":"14:53","maghrib":"16:47","isha":"18:31"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:30","maghrib":"16:47","isha":"19:30"}},"2026-01-28":{"hijri":"9 Sha'ban 1447 AH","begins":{"fajr":"06:18","sunrise":"08:01","zuhr":"12:30","asr":"14:55","maghrib":"16:49","isha":"18:33"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:30","maghrib":"16:49","isha":"19:30"}},"2026-01-29":{"hijri":"10 Sha'ban 1447 AH","begins":{"fajr":"06:16","sunrise":"08:00","zuhr":"12:30","asr":"14:56","maghrib":"16:51","isha":"18:35"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:30","maghrib":"16:51","isha":"19:30"}},"2026-01-30":{"hijri":"11 Sha'ban 1447 AH","begins":{"fajr":"06:15","sunrise":"07:58","zuhr":"12:30","asr":"14:58","maghrib":"16:53","isha":"18:36"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:45","maghrib":"16:53","isha":"19:30"},"jummah":{"first":"12:45","second":"14:20"}},"2026-01-31":{"hijri":"12 Sha'ban 1447 AH","begins":{"fajr":"06:13","sunrise":"07:57","zuhr":"12:30","asr":"15:00","maghrib":"16:55","isha":"18:38"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:45","maghrib":"16:55","isha":"19:00"}},"2026-02-01":{"hijri":"13 Sha'ban 1447 AH","begins":{"fajr":"06:12","sunrise":"07:55","zuhr":"12:30","asr":"15:02","maghrib":"16:57","isha":"18:39"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:45","maghrib":"16:57","isha":"19:00"}},"2026-02-02":{"hijri":"14 Sha'ban 1447 AH","begins":{"fajr":"06:10","sunrise":"07:53","zuhr":"12:30","asr":"15:04","maghrib":"16:59","isha":"18:40"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:45","maghrib":"16:59","isha":"19:30"}},"2026-02-03":{"hijri":"15 Sha'ban 1447 AH","begins":{"fajr":"06:08","sunrise":"07:51","zuhr":"12:31","asr":"15:06","maghrib":"17:01","isha":"18:41"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:45","maghrib":"17:01","isha":"19:30"}},"2026-02-04":{"hijri":"16 Sha'ban 1447 AH","begins":{"fajr":"06:06","sunrise":"07:50","zuhr":"12:31","asr":"15:07","maghrib":"17:03","isha":"18:43"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:45","maghrib":"17:03","isha":"19:30"}},"2026-02-05":{"hijri":"17 Sha'ban 1447 AH","begins":{"fajr":"06:05","sunrise":"07:48","zuhr":"12:31","asr":"15:09","maghrib":"17:05","isha":"18:44"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"15:45","maghrib":"17:05","isha":"19:30"}},"2026-02-06":{"hijri":"18 Sha'ban 1447 AH","begins":{"fajr":"06:03","sunrise":"07:46","zuhr":"12:31","asr":"15:11","maghrib":"17:07","isha":"18:46"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:45","maghrib":"17:07","isha":"19:30"},"jummah":{"first":"12:45","second":"14:30"}},"2026-02-07":{"hijri":"19 Sha'ban 1447 AH","begins":{"fajr":"06:01","sunrise":"07:44","zuhr":"12:31","asr":"15:13","maghrib":"17:09","isha":"18:47"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:45","maghrib":"17:09","isha":"19:00"}},"2026-02-08":{"hijri":"20 Sha'ban 1447 AH","begins":{"fajr":"05:59","sunrise":"07:42","zuhr":"12:31","asr":"15:15","maghrib":"17:11","isha":"18:49"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:45","maghrib":"17:11","isha":"19:00"}},"2026-02-09":{"hijri":"21 Sha'ban 1447 AH","begins":{"fajr":"05:57","sunrise":"07:40","zuhr":"12:31","asr":"15:17","maghrib":"17:13","isha":"18:51"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:45","maghrib":"17:13","isha":"19:30"}},"2026-02-10":{"hijri":"22 Sha'ban 1447 AH","begins":{"fajr":"05:55","sunrise":"07:38","zuhr":"12:31","asr":"15:19","maghrib":"17:15","isha":"18:53"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:45","maghrib":"17:15","isha":"19:30"}},"2026-02-11":{"hijri":"23 Sha'ban 1447 AH","begins":{"fajr":"05:53","sunrise":"07:36","zuhr":"12:31","asr":"15:20","maghrib":"17:17","isha":"18:54"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:45","maghrib":"17:17","isha":"19:30"}},"2026-02-12":{"hijri":"24 Sha'ban 1447 AH","begins":{"fajr":"05:51","sunrise":"07:34","zuhr":"12:31","asr":"15:22","maghrib":"17:19","isha":"18:56"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:45","maghrib":"17:19","isha":"19:30"}},"2026-02-13":{"hijri":"25 Sha'ban 1447 AH","begins":{"fajr":"05:49","sunrise":"07:32","zuhr":"12:31","asr":"15:24","maghrib":"17:21","isha":"18:58"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"16:00","maghrib":"17:21","isha":"19:30"},"jummah":{"first":"12:45","second":"14:50"}},"2026-02-14":{"hijri":"26 Sha'ban 1447 AH","begins":{"fajr":"05:47","sunrise":"07:30","zuhr":"12:31","asr":"15:26","maghrib":"17:23","isha":"19:00"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"16:00","maghrib":"17:23","isha":"19:15"}},"2026-02-15":{"hijri":"27 Sha'ban 1447 AH","begins":{"fajr":"05:45","sunrise":"07:28","zuhr":"12:31","asr":"15:28","maghrib":"17:25","isha":"19:01"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"16:00","maghrib":"17:25","isha":"19:15"}},"2026-02-16":{"hijri":"28 Sha'ban 1447 AH","begins":{"fajr":"05:43","sunrise":"07:26","zuhr":"12:31","asr":"15:30","maghrib":"17:27","isha":"19:03"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"16:00","maghrib":"17:27","isha":"19:30"}},"2026-02-17":{"hijri":"29 Sha'ban 1447 AH","begins":{"fajr":"05:41","sunrise":"07:24","zuhr":"12:31","asr":"15:31","maghrib":"17:29","isha":"19:05"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"16:00","maghrib":"17:29","isha":"19:30"}},"2026-02-18":{"hijri":"1 Ramadan 1447 AH","begins":{"fajr":"05:38","sunrise":"07:22","zuhr":"12:31","asr":"15:33","maghrib":"17:31","isha":"19:07"},"jamaat":{"fajr":"06:00","zuhr":"12:45","asr":"16:00","maghrib":"17:31","isha":"19:30"}},"2026-02-19":{"hijri":"2 Ramadan 1447 AH","begins":{"fajr":"05:36","sunrise":"07:20","zuhr":"12:31","asr":"15:35","maghrib":"17:33","isha":"19:08"},"jamaat":{"fajr":"06:00","zuhr":"12:45","asr":"16:00","maghrib":"17:33","isha":"19:30"}},"2026-02-20":{"hijri":"3 Ramadan 1447 AH","begins":{"fajr":"05:34","sunrise":"07:18","zuhr":"12:30","asr":"15:37","maghrib":"17:35","isha":"19:10"},"jamaat":{"fajr":"05:50","zuhr":"12:45","asr":"16:15","maghrib":"17:35","isha":"19:45"},"jummah":{"first":"12:45","second":"15:00"}},"2026-02-21":{"hijri":"4 Ramadan 1447 AH","begins":{"fajr":"05:32","sunrise":"07:15","zuhr":"12:30","asr":"15:38","maghrib":"17:37","isha":"19:12"},"jamaat":{"fajr":"05:50","zuhr":"12:45","asr":"16:15","maghrib":"17:37","isha":"19:45"}},"2026-02-22":{"hijri":"5 Ramadan 1447 AH","begins":{"fajr":"05:30","sunrise":"07:13","zuhr":"12:30","asr":"15:40","maghrib":"17:39","isha":"19:13"},"jamaat":{"fajr":"05:50","zuhr":"12:45","asr":"16:15","maghrib":"17:39","isha":"19:45"}},"2026-02-23":{"hijri":"6 Ramadan 1447 AH","begins":{"fajr":"05:27","sunrise":"07:11","zuhr":"12:30","asr":"15:42","maghrib":"17:41","isha":"19:14"},"jamaat":{"fajr":"05:50","zuhr":"12:45","asr":"16:15","maghrib":"17:41","isha":"19:45"}},"2026-02-24":{"hijri":"7 Ramadan 1447 AH","begins":{"fajr":"05:25","sunrise":"07:09","zuhr":"12:30","asr":"15:44","maghrib":"17:43","isha":"19:16"},"jamaat":{"fajr":"05:40","zuhr":"12:45","asr":"16:15","maghrib":"17:43","isha":"19:45"}},"2026-02-25":{"hijri":"8 Ramadan 1447 AH","begins":{"fajr":"05:23","sunrise":"07:06","zuhr":"12:30","asr":"15:46","maghrib":"17:45","isha":"19:18"},"jamaat":{"fajr":"05:40","zuhr":"12:45","asr":"16:15","maghrib":"17:45","isha":"19:45"}},"2026-02-26":{"hijri":"9 Ramadan 1447 AH","begins":{"fajr":"05:21","sunrise":"07:04","zuhr":"12:30","asr":"15:47","maghrib":"17:47","isha":"19:20"},"jamaat":{"fajr":"05:40","zuhr":"12:45","asr":"16:15","maghrib":"17:47","isha":"19:45"}},"2026-02-27":{"hijri":"10 Ramadan 1447 AH","begins":{"fajr":"05:18","sunrise":"07:02","zuhr":"12:29","asr":"15:49","maghrib":"17:48","isha":"19:21"},"jamaat":{"fajr":"05:35","zuhr":"12:45","asr":"16:30","maghrib":"17:48","isha":"20:00"},"jummah":{"first":"12:45","second":"15:15"}},"2026-02-28":{"hijri":"11 Ramadan 1447 AH","begins":{"fajr":"05:16","sunrise":"07:00","zuhr":"12:29","asr":"15:51","maghrib":"17:50","isha":"19:23"},"jamaat":{"fajr":"05:35","zuhr":"12:45","asr":"16:30","maghrib":"17:50","isha":"20:00"}},"2026-03-01":{"hijri":"12 Ramadan 1447 AH","begins":{"fajr":"05:14","sunrise":"06:57","zuhr":"12:29","asr":"15:52","maghrib":"17:52","isha":"19:24"},"jamaat":{"fajr":"05:35","zuhr":"12:45","asr":"16:30","maghrib":"17:52","isha":"20:00"}},"2026-03-02":{"hijri":"13 Ramadan 1447 AH","begins":{"fajr":"05:11","sunrise":"06:55","zuhr":"12:29","asr":"15:54","maghrib":"17:54","isha":"19:26"},"jamaat":{"fajr":"05:35","zuhr":"12:45","asr":"16:30","maghrib":"17:54","isha":"20:00"}},"2026-03-03":{"hijri":"14 Ramadan 1447 AH","begins":{"fajr":"05:09","sunrise":"06:53","zuhr":"12:29","asr":"15:56","maghrib":"17:56","isha":"19:27"},"jamaat":{"fajr":"05:25","zuhr":"12:45","asr":"16:30","maghrib":"17:56","isha":"20:00"}},"2026-03-04":{"hijri":"15 Ramadan 1447 AH","begins":{"fajr":"05:07","sunrise":"06:50","zuhr":"12:28","asr":"15:57","maghrib":"17:58","isha":"19:29"},"jamaat":{"fajr":"05:25","zuhr":"12:45","asr":"16:30","maghrib":"17:58","isha":"20:00"}},"2026-03-05":{"hijri":"16 Ramadan 1447 AH","begins":{"fajr":"05:04","sunrise":"06:48","zuhr":"12:28","asr":"15:59","maghrib":"18:00","isha":"19:30"},"jamaat":{"fajr":"05:25","zuhr":"12:45","asr":"16:30","maghrib":"18:00","isha":"20:00"}},"2026-03-06":{"hijri":"17 Ramadan 1447 AH","begins":{"fajr":"05:02","sunrise":"06:46","zuhr":"12:28","asr":"16:01","maghrib":"18:02","isha":"19:31"},"jamaat":{"fajr":"05:15","zuhr":"12:45","asr":"16:45","maghrib":"18:02","isha":"20:00"},"jummah":{"first":"12:45","second":"15:15"}},"2026-03-07":{"hijri":"18 Ramadan 1447 AH","begins":{"fajr":"05:00","sunrise":"06:43","zuhr":"12:28","asr":"16:02","maghrib":"18:04","isha":"19:32"},"jamaat":{"fajr":"05:15","zuhr":"12:45","asr":"16:45","maghrib":"18:04","isha":"20:00"}},"2026-03-08":{"hijri":"19 Ramadan 1447 AH","begins":{"fajr":"04:57","sunrise":"06:41","zuhr":"12:27","asr":"16:04","maghrib":"18:06","isha":"19:34"},"jamaat":{"fajr":"05:15","zuhr":"12:45","asr":"16:45","maghrib":"18:06","isha":"20:00"}},"2026-03-09":{"hijri":"20 Ramadan 1447 AH","begins":{"fajr":"04:55","sunrise":"06:38","zuhr":"12:27","asr":"16:05","maghrib":"18:08","isha":"19:36"},"jamaat":{"fajr":"05:15","zuhr":"12:45","asr":"16:45","maghrib":"18:08","isha":"20:00"}},"2026-03-10":{"hijri":"21 Ramadan 1447 AH","begins":{"fajr":"04:52","sunrise":"06:36","zuhr":"12:27","asr":"16:07","maghrib":"18:09","isha":"19:38"},"jamaat":{"fajr":"05:10","zuhr":"12:45","asr":"16:45","maghrib":"18:09","isha":"20:00"}},"2026-03-11":{"hijri":"22 Ramadan 1447 AH","begins":{"fajr":"04:50","sunrise":"06:34","zuhr":"12:27","asr":"16:09","maghrib":"18:11","isha":"19:39"},"jamaat":{"fajr":"05:10","zuhr":"12:45","asr":"16:45","maghrib":"18:11","isha":"20:00"}},"2026-03-12":{"hijri":"23 Ramadan 1447 AH","begins":{"fajr":"04:48","sunrise":"06:31","zuhr":"12:26","asr":"16:10","maghrib":"18:13","isha":"19:41"},"jamaat":{"fajr":"05:10","zuhr":"12:45","asr":"16:45","maghrib":"18:13","isha":"20:00"}},"2026-03-13":{"hijri":"24 Ramadan 1447 AH","begins":{"fajr":"04:45","sunrise":"06:29","zuhr":"12:26","asr":"16:12","maghrib":"18:15","isha":"19:43"},"jamaat":{"fajr":"05:00","zuhr":"12:45","asr":"17:00","maghrib":"18:15","isha":"20:15"},"jummah":{"first":"12:45","second":"15:30"}},"2026-03-14":{"hijri":"25 Ramadan 1447 AH","begins":{"fajr":"04:43","sunrise":"06:26","zuhr":"12:26","asr":"16:13","maghrib":"18:17","isha":"19:44"},"jamaat":{"fajr":"05:00","zuhr":"12:45","asr":"17:00","maghrib":"18:17","isha":"20:15"}},"2026-03-15":{"hijri":"26 Ramadan 1447 AH","begins":{"fajr":"04:40","sunrise":"06:24","zuhr":"12:25","asr":"16:15","maghrib":"18:19","isha":"19:45"},"jamaat":{"fajr":"05:00","zuhr":"12:45","asr":"17:00","maghrib":"18:19","isha":"20:15"}},"2026-03-16":{"hijri":"27 Ramadan 1447 AH","begins":{"fajr":"04:38","sunrise":"06:22","zuhr":"12:25","asr":"16:16","maghrib":"18:21","isha":"19:47"},"jamaat":{"fajr":"05:00","zuhr":"12:45","asr":"17:00","maghrib":"18:21","isha":"20:15"}},"2026-03-17":{"hijri":"28 Ramadan 1447 AH","begins":{"fajr":"04:36","sunrise":"06:19","zuhr":"12:25","asr":"16:18","maghrib":"18:23","isha":"19:49"},"jamaat":{"fajr":"04:55","zuhr":"12:45","asr":"17:00","maghrib":"18:23","isha":"20:15"}},"2026-03-18":{"hijri":"29 Ramadan 1447 AH","begins":{"fajr":"04:33","sunrise":"06:17","zuhr":"12:25","asr":"16:19","maghrib":"18:24","isha":"19:51"},"jamaat":{"fajr":"04:55","zuhr":"12:45","asr":"17:00","maghrib":"18:24","isha":"20:15"}},"2026-03-19":{"hijri":"30 Ramadan 1447 AH","begins":{"fajr":"04:32","sunrise":"06:14","zuhr":"12:24","asr":"16:21","maghrib":"18:26","isha":"19:52"},"jamaat":{"fajr":"04:55","zuhr":"12:45","asr":"17:00","maghrib":"18:26","isha":"20:15"}},"2026-03-20":{"hijri":"1 Shawwal 1447 AH","begins":{"fajr":"04:29","sunrise":"06:12","zuhr":"12:24","asr":"16:22","maghrib":"18:28","isha":"19:54"},"jamaat":{"fajr":"05:30","zuhr":"12:45","asr":"17:15","maghrib":"18:28","isha":"20:30"},"jummah":{"first":"12:45","second":"15:30"}},"2026-03-21":{"hijri":"2 Shawwal 1447 AH","begins":{"fajr":"04:28","sunrise":"06:09","zuhr":"12:24","asr":"16:24","maghrib":"18:30","isha":"19:55"},"jamaat":{"fajr":"05:30","zuhr":"12:45","asr":"17:15","maghrib":"18:30","isha":"20:30"}},"2026-03-22":{"hijri":"3 Shawwal 1447 AH","begins":{"fajr":"04:25","sunrise":"06:07","zuhr":"12:23","asr":"16:25","maghrib":"18:32","isha":"19:57"},"jamaat":{"fajr":"05:30","zuhr":"12:45","asr":"17:15","maghrib":"18:32","isha":"20:30"}},"2026-03-23":{"hijri":"4 Shawwal 1447 AH","begins":{"fajr":"04:23","sunrise":"06:04","zuhr":"12:23","asr":"16:27","maghrib":"18:34","isha":"19:58"},"jamaat":{"fajr":"05:30","zuhr":"12:45","asr":"17:15","maghrib":"18:34","isha":"20:30"}},"2026-03-24":{"hijri":"5 Shawwal 1447 AH","begins":{"fajr":"04:20","sunrise":"06:02","zuhr":"12:23","asr":"16:28","maghrib":"18:35","isha":"20:00"},"jamaat":{"fajr":"05:30","zuhr":"12:45","asr":"17:15","maghrib":"18:35","isha":"20:30"}},"2026-03-25":{"hijri":"6 Shawwal 1447 AH","begins":{"fajr":"04:19","sunrise":"06:00","zuhr":"12:22","asr":"16:30","maghrib":"18:37","isha":"20:02"},"jamaat":{"fajr":"05:30","zuhr":"12:45","asr":"17:15","maghrib":"18:37","isha":"20:30"}},"2026-03-26":{"hijri":"7 Shawwal 1447 AH","begins":{"fajr":"04:17","sunrise":"05:57","zuhr":"12:21","asr":"16:31","maghrib":"18:39","isha":"20:03"},"jamaat":{"fajr":"05:30","zuhr":"12:45","asr":"17:15","maghrib":"18:39","isha":"20:30"}},"2026-03-27":{"hijri":"8 Shawwal 1447 AH","begins":{"fajr":"04:15","sunrise":"05:55","zuhr":"12:21","asr":"16:32","maghrib":"18:41","isha":"20:04"},"jamaat":{"fajr":"05:15","zuhr":"12:45","asr":"17:30","maghrib":"18:41","isha":"20:30"},"jummah":{"first":"12:45","second":"15:30"}},"2026-03-28":{"hijri":"9 Shawwal 1447 AH","begins":{"fajr":"04:13","sunrise":"05:52","zuhr":"12:21","asr":"16:34","maghrib":"18:43","isha":"20:06"},"jamaat":{"fajr":"05:15","zuhr":"12:45","asr":"17:30","maghrib":"18:43","isha":"20:30"}},"2026-03-29":{"hijri":"10 Shawwal 1447 AH","begins":{"fajr":"05:10","sunrise":"06:50","zuhr":"13:21","asr":"17:35","maghrib":"19:45","isha":"21:08"},"jamaat":{"fajr":"06:15","zuhr":"13:45","asr":"18:30","maghrib":"19:45","isha":"21:30"}},"2026-03-30":{"hijri":"11 Shawwal 1447 AH","begins":{"fajr":"05:09","sunrise":"06:47","zuhr":"13:21","asr":"17:37","maghrib":"19:46","isha":"21:09"},"jamaat":{"fajr":"06:15","zuhr":"13:45","asr":"18:30","maghrib":"19:46","isha":"21:30"}},"2026-03-31":{"hijri":"12 Shawwal 1447 AH","begins":{"fajr":"05:06","sunrise":"06:45","zuhr":"13:21","asr":"17:38","maghrib":"19:48","isha":"21:11"},"jamaat":{"fajr":"06:15","zuhr":"13:45","asr":"18:30","maghrib":"19:48","isha":"21:30"}},"2026-04-01":{"hijri":"13 Shawwal 1447 AH","begins":{"fajr":"05:04","sunrise":"06:43","zuhr":"13:20","asr":"17:39","maghrib":"19:50","isha":"21:12"},"jamaat":{"fajr":"06:15","zuhr":"13:45","asr":"18:30","maghrib":"19:50","isha":"21:30"}},"2026-04-02":{"hijri":"14 Shawwal 1447 AH","begins":{"fajr":"05:02","sunrise":"06:40","zuhr":"13:20","asr":"17:41","maghrib":"19:52","isha":"21:13"},"jamaat":{"fajr":"06:15","zuhr":"13:45","asr":"18:30","maghrib":"19:52","isha":"21:30"}},"2026-04-03":{"hijri":"15 Shawwal 1447 AH","begins":{"fajr":"04:59","sunrise":"06:38","zuhr":"13:20","asr":"17:42","maghrib":"19:54","isha":"21:14"},"jamaat":{"fajr":"06:00","zuhr":"13:30","asr":"18:30","maghrib":"19:54","isha":"21:30"},"jummah":{"first":"13:30","second":"15:30"}},"2026-04-04":{"hijri":"16 Shawwal 1447 AH","begins":{"fajr":"04:57","sunrise":"06:35","zuhr":"13:20","asr":"17:43","maghrib":"19:56","isha":"21:15"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"19:56","isha":"21:30"}},"2026-04-05":{"hijri":"17 Shawwal 1447 AH","begins":{"fajr":"04:54","sunrise":"06:33","zuhr":"13:19","asr":"17:45","maghrib":"19:57","isha":"21:15"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"19:57","isha":"21:30"}},"2026-04-06":{"hijri":"18 Shawwal 1447 AH","begins":{"fajr":"04:52","sunrise":"06:31","zuhr":"13:19","asr":"17:46","maghrib":"19:59","isha":"21:16"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"19:59","isha":"21:30"}},"2026-04-07":{"hijri":"19 Shawwal 1447 AH","begins":{"fajr":"04:50","sunrise":"06:28","zuhr":"13:19","asr":"17:47","maghrib":"20:01","isha":"21:17"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"20:01","isha":"21:30"}},"2026-04-08":{"hijri":"20 Shawwal 1447 AH","begins":{"fajr":"04:47","sunrise":"06:26","zuhr":"13:18","asr":"17:49","maghrib":"20:03","isha":"21:17"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"20:03","isha":"21:30"}},"2026-04-09":{"hijri":"21 Shawwal 1447 AH","begins":{"fajr":"04:45","sunrise":"06:23","zuhr":"13:18","asr":"17:50","maghrib":"20:05","isha":"21:18"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"20:05","isha":"21:30"}},"2026-04-10":{"hijri":"22 Shawwal 1447 AH","begins":{"fajr":"04:43","sunrise":"06:21","zuhr":"13:18","asr":"17:51","maghrib":"20:07","isha":"21:19"},"jamaat":{"fajr":"05:40","zuhr":"13:30","asr":"18:30","maghrib":"20:07","isha":"21:45"},"jummah":{"first":"13:30","second":"15:30"}},"2026-04-11":{"hijri":"23 Shawwal 1447 AH","begins":{"fajr":"04:40","sunrise":"06:19","zuhr":"13:18","asr":"17:52","maghrib":"20:08","isha":"21:20"},"jamaat":{"fajr":"05:40","zuhr":"13:45","asr":"18:30","maghrib":"20:08","isha":"21:45"}},"2026-04-12":{"hijri":"24 Shawwal 1447 AH","begins":{"fajr":"04:38","sunrise":"06:16","zuhr":"13:17","asr":"17:54","maghrib":"20:10","isha":"21:22"},"jamaat":{"fajr":"05:40","zuhr":"13:45","asr":"18:30","maghrib":"20:10","isha":"21:45"}},"2026-04-13":{"hijri":"25 Shawwal 1447 AH","begins":{"fajr":"04:35","sunrise":"06:14","zuhr":"13:17","asr":"17:55","maghrib":"20:12","isha":"21:23"},"jamaat":{"fajr":"05:40","zuhr":"13:45","asr":"18:30","maghrib":"20:12","isha":"21:45"}},"2026-04-14":{"hijri":"26 Shawwal 1447 AH","begins":{"fajr":"04:33","sunrise":"06:12","zuhr":"13:17","asr":"17:56","maghrib":"20:14","isha":"21:25"},"jamaat":{"fajr":"05:40","zuhr":"13:45","asr":"18:30","maghrib":"20:14","isha":"21:45"}},"2026-04-15":{"hijri":"27 Shawwal 1447 AH","begins":{"fajr":"04:31","sunrise":"06:09","zuhr":"13:17","asr":"17:57","maghrib":"20:16","isha":"21:27"},"jamaat":{"fajr":"05:40","zuhr":"13:45","asr":"18:30","maghrib":"20:16","isha":"21:45"}},"2026-04-16":{"hijri":"28 Shawwal 1447 AH","begins":{"fajr":"04:29","sunrise":"06:07","zuhr":"13:16","asr":"17:59","maghrib":"20:18","isha":"21:29"},"jamaat":{"fajr":"05:40","zuhr":"13:45","asr":"18:30","maghrib":"20:18","isha":"21:45"}},"2026-04-17":{"hijri":"29 Shawwal 1447 AH","begins":{"fajr":"04:25","sunrise":"06:05","zuhr":"13:16","asr":"18:00","maghrib":"20:19","isha":"21:31"},"jamaat":{"fajr":"05:15","zuhr":"13:30","asr":"19:15","maghrib":"20:19","isha":"22:00"},"jummah":{"first":"13:30","second":"15:30"}},"2026-04-18":{"hijri":"1 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:23","sunrise":"06:02","zuhr":"13:16","asr":"18:01","maghrib":"20:21","isha":"21:33"},"jamaat":{"fajr":"05:15","zuhr":"13:45","asr":"19:15","maghrib":"20:21","isha":"22:00"}},"2026-04-19":{"hijri":"2 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:21","sunrise":"06:00","zuhr":"13:16","asr":"18:02","maghrib":"20:23","isha":"21:34"},"jamaat":{"fajr":"05:15","zuhr":"13:45","asr":"19:15","maghrib":"20:23","isha":"22:00"}},"2026-04-20":{"hijri":"3 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:18","sunrise":"05:58","zuhr":"13:16","asr":"18:03","maghrib":"20:25","isha":"21:36"},"jamaat":{"fajr":"05:15","zuhr":"13:45","asr":"19:15","maghrib":"20:25","isha":"22:00"}},"2026-04-21":{"hijri":"4 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:15","sunrise":"05:56","zuhr":"13:15","asr":"18:05","maghrib":"20:27","isha":"21:38"},"jamaat":{"fajr":"05:15","zuhr":"13:45","asr":"19:15","maghrib":"20:27","isha":"22:00"}},"2026-04-22":{"hijri":"5 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:13","sunrise":"05:53","zuhr":"13:15","asr":"18:06","maghrib":"20:29","isha":"21:40"},"jamaat":{"fajr":"05:15","zuhr":"13:45","asr":"19:15","maghrib":"20:29","isha":"22:00"}},"2026-04-23":{"hijri":"6 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:10","sunrise":"05:51","zuhr":"13:15","asr":"18:07","maghrib":"20:30","isha":"21:42"},"jamaat":{"fajr":"05:15","zuhr":"13:45","asr":"19:15","maghrib":"20:30","isha":"22:00"}},"2026-04-24":{"hijri":"7 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:08","sunrise":"05:49","zuhr":"13:15","asr":"18:08","maghrib":"20:32","isha":"21:43"},"jamaat":{"fajr":"05:00","zuhr":"13:30","asr":"19:15","maghrib":"20:32","isha":"22:00"},"jummah":{"first":"13:30","second":"15:30"}},"2026-04-25":{"hijri":"8 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:06","sunrise":"05:47","zuhr":"13:15","asr":"18:09","maghrib":"20:34","isha":"21:45"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:15","maghrib":"20:34","isha":"22:00"}},"2026-04-26":{"hijri":"9 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:02","sunrise":"05:45","zuhr":"13:14","asr":"18:11","maghrib":"20:36","isha":"21:47"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:15","maghrib":"20:36","isha":"22:00"}},"2026-04-27":{"hijri":"10 Dhul Qa'dah 1447 AH","begins":{"fajr":"04:00","sunrise":"05:43","zuhr":"13:14","asr":"18:12","maghrib":"20:38","isha":"21:48"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:15","maghrib":"20:38","isha":"22:00"}},"2026-04-28":{"hijri":"11 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:58","sunrise":"05:40","zuhr":"13:14","asr":"18:13","maghrib":"20:40","isha":"21:48"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:15","maghrib":"20:40","isha":"22:00"}},"2026-04-29":{"hijri":"12 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:55","sunrise":"05:38","zuhr":"13:14","asr":"18:14","maghrib":"20:41","isha":"21:48"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:15","maghrib":"20:41","isha":"22:00"}},"2026-04-30":{"hijri":"13 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:52","sunrise":"05:36","zuhr":"13:14","asr":"18:15","maghrib":"20:43","isha":"21:50"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:15","maghrib":"20:43","isha":"22:00"}},"2026-05-01":{"hijri":"14 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:50","sunrise":"05:34","zuhr":"13:14","asr":"18:16","maghrib":"20:45","isha":"21:51"},"jamaat":{"fajr":"04:45","zuhr":"13:30","asr":"19:30","maghrib":"20:45","isha":"22:15"},"jummah":{"first":"13:30","second":"15:30"}},"2026-05-02":{"hijri":"15 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:47","sunrise":"05:32","zuhr":"13:14","asr":"18:17","maghrib":"20:47","isha":"21:51"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:30","maghrib":"20:47","isha":"22:15"}},"2026-05-03":{"hijri":"16 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:45","sunrise":"05:30","zuhr":"13:14","asr":"18:18","maghrib":"20:49","isha":"21:53"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:30","maghrib":"20:49","isha":"22:15"}},"2026-05-04":{"hijri":"17 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:42","sunrise":"05:28","zuhr":"13:13","asr":"18:19","maghrib":"20:50","isha":"21:54"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:30","maghrib":"20:50","isha":"22:15"}},"2026-05-05":{"hijri":"18 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:40","sunrise":"05:26","zuhr":"13:13","asr":"18:20","maghrib":"20:52","isha":"21:56"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:30","maghrib":"20:52","isha":"22:15"}},"2026-05-06":{"hijri":"19 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:37","sunrise":"05:24","zuhr":"13:13","asr":"18:22","maghrib":"20:54","isha":"21:58"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:30","maghrib":"20:54","isha":"22:15"}},"2026-05-07":{"hijri":"20 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:35","sunrise":"05:23","zuhr":"13:13","asr":"18:23","maghrib":"20:56","isha":"22:00"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:30","maghrib":"20:56","isha":"22:15"}},"2026-05-08":{"hijri":"21 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:33","sunrise":"05:21","zuhr":"13:13","asr":"18:24","maghrib":"20:57","isha":"22:02"},"jamaat":{"fajr":"04:30","zuhr":"13:30","asr":"19:45","maghrib":"20:57","isha":"22:25"},"jummah":{"first":"13:30","second":"15:30"}},"2026-05-09":{"hijri":"22 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:31","sunrise":"05:19","zuhr":"13:13","asr":"18:25","maghrib":"20:59","isha":"22:04"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"20:59","isha":"22:25"}},"2026-05-10":{"hijri":"23 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:28","sunrise":"05:17","zuhr":"13:13","asr":"18:26","maghrib":"21:01","isha":"22:05"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:01","isha":"22:25"}},"2026-05-11":{"hijri":"24 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:26","sunrise":"05:15","zuhr":"13:13","asr":"18:27","maghrib":"21:03","isha":"22:07"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:03","isha":"22:25"}},"2026-05-12":{"hijri":"25 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:23","sunrise":"05:13","zuhr":"13:13","asr":"18:28","maghrib":"21:04","isha":"22:08"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:04","isha":"22:25"}},"2026-05-13":{"hijri":"26 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:22","sunrise":"05:12","zuhr":"13:13","asr":"18:29","maghrib":"21:06","isha":"22:10"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:06","isha":"22:25"}},"2026-05-14":{"hijri":"27 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:19","sunrise":"05:10","zuhr":"13:13","asr":"18:30","maghrib":"21:08","isha":"22:12"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:08","isha":"22:25"}},"2026-05-15":{"hijri":"28 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:17","sunrise":"05:08","zuhr":"13:13","asr":"18:31","maghrib":"21:09","isha":"22:13"},"jamaat":{"fajr":"04:30","zuhr":"13:30","asr":"19:45","maghrib":"21:09","isha":"22:35"},"jummah":{"first":"13:30","second":"15:30"}},"2026-05-16":{"hijri":"29 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:15","sunrise":"05:07","zuhr":"13:13","asr":"18:32","maghrib":"21:11","isha":"22:14"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:11","isha":"22:35"}},"2026-05-17":{"hijri":"30 Dhul Qa'dah 1447 AH","begins":{"fajr":"03:13","sunrise":"05:05","zuhr":"13:13","asr":"18:33","maghrib":"21:13","isha":"22:16"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:13","isha":"22:35"}},"2026-05-18":{"hijri":"1 Dhul Hijjah 1447 AH","begins":{"fajr":"03:11","sunrise":"05:04","zuhr":"13:13","asr":"18:33","maghrib":"21:14","isha":"22:17"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:14","isha":"22:35"}},"2026-05-19":{"hijri":"2 Dhul Hijjah 1447 AH","begins":{"fajr":"03:09","sunrise":"05:02","zuhr":"13:13","asr":"18:34","maghrib":"21:16","isha":"22:19"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:16","isha":"22:35"}},"2026-05-20":{"hijri":"3 Dhul Hijjah 1447 AH","begins":{"fajr":"03:07","sunrise":"05:01","zuhr":"13:13","asr":"18:35","maghrib":"21:17","isha":"22:21"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:17","isha":"22:35"}},"2026-05-21":{"hijri":"4 Dhul Hijjah 1447 AH","begins":{"fajr":"03:06","sunrise":"04:59","zuhr":"13:13","asr":"18:36","maghrib":"21:19","isha":"22:22"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:19","isha":"22:35"}},"2026-05-22":{"hijri":"5 Dhul Hijjah 1447 AH","begins":{"fajr":"03:03","sunrise":"04:58","zuhr":"13:13","asr":"18:37","maghrib":"21:20","isha":"22:24"},"jamaat":{"fajr":"04:15","zuhr":"13:30","asr":"19:45","maghrib":"21:20","isha":"22:45"},"jummah":{"first":"13:30","second":"15:30"}},"2026-05-23":{"hijri":"6 Dhul Hijjah 1447 AH","begins":{"fajr":"03:01","sunrise":"04:57","zuhr":"13:13","asr":"18:38","maghrib":"21:22","isha":"22:25"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:22","isha":"22:45"}},"2026-05-24":{"hijri":"7 Dhul Hijjah 1447 AH","begins":{"fajr":"02:59","sunrise":"04:55","zuhr":"13:14","asr":"18:39","maghrib":"21:23","isha":"22:26"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:23","isha":"22:45"}},"2026-05-25":{"hijri":"8 Dhul Hijjah 1447 AH","begins":{"fajr":"02:57","sunrise":"04:54","zuhr":"13:14","asr":"18:40","maghrib":"21:25","isha":"22:27"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:25","isha":"22:45"}},"2026-05-26":{"hijri":"9 Dhul Hijjah 1447 AH","begins":{"fajr":"02:55","sunrise":"04:53","zuhr":"13:14","asr":"18:40","maghrib":"21:26","isha":"22:28"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:26","isha":"22:45"}},"2026-05-27":{"hijri":"10 Dhul Hijjah 1447 AH","begins":{"fajr":"02:54","sunrise":"04:52","zuhr":"13:14","asr":"18:41","maghrib":"21:27","isha":"22:30"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:27","isha":"22:45"}},"2026-05-28":{"hijri":"11 Dhul Hijjah 1447 AH","begins":{"fajr":"02:52","sunrise":"04:51","zuhr":"13:14","asr":"18:42","maghrib":"21:29","isha":"22:31"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:29","isha":"22:45"}},"2026-05-29":{"hijri":"12 Dhul Hijjah 1447 AH","begins":{"fajr":"02:51","sunrise":"04:50","zuhr":"13:14","asr":"18:43","maghrib":"21:30","isha":"22:32"},"jamaat":{"fajr":"04:15","zuhr":"13:30","asr":"19:45","maghrib":"21:30","isha":"22:50"},"jummah":{"first":"13:30","second":"15:30"}},"2026-05-30":{"hijri":"13 Dhul Hijjah 1447 AH","begins":{"fajr":"02:49","sunrise":"04:49","zuhr":"13:14","asr":"18:44","maghrib":"21:31","isha":"22:33"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:31","isha":"22:50"}},"2026-05-31":{"hijri":"14 Dhul Hijjah 1447 AH","begins":{"fajr":"02:48","sunrise":"04:48","zuhr":"13:14","asr":"18:44","maghrib":"21:33","isha":"22:34"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:33","isha":"22:50"}},"2026-06-01":{"hijri":"15 Dhul Hijjah 1447 AH","begins":{"fajr":"02:46","sunrise":"04:47","zuhr":"13:15","asr":"18:45","maghrib":"21:34","isha":"22:34"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:34","isha":"22:50"}},"2026-06-02":{"hijri":"16 Dhul Hijjah 1447 AH","begins":{"fajr":"02:45","sunrise":"04:46","zuhr":"13:15","asr":"18:46","maghrib":"21:35","isha":"22:35"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:35","isha":"22:50"}},"2026-06-03":{"hijri":"17 Dhul Hijjah 1447 AH","begins":{"fajr":"02:44","sunrise":"04:45","zuhr":"13:15","asr":"18:46","maghrib":"21:36","isha":"22:36"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:36","isha":"22:50"}},"2026-06-04":{"hijri":"18 Dhul Hijjah 1447 AH","begins":{"fajr":"02:43","sunrise":"04:44","zuhr":"13:15","asr":"18:47","maghrib":"21:37","isha":"22:37"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"19:45","maghrib":"21:37","isha":"22:50"}},"2026-06-05":{"hijri":"19 Dhul Hijjah 1447 AH","begins":{"fajr":"02:41","sunrise":"04:44","zuhr":"13:15","asr":"18:48","maghrib":"21:38","isha":"22:38"},"jamaat":{"fajr":"04:15","zuhr":"13:30","asr":"20:00","maghrib":"21:38","isha":"22:55"},"jummah":{"first":"13:30","second":"15:30"}},"2026-06-06":{"hijri":"20 Dhul Hijjah 1447 AH","begins":{"fajr":"02:40","sunrise":"04:43","zuhr":"13:15","asr":"18:48","maghrib":"21:39","isha":"22:39"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:39","isha":"22:55"}},"2026-06-07":{"hijri":"21 Dhul Hijjah 1447 AH","begins":{"fajr":"02:39","sunrise":"04:42","zuhr":"13:16","asr":"18:49","maghrib":"21:40","isha":"22:40"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:40","isha":"22:55"}},"2026-06-08":{"hijri":"22 Dhul Hijjah 1447 AH","begins":{"fajr":"02:38","sunrise":"04:42","zuhr":"13:16","asr":"18:49","maghrib":"21:41","isha":"22:41"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:41","isha":"22:55"}},"2026-06-09":{"hijri":"23 Dhul Hijjah 1447 AH","begins":{"fajr":"02:37","sunrise":"04:41","zuhr":"13:16","asr":"18:50","maghrib":"21:42","isha":"22:42"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:42","isha":"22:55"}},"2026-06-10":{"hijri":"24 Dhul Hijjah 1447 AH","begins":{"fajr":"02:37","sunrise":"04:41","zuhr":"13:16","asr":"18:50","maghrib":"21:43","isha":"22:43"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:43","isha":"22:55"}},"2026-06-11":{"hijri":"25 Dhul Hijjah 1447 AH","begins":{"fajr":"02:35","sunrise":"04:40","zuhr":"13:16","asr":"18:51","maghrib":"21:44","isha":"22:44"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:44","isha":"22:55"}},"2026-06-12":{"hijri":"26 Dhul Hijjah 1447 AH","begins":{"fajr":"02:34","sunrise":"04:40","zuhr":"13:17","asr":"18:51","maghrib":"21:44","isha":"22:44"},"jamaat":{"fajr":"04:15","zuhr":"13:30","asr":"20:00","maghrib":"21:44","isha":"23:00"},"jummah":{"first":"13:30","second":"15:30"}},"2026-06-13":{"hijri":"27 Dhul Hijjah 1447 AH","begins":{"fajr":"02:34","sunrise":"04:40","zuhr":"13:17","asr":"18:52","maghrib":"21:45","isha":"22:45"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:45","isha":"23:00"}},"2026-06-14":{"hijri":"28 Dhul Hijjah 1447 AH","begins":{"fajr":"02:34","sunrise":"04:40","zuhr":"13:17","asr":"18:52","maghrib":"21:46","isha":"22:46"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:46","isha":"23:00"}},"2026-06-15":{"hijri":"29 Dhul Hijjah 1447 AH","begins":{"fajr":"02:33","sunrise":"04:40","zuhr":"13:17","asr":"18:53","maghrib":"21:46","isha":"22:46"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:46","isha":"23:00"}},"2026-06-16":{"hijri":"1 Muharram 1448 AH","begins":{"fajr":"02:33","sunrise":"04:39","zuhr":"13:17","asr":"18:53","maghrib":"21:47","isha":"22:47"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:47","isha":"23:00"}},"2026-06-17":{"hijri":"2 Muharram 1448 AH","begins":{"fajr":"02:33","sunrise":"04:39","zuhr":"13:18","asr":"18:53","maghrib":"21:47","isha":"22:47"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:47","isha":"23:00"}},"2026-06-18":{"hijri":"3 Muharram 1448 AH","begins":{"fajr":"02:33","sunrise":"04:39","zuhr":"13:18","asr":"18:54","maghrib":"21:47","isha":"22:47"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:47","isha":"23:00"}},"2026-06-19":{"hijri":"4 Muharram 1448 AH","begins":{"fajr":"02:33","sunrise":"04:40","zuhr":"13:18","asr":"18:54","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:30","asr":"20:00","maghrib":"21:48","isha":"23:00"},"jummah":{"first":"13:30","second":"15:30"}},"2026-06-20":{"hijri":"5 Muharram 1448 AH","begins":{"fajr":"02:33","sunrise":"04:40","zuhr":"13:18","asr":"18:54","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-06-21":{"hijri":"6 Muharram 1448 AH","begins":{"fajr":"02:35","sunrise":"04:40","zuhr":"13:19","asr":"18:54","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-06-22":{"hijri":"7 Muharram 1448 AH","begins":{"fajr":"02:35","sunrise":"04:40","zuhr":"13:19","asr":"18:54","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-06-23":{"hijri":"8 Muharram 1448 AH","begins":{"fajr":"02:37","sunrise":"04:40","zuhr":"13:19","asr":"18:55","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-06-24":{"hijri":"9 Muharram 1448 AH","begins":{"fajr":"02:37","sunrise":"04:41","zuhr":"13:19","asr":"18:55","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-06-25":{"hijri":"10 Muharram 1448 AH","begins":{"fajr":"02:38","sunrise":"04:41","zuhr":"13:19","asr":"18:55","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-06-26":{"hijri":"11 Muharram 1448 AH","begins":{"fajr":"02:39","sunrise":"04:42","zuhr":"13:20","asr":"18:55","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:30","asr":"20:00","maghrib":"21:48","isha":"23:00"},"jummah":{"first":"13:30","second":"15:30"}},"2026-06-27":{"hijri":"12 Muharram 1448 AH","begins":{"fajr":"02:40","sunrise":"04:42","zuhr":"13:20","asr":"18:55","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-06-28":{"hijri":"13 Muharram 1448 AH","begins":{"fajr":"02:41","sunrise":"04:43","zuhr":"13:20","asr":"18:55","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-06-29":{"hijri":"14 Muharram 1448 AH","begins":{"fajr":"02:42","sunrise":"04:43","zuhr":"13:20","asr":"18:55","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-06-30":{"hijri":"15 Muharram 1448 AH","begins":{"fajr":"02:43","sunrise":"04:44","zuhr":"13:20","asr":"18:55","maghrib":"21:48","isha":"22:48"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:48","isha":"23:00"}},"2026-07-01":{"hijri":"16 Muharram 1448 AH","begins":{"fajr":"02:45","sunrise":"04:45","zuhr":"13:21","asr":"18:55","maghrib":"21:47","isha":"22:47"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:47","isha":"23:00"}},"2026-07-02":{"hijri":"17 Muharram 1448 AH","begins":{"fajr":"02:46","sunrise":"04:46","zuhr":"13:21","asr":"18:55","maghrib":"21:47","isha":"22:47"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:47","isha":"23:00"}},"2026-07-03":{"hijri":"18 Muharram 1448 AH","begins":{"fajr":"02:48","sunrise":"04:46","zuhr":"13:21","asr":"18:55","maghrib":"21:46","isha":"22:46"},"jamaat":{"fajr":"04:15","zuhr":"13:30","asr":"20:00","maghrib":"21:46","isha":"23:00"},"jummah":{"first":"13:30","second":"15:30"}},"2026-07-04":{"hijri":"19 Muharram 1448 AH","begins":{"fajr":"02:49","sunrise":"04:47","zuhr":"13:21","asr":"18:54","maghrib":"21:46","isha":"22:46"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:46","isha":"23:00"}},"2026-07-05":{"hijri":"20 Muharram 1448 AH","begins":{"fajr":"02:50","sunrise":"04:48","zuhr":"13:21","asr":"18:54","maghrib":"21:45","isha":"22:45"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:45","isha":"23:00"}},"2026-07-06":{"hijri":"21 Muharram 1448 AH","begins":{"fajr":"02:52","sunrise":"04:49","zuhr":"13:21","asr":"18:54","maghrib":"21:45","isha":"22:45"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:45","isha":"23:00"}},"2026-07-07":{"hijri":"22 Muharram 1448 AH","begins":{"fajr":"02:53","sunrise":"04:50","zuhr":"13:21","asr":"18:54","maghrib":"21:44","isha":"22:44"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:44","isha":"23:00"}},"2026-07-08":{"hijri":"23 Muharram 1448 AH","begins":{"fajr":"02:55","sunrise":"04:51","zuhr":"13:21","asr":"18:53","maghrib":"21:43","isha":"22:43"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:43","isha":"23:00"}},"2026-07-09":{"hijri":"24 Muharram 1448 AH","begins":{"fajr":"02:56","sunrise":"04:52","zuhr":"13:21","asr":"18:53","maghrib":"21:42","isha":"22:42"},"jamaat":{"fajr":"04:15","zuhr":"13:45","asr":"20:00","maghrib":"21:42","isha":"23:00"}},"2026-07-10":{"hijri":"25 Muharram 1448 AH","begins":{"fajr":"02:57","sunrise":"04:53","zuhr":"13:21","asr":"18:53","maghrib":"21:41","isha":"22:41"},"jamaat":{"fajr":"04:30","zuhr":"13:30","asr":"20:00","maghrib":"21:41","isha":"22:50"},"jummah":{"first":"13:30","second":"15:30"}},"2026-07-11":{"hijri":"26 Muharram 1448 AH","begins":{"fajr":"02:59","sunrise":"04:55","zuhr":"13:21","asr":"18:52","maghrib":"21:41","isha":"22:41"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"20:00","maghrib":"21:41","isha":"22:50"}},"2026-07-12":{"hijri":"27 Muharram 1448 AH","begins":{"fajr":"03:00","sunrise":"04:56","zuhr":"13:21","asr":"18:52","maghrib":"21:40","isha":"22:40"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"20:00","maghrib":"21:40","isha":"22:50"}},"2026-07-13":{"hijri":"28 Muharram 1448 AH","begins":{"fajr":"03:03","sunrise":"04:57","zuhr":"13:21","asr":"18:51","maghrib":"21:39","isha":"22:39"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"20:00","maghrib":"21:39","isha":"22:50"}},"2026-07-14":{"hijri":"29 Muharram 1448 AH","begins":{"fajr":"03:04","sunrise":"04:58","zuhr":"13:21","asr":"18:51","maghrib":"21:38","isha":"22:38"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"20:00","maghrib":"21:38","isha":"22:50"}},"2026-07-15":{"hijri":"1 Safar 1448 AH","begins":{"fajr":"03:05","sunrise":"05:00","zuhr":"13:21","asr":"18:50","maghrib":"21:36","isha":"22:36"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"20:00","maghrib":"21:36","isha":"22:50"}},"2026-07-16":{"hijri":"2 Safar 1448 AH","begins":{"fajr":"03:08","sunrise":"05:01","zuhr":"13:21","asr":"18:50","maghrib":"21:35","isha":"22:35"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"20:00","maghrib":"21:35","isha":"22:50"}},"2026-07-17":{"hijri":"3 Safar 1448 AH","begins":{"fajr":"03:09","sunrise":"05:02","zuhr":"13:21","asr":"18:49","maghrib":"21:34","isha":"22:34"},"jamaat":{"fajr":"04:30","zuhr":"13:30","asr":"19:45","maghrib":"21:34","isha":"22:45"},"jummah":{"first":"13:30","second":"15:30"}},"2026-07-18":{"hijri":"4 Safar 1448 AH","begins":{"fajr":"03:11","sunrise":"05:04","zuhr":"13:21","asr":"18:48","maghrib":"21:33","isha":"22:33"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:33","isha":"22:45"}},"2026-07-19":{"hijri":"5 Safar 1448 AH","begins":{"fajr":"03:13","sunrise":"05:05","zuhr":"13:21","asr":"18:48","maghrib":"21:32","isha":"22:32"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:32","isha":"22:45"}},"2026-07-20":{"hijri":"6 Safar 1448 AH","begins":{"fajr":"03:14","sunrise":"05:07","zuhr":"13:21","asr":"18:47","maghrib":"21:30","isha":"22:30"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:30","isha":"22:45"}},"2026-07-21":{"hijri":"7 Safar 1448 AH","begins":{"fajr":"03:17","sunrise":"05:08","zuhr":"13:21","asr":"18:46","maghrib":"21:29","isha":"22:29"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:29","isha":"22:45"}},"2026-07-22":{"hijri":"8 Safar 1448 AH","begins":{"fajr":"03:18","sunrise":"05:09","zuhr":"13:21","asr":"18:45","maghrib":"21:27","isha":"22:27"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:27","isha":"22:45"}},"2026-07-23":{"hijri":"9 Safar 1448 AH","begins":{"fajr":"03:21","sunrise":"05:11","zuhr":"13:21","asr":"18:45","maghrib":"21:26","isha":"22:26"},"jamaat":{"fajr":"04:30","zuhr":"13:45","asr":"19:45","maghrib":"21:26","isha":"22:45"}},"2026-07-24":{"hijri":"10 Safar 1448 AH","begins":{"fajr":"03:22","sunrise":"05:13","zuhr":"13:21","asr":"18:44","maghrib":"21:24","isha":"22:25"},"jamaat":{"fajr":"04:45","zuhr":"13:30","asr":"19:45","maghrib":"21:24","isha":"22:35"},"jummah":{"first":"13:30","second":"15:30"}},"2026-07-25":{"hijri":"11 Safar 1448 AH","begins":{"fajr":"03:25","sunrise":"05:14","zuhr":"13:21","asr":"18:43","maghrib":"21:23","isha":"22:24"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:45","maghrib":"21:23","isha":"22:35"}},"2026-07-26":{"hijri":"12 Safar 1448 AH","begins":{"fajr":"03:26","sunrise":"05:16","zuhr":"13:21","asr":"18:42","maghrib":"21:21","isha":"22:23"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:45","maghrib":"21:21","isha":"22:35"}},"2026-07-27":{"hijri":"13 Safar 1448 AH","begins":{"fajr":"03:29","sunrise":"05:17","zuhr":"13:21","asr":"18:41","maghrib":"21:20","isha":"22:21"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:45","maghrib":"21:20","isha":"22:35"}},"2026-07-28":{"hijri":"14 Safar 1448 AH","begins":{"fajr":"03:31","sunrise":"05:19","zuhr":"13:21","asr":"18:40","maghrib":"21:18","isha":"22:20"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:45","maghrib":"21:18","isha":"22:35"}},"2026-07-29":{"hijri":"15 Safar 1448 AH","begins":{"fajr":"03:33","sunrise":"05:20","zuhr":"13:21","asr":"18:39","maghrib":"21:16","isha":"22:18"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:45","maghrib":"21:16","isha":"22:35"}},"2026-07-30":{"hijri":"16 Safar 1448 AH","begins":{"fajr":"03:35","sunrise":"05:22","zuhr":"13:21","asr":"18:38","maghrib":"21:15","isha":"22:16"},"jamaat":{"fajr":"04:45","zuhr":"13:45","asr":"19:45","maghrib":"21:15","isha":"22:35"}},"2026-07-31":{"hijri":"17 Safar 1448 AH","begins":{"fajr":"03:37","sunrise":"05:24","zuhr":"13:21","asr":"18:37","maghrib":"21:13","isha":"22:15"},"jamaat":{"fajr":"05:00","zuhr":"13:30","asr":"19:45","maghrib":"21:13","isha":"22:30"},"jummah":{"first":"13:30","second":"15:30"}},"2026-08-01":{"hijri":"18 Safar 1448 AH","begins":{"fajr":"03:39","sunrise":"05:25","zuhr":"13:21","asr":"18:36","maghrib":"21:11","isha":"22:14"},"jamaat":{"fajr":"05:00","zuhr":"13:30","asr":"19:45","maghrib":"21:11","isha":"22:30"}},"2026-08-02":{"hijri":"19 Safar 1448 AH","begins":{"fajr":"03:42","sunrise":"05:27","zuhr":"13:21","asr":"18:35","maghrib":"21:09","isha":"22:12"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:45","maghrib":"21:09","isha":"22:30"}},"2026-08-03":{"hijri":"20 Safar 1448 AH","begins":{"fajr":"03:44","sunrise":"05:29","zuhr":"13:21","asr":"18:34","maghrib":"21:08","isha":"22:11"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:45","maghrib":"21:08","isha":"22:30"}},"2026-08-04":{"hijri":"21 Safar 1448 AH","begins":{"fajr":"03:46","sunrise":"05:30","zuhr":"13:21","asr":"18:33","maghrib":"21:06","isha":"22:09"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:45","maghrib":"21:06","isha":"22:30"}},"2026-08-05":{"hijri":"22 Safar 1448 AH","begins":{"fajr":"03:47","sunrise":"05:32","zuhr":"13:21","asr":"18:31","maghrib":"21:04","isha":"22:07"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:45","maghrib":"21:04","isha":"22:30"}},"2026-08-06":{"hijri":"23 Safar 1448 AH","begins":{"fajr":"03:50","sunrise":"05:34","zuhr":"13:21","asr":"18:30","maghrib":"21:02","isha":"22:06"},"jamaat":{"fajr":"05:00","zuhr":"13:45","asr":"19:45","maghrib":"21:02","isha":"22:30"}},"2026-08-07":{"hijri":"24 Safar 1448 AH","begins":{"fajr":"03:52","sunrise":"05:35","zuhr":"13:21","asr":"18:29","maghrib":"21:00","isha":"22:04"},"jamaat":{"fajr":"05:10","zuhr":"13:30","asr":"19:30","maghrib":"21:00","isha":"22:15"},"jummah":{"first":"13:30","second":"15:30"}},"2026-08-08":{"hijri":"25 Safar 1448 AH","begins":{"fajr":"03:54","sunrise":"05:37","zuhr":"13:21","asr":"18:28","maghrib":"20:58","isha":"22:02"},"jamaat":{"fajr":"05:10","zuhr":"13:45","asr":"19:30","maghrib":"20:58","isha":"22:15"}},"2026-08-09":{"hijri":"26 Safar 1448 AH","begins":{"fajr":"03:56","sunrise":"05:39","zuhr":"13:21","asr":"18:26","maghrib":"20:56","isha":"22:00"},"jamaat":{"fajr":"05:10","zuhr":"13:45","asr":"19:30","maghrib":"20:56","isha":"22:15"}},"2026-08-10":{"hijri":"27 Safar 1448 AH","begins":{"fajr":"03:58","sunrise":"05:41","zuhr":"13:21","asr":"18:25","maghrib":"20:54","isha":"21:59"},"jamaat":{"fajr":"05:10","zuhr":"13:45","asr":"19:30","maghrib":"20:54","isha":"22:15"}},"2026-08-11":{"hijri":"28 Safar 1448 AH","begins":{"fajr":"04:00","sunrise":"05:42","zuhr":"13:21","asr":"18:24","maghrib":"20:52","isha":"21:58"},"jamaat":{"fajr":"05:10","zuhr":"13:45","asr":"19:30","maghrib":"20:52","isha":"22:15"}},"2026-08-12":{"hijri":"29 Safar 1448 AH","begins":{"fajr":"04:02","sunrise":"05:44","zuhr":"13:21","asr":"18:22","maghrib":"20:50","isha":"21:57"},"jamaat":{"fajr":"05:10","zuhr":"13:45","asr":"19:30","maghrib":"20:50","isha":"22:15"}},"2026-08-13":{"hijri":"30 Safar 1448 AH","begins":{"fajr":"04:05","sunrise":"05:46","zuhr":"13:21","asr":"18:21","maghrib":"20:48","isha":"21:56"},"jamaat":{"fajr":"05:10","zuhr":"13:45","asr":"19:30","maghrib":"20:48","isha":"22:15"}},"2026-08-14":{"hijri":"1 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:06","sunrise":"05:48","zuhr":"13:21","asr":"18:19","maghrib":"20:46","isha":"21:55"},"jamaat":{"fajr":"05:20","zuhr":"13:30","asr":"19:15","maghrib":"20:46","isha":"22:15"},"jummah":{"first":"13:30","second":"15:30"}},"2026-08-15":{"hijri":"2 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:08","sunrise":"05:49","zuhr":"13:21","asr":"18:18","maghrib":"20:43","isha":"21:54"},"jamaat":{"fajr":"05:20","zuhr":"13:45","asr":"19:15","maghrib":"20:43","isha":"22:15"}},"2026-08-16":{"hijri":"3 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:10","sunrise":"05:51","zuhr":"13:21","asr":"18:16","maghrib":"20:41","isha":"21:53"},"jamaat":{"fajr":"05:20","zuhr":"13:45","asr":"19:15","maghrib":"20:41","isha":"22:15"}},"2026-08-17":{"hijri":"4 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:13","sunrise":"05:53","zuhr":"13:21","asr":"18:15","maghrib":"20:39","isha":"21:51"},"jamaat":{"fajr":"05:20","zuhr":"13:45","asr":"19:15","maghrib":"20:39","isha":"22:15"}},"2026-08-18":{"hijri":"5 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:14","sunrise":"05:55","zuhr":"13:20","asr":"18:13","maghrib":"20:37","isha":"21:48"},"jamaat":{"fajr":"05:20","zuhr":"13:45","asr":"19:15","maghrib":"20:37","isha":"22:15"}},"2026-08-19":{"hijri":"6 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:17","sunrise":"05:56","zuhr":"13:20","asr":"18:12","maghrib":"20:35","isha":"21:46"},"jamaat":{"fajr":"05:20","zuhr":"13:45","asr":"19:15","maghrib":"20:35","isha":"22:15"}},"2026-08-20":{"hijri":"7 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:19","sunrise":"05:58","zuhr":"13:20","asr":"18:10","maghrib":"20:32","isha":"21:44"},"jamaat":{"fajr":"05:20","zuhr":"13:45","asr":"19:15","maghrib":"20:32","isha":"22:15"}},"2026-08-21":{"hijri":"8 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:21","sunrise":"06:00","zuhr":"13:20","asr":"18:08","maghrib":"20:30","isha":"21:43"},"jamaat":{"fajr":"05:30","zuhr":"13:30","asr":"18:45","maghrib":"20:30","isha":"22:00"},"jummah":{"first":"13:30","second":"15:30"}},"2026-08-22":{"hijri":"9 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:23","sunrise":"06:02","zuhr":"13:19","asr":"18:07","maghrib":"20:28","isha":"21:40"},"jamaat":{"fajr":"05:30","zuhr":"13:45","asr":"18:45","maghrib":"20:28","isha":"22:00"}},"2026-08-23":{"hijri":"10 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:24","sunrise":"06:03","zuhr":"13:19","asr":"18:05","maghrib":"20:26","isha":"21:38"},"jamaat":{"fajr":"05:30","zuhr":"13:45","asr":"18:45","maghrib":"20:26","isha":"22:00"}},"2026-08-24":{"hijri":"11 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:25","sunrise":"06:05","zuhr":"13:19","asr":"18:04","maghrib":"20:23","isha":"21:36"},"jamaat":{"fajr":"05:30","zuhr":"13:45","asr":"18:45","maghrib":"20:23","isha":"22:00"}},"2026-08-25":{"hijri":"12 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:26","sunrise":"06:07","zuhr":"13:19","asr":"18:02","maghrib":"20:21","isha":"21:35"},"jamaat":{"fajr":"05:30","zuhr":"13:45","asr":"18:45","maghrib":"20:21","isha":"22:00"}},"2026-08-26":{"hijri":"13 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:27","sunrise":"06:09","zuhr":"13:18","asr":"18:00","maghrib":"20:19","isha":"21:32"},"jamaat":{"fajr":"05:30","zuhr":"13:45","asr":"18:45","maghrib":"20:19","isha":"22:00"}},"2026-08-27":{"hijri":"14 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:28","sunrise":"06:10","zuhr":"13:18","asr":"17:58","maghrib":"20:17","isha":"21:30"},"jamaat":{"fajr":"05:30","zuhr":"13:45","asr":"18:45","maghrib":"20:17","isha":"22:00"}},"2026-08-28":{"hijri":"15 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:29","sunrise":"06:12","zuhr":"13:18","asr":"17:57","maghrib":"20:14","isha":"21:28"},"jamaat":{"fajr":"05:45","zuhr":"13:30","asr":"18:45","maghrib":"20:14","isha":"21:45"},"jummah":{"first":"13:30","second":"15:30"}},"2026-08-29":{"hijri":"16 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:30","sunrise":"06:14","zuhr":"13:18","asr":"17:55","maghrib":"20:12","isha":"21:26"},"jamaat":{"fajr":"05:45","zuhr":"13:45","asr":"18:45","maghrib":"20:12","isha":"21:45"}},"2026-08-30":{"hijri":"17 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:31","sunrise":"06:16","zuhr":"13:17","asr":"17:53","maghrib":"20:09","isha":"21:24"},"jamaat":{"fajr":"05:45","zuhr":"13:45","asr":"18:45","maghrib":"20:09","isha":"21:45"}},"2026-08-31":{"hijri":"18 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:31","sunrise":"06:17","zuhr":"13:17","asr":"17:51","maghrib":"20:07","isha":"21:22"},"jamaat":{"fajr":"05:45","zuhr":"13:45","asr":"18:45","maghrib":"20:07","isha":"21:45"}},"2026-09-01":{"hijri":"19 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:33","sunrise":"06:19","zuhr":"13:17","asr":"17:49","maghrib":"20:05","isha":"21:20"},"jamaat":{"fajr":"05:45","zuhr":"13:45","asr":"18:45","maghrib":"20:05","isha":"21:45"}},"2026-09-02":{"hijri":"20 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:36","sunrise":"06:21","zuhr":"13:16","asr":"17:48","maghrib":"20:02","isha":"21:18"},"jamaat":{"fajr":"05:45","zuhr":"13:45","asr":"18:45","maghrib":"20:02","isha":"21:45"}},"2026-09-03":{"hijri":"21 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:38","sunrise":"06:23","zuhr":"13:16","asr":"17:46","maghrib":"20:00","isha":"21:15"},"jamaat":{"fajr":"05:45","zuhr":"13:45","asr":"18:45","maghrib":"20:00","isha":"21:45"}},"2026-09-04":{"hijri":"22 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:40","sunrise":"06:24","zuhr":"13:16","asr":"17:44","maghrib":"19:58","isha":"21:14"},"jamaat":{"fajr":"06:00","zuhr":"13:30","asr":"18:30","maghrib":"19:58","isha":"21:30"},"jummah":{"first":"13:30","second":"15:30"}},"2026-09-05":{"hijri":"23 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:43","sunrise":"06:26","zuhr":"13:15","asr":"17:42","maghrib":"19:55","isha":"21:12"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"19:55","isha":"21:30"}},"2026-09-06":{"hijri":"24 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:45","sunrise":"06:28","zuhr":"13:15","asr":"17:40","maghrib":"19:53","isha":"21:09"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"19:53","isha":"21:30"}},"2026-09-07":{"hijri":"25 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:47","sunrise":"06:30","zuhr":"13:15","asr":"17:38","maghrib":"19:50","isha":"21:08"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"19:50","isha":"21:30"}},"2026-09-08":{"hijri":"26 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:49","sunrise":"06:31","zuhr":"13:14","asr":"17:36","maghrib":"19:48","isha":"21:05"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"19:48","isha":"21:30"}},"2026-09-09":{"hijri":"27 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:52","sunrise":"06:33","zuhr":"13:14","asr":"17:34","maghrib":"19:45","isha":"21:03"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"19:45","isha":"21:30"}},"2026-09-10":{"hijri":"28 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:54","sunrise":"06:35","zuhr":"13:14","asr":"17:32","maghrib":"19:43","isha":"21:00"},"jamaat":{"fajr":"06:00","zuhr":"13:45","asr":"18:30","maghrib":"19:43","isha":"21:30"}},"2026-09-11":{"hijri":"29 Rabi al-Awwal 1448 AH","begins":{"fajr":"04:56","sunrise":"06:36","zuhr":"13:13","asr":"17:30","maghrib":"19:41","isha":"20:59"},"jamaat":{"fajr":"06:10","zuhr":"13:30","asr":"18:15","maghrib":"19:41","isha":"21:15"},"jummah":{"first":"13:30","second":"15:30"}},"2026-09-12":{"hijri":"1 Rabi al-Thani 1448 AH","begins":{"fajr":"04:58","sunrise":"06:38","zuhr":"13:13","asr":"17:28","maghrib":"19:38","isha":"20:56"},"jamaat":{"fajr":"06:10","zuhr":"13:45","asr":"18:15","maghrib":"19:38","isha":"21:15"}},"2026-09-13":{"hijri":"2 Rabi al-Thani 1448 AH","begins":{"fajr":"05:00","sunrise":"06:40","zuhr":"13:12","asr":"17:26","maghrib":"19:36","isha":"20:54"},"jamaat":{"fajr":"06:10","zuhr":"13:45","asr":"18:15","maghrib":"19:36","isha":"21:15"}},"2026-09-14":{"hijri":"3 Rabi al-Thani 1448 AH","begins":{"fajr":"05:02","sunrise":"06:42","zuhr":"13:12","asr":"17:24","maghrib":"19:33","isha":"20:52"},"jamaat":{"fajr":"06:10","zuhr":"13:45","asr":"18:15","maghrib":"19:33","isha":"21:15"}},"2026-09-15":{"hijri":"4 Rabi al-Thani 1448 AH","begins":{"fajr":"05:05","sunrise":"06:43","zuhr":"13:12","asr":"17:22","maghrib":"19:31","isha":"20:50"},"jamaat":{"fajr":"06:10","zuhr":"13:45","asr":"18:15","maghrib":"19:31","isha":"21:15"}},"2026-09-16":{"hijri":"5 Rabi al-Thani 1448 AH","begins":{"fajr":"05:08","sunrise":"06:45","zuhr":"13:11","asr":"17:20","maghrib":"19:28","isha":"20:48"},"jamaat":{"fajr":"06:10","zuhr":"13:45","asr":"18:15","maghrib":"19:28","isha":"21:15"}},"2026-09-17":{"hijri":"6 Rabi al-Thani 1448 AH","begins":{"fajr":"05:10","sunrise":"06:47","zuhr":"13:11","asr":"17:18","maghrib":"19:26","isha":"20:45"},"jamaat":{"fajr":"06:10","zuhr":"13:45","asr":"18:15","maghrib":"19:26","isha":"21:15"}},"2026-09-18":{"hijri":"7 Rabi al-Thani 1448 AH","begins":{"fajr":"05:12","sunrise":"06:49","zuhr":"13:11","asr":"17:16","maghrib":"19:23","isha":"20:42"},"jamaat":{"fajr":"06:20","zuhr":"13:30","asr":"18:00","maghrib":"19:23","isha":"21:00"},"jummah":{"first":"13:30","second":"15:30"}},"2026-09-19":{"hijri":"8 Rabi al-Thani 1448 AH","begins":{"fajr":"05:14","sunrise":"06:50","zuhr":"13:10","asr":"17:14","maghrib":"19:21","isha":"20:40"},"jamaat":{"fajr":"06:20","zuhr":"13:45","asr":"18:00","maghrib":"19:21","isha":"21:00"}},"2026-09-20":{"hijri":"9 Rabi al-Thani 1448 AH","begins":{"fajr":"05:15","sunrise":"06:52","zuhr":"13:10","asr":"17:12","maghrib":"19:18","isha":"20:38"},"jamaat":{"fajr":"06:20","zuhr":"13:45","asr":"18:00","maghrib":"19:18","isha":"21:00"}},"2026-09-21":{"hijri":"10 Rabi al-Thani 1448 AH","begins":{"fajr":"05:18","sunrise":"06:54","zuhr":"13:10","asr":"17:10","maghrib":"19:16","isha":"20:36"},"jamaat":{"fajr":"06:20","zuhr":"13:45","asr":"18:00","maghrib":"19:16","isha":"21:00"}},"2026-09-22":{"hijri":"11 Rabi al-Thani 1448 AH","begins":{"fajr":"05:20","sunrise":"06:56","zuhr":"13:09","asr":"17:08","maghrib":"19:14","isha":"20:34"},"jamaat":{"fajr":"06:20","zuhr":"13:45","asr":"18:00","maghrib":"19:14","isha":"21:00"}},"2026-09-23":{"hijri":"12 Rabi al-Thani 1448 AH","begins":{"fajr":"05:21","sunrise":"06:57","zuhr":"13:09","asr":"17:06","maghrib":"19:11","isha":"20:31"},"jamaat":{"fajr":"06:20","zuhr":"13:45","asr":"18:00","maghrib":"19:11","isha":"21:00"}},"2026-09-24":{"hijri":"13 Rabi al-Thani 1448 AH","begins":{"fajr":"05:23","sunrise":"06:59","zuhr":"13:09","asr":"17:03","maghrib":"19:09","isha":"20:29"},"jamaat":{"fajr":"06:20","zuhr":"13:45","asr":"18:00","maghrib":"19:09","isha":"21:00"}},"2026-09-25":{"hijri":"14 Rabi al-Thani 1448 AH","begins":{"fajr":"05:25","sunrise":"07:01","zuhr":"13:08","asr":"17:01","maghrib":"19:06","isha":"20:28"},"jamaat":{"fajr":"06:30","zuhr":"13:30","asr":"17:30","maghrib":"19:06","isha":"20:45"},"jummah":{"first":"13:30","second":"15:30"}},"2026-09-26":{"hijri":"15 Rabi al-Thani 1448 AH","begins":{"fajr":"05:27","sunrise":"07:03","zuhr":"13:08","asr":"16:59","maghrib":"19:04","isha":"20:25"},"jamaat":{"fajr":"06:30","zuhr":"13:45","asr":"17:30","maghrib":"19:04","isha":"20:45"}},"2026-09-27":{"hijri":"16 Rabi al-Thani 1448 AH","begins":{"fajr":"05:29","sunrise":"07:05","zuhr":"13:08","asr":"16:57","maghrib":"19:01","isha":"20:23"},"jamaat":{"fajr":"06:30","zuhr":"13:45","asr":"17:30","maghrib":"19:01","isha":"20:45"}},"2026-09-28":{"hijri":"17 Rabi al-Thani 1448 AH","begins":{"fajr":"05:31","sunrise":"07:06","zuhr":"13:07","asr":"16:55","maghrib":"18:59","isha":"20:20"},"jamaat":{"fajr":"06:30","zuhr":"13:45","asr":"17:30","maghrib":"18:59","isha":"20:45"}},"2026-09-29":{"hijri":"18 Rabi al-Thani 1448 AH","begins":{"fajr":"05:32","sunrise":"07:08","zuhr":"13:07","asr":"16:53","maghrib":"18:56","isha":"20:18"},"jamaat":{"fajr":"06:30","zuhr":"13:45","asr":"17:30","maghrib":"18:56","isha":"20:45"}},"2026-09-30":{"hijri":"19 Rabi al-Thani 1448 AH","begins":{"fajr":"05:34","sunrise":"07:10","zuhr":"13:07","asr":"16:51","maghrib":"18:54","isha":"20:15"},"jamaat":{"fajr":"06:30","zuhr":"13:45","asr":"17:30","maghrib":"18:54","isha":"20:45"}},"2026-10-01":{"hijri":"20 Rabi al-Thani 1448 AH","begins":{"fajr":"05:36","sunrise":"07:12","zuhr":"13:06","asr":"16:49","maghrib":"18:52","isha":"20:14"},"jamaat":{"fajr":"06:30","zuhr":"13:45","asr":"17:30","maghrib":"18:52","isha":"20:45"}},"2026-10-02":{"hijri":"21 Rabi al-Thani 1448 AH","begins":{"fajr":"05:38","sunrise":"07:13","zuhr":"13:06","asr":"16:46","maghrib":"18:49","isha":"20:11"},"jamaat":{"fajr":"06:45","zuhr":"13:30","asr":"17:30","maghrib":"18:49","isha":"20:30"},"jummah":{"first":"13:30","second":"15:30"}},"2026-10-03":{"hijri":"22 Rabi al-Thani 1448 AH","begins":{"fajr":"05:40","sunrise":"07:15","zuhr":"13:06","asr":"16:44","maghrib":"18:47","isha":"20:09"},"jamaat":{"fajr":"06:45","zuhr":"13:45","asr":"17:30","maghrib":"18:47","isha":"20:30"}},"2026-10-04":{"hijri":"23 Rabi al-Thani 1448 AH","begins":{"fajr":"05:42","sunrise":"07:17","zuhr":"13:05","asr":"16:42","maghrib":"18:44","isha":"20:07"},"jamaat":{"fajr":"06:45","zuhr":"13:45","asr":"17:30","maghrib":"18:44","isha":"20:30"}},"2026-10-05":{"hijri":"24 Rabi al-Thani 1448 AH","begins":{"fajr":"05:44","sunrise":"07:19","zuhr":"13:05","asr":"16:40","maghrib":"18:42","isha":"20:06"},"jamaat":{"fajr":"06:45","zuhr":"13:45","asr":"17:30","maghrib":"18:42","isha":"20:30"}},"2026-10-06":{"hijri":"25 Rabi al-Thani 1448 AH","begins":{"fajr":"05:46","sunrise":"07:21","zuhr":"13:05","asr":"16:38","maghrib":"18:39","isha":"20:04"},"jamaat":{"fajr":"06:45","zuhr":"13:45","asr":"17:30","maghrib":"18:39","isha":"20:30"}},"2026-10-07":{"hijri":"26 Rabi al-Thani 1448 AH","begins":{"fajr":"05:47","sunrise":"07:22","zuhr":"13:04","asr":"16:36","maghrib":"18:37","isha":"20:02"},"jamaat":{"fajr":"06:45","zuhr":"13:45","asr":"17:30","maghrib":"18:37","isha":"20:30"}},"2026-10-08":{"hijri":"27 Rabi al-Thani 1448 AH","begins":{"fajr":"05:49","sunrise":"07:24","zuhr":"13:04","asr":"16:34","maghrib":"18:35","isha":"19:59"},"jamaat":{"fajr":"06:45","zuhr":"13:45","asr":"17:30","maghrib":"18:35","isha":"20:30"}},"2026-10-09":{"hijri":"28 Rabi al-Thani 1448 AH","begins":{"fajr":"05:51","sunrise":"07:26","zuhr":"13:04","asr":"16:32","maghrib":"18:32","isha":"19:57"},"jamaat":{"fajr":"07:00","zuhr":"13:30","asr":"17:00","maghrib":"18:32","isha":"20:15"},"jummah":{"first":"13:30","second":"15:30"}},"2026-10-10":{"hijri":"29 Rabi al-Thani 1448 AH","begins":{"fajr":"05:53","sunrise":"07:28","zuhr":"13:04","asr":"16:29","maghrib":"18:30","isha":"19:54"},"jamaat":{"fajr":"07:00","zuhr":"13:45","asr":"17:00","maghrib":"18:30","isha":"20:15"}},"2026-10-11":{"hijri":"30 Rabi al-Thani 1448 AH","begins":{"fajr":"05:55","sunrise":"07:30","zuhr":"13:03","asr":"16:27","maghrib":"18:28","isha":"19:53"},"jamaat":{"fajr":"07:00","zuhr":"13:45","asr":"17:00","maghrib":"18:28","isha":"20:15"}},"2026-10-12":{"hijri":"1 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:57","sunrise":"07:32","zuhr":"13:03","asr":"16:25","maghrib":"18:25","isha":"19:52"},"jamaat":{"fajr":"07:00","zuhr":"13:45","asr":"17:00","maghrib":"18:25","isha":"20:15"}},"2026-10-13":{"hijri":"2 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:58","sunrise":"07:33","zuhr":"13:03","asr":"16:23","maghrib":"18:23","isha":"19:50"},"jamaat":{"fajr":"07:00","zuhr":"13:45","asr":"17:00","maghrib":"18:23","isha":"20:15"}},"2026-10-14":{"hijri":"3 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:00","sunrise":"07:35","zuhr":"13:03","asr":"16:21","maghrib":"18:21","isha":"19:47"},"jamaat":{"fajr":"07:00","zuhr":"13:45","asr":"17:00","maghrib":"18:21","isha":"20:15"}},"2026-10-15":{"hijri":"4 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:01","sunrise":"07:37","zuhr":"13:02","asr":"16:19","maghrib":"18:18","isha":"19:45"},"jamaat":{"fajr":"07:00","zuhr":"13:45","asr":"17:00","maghrib":"18:18","isha":"20:15"}},"2026-10-16":{"hijri":"5 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:02","sunrise":"07:39","zuhr":"13:02","asr":"16:17","maghrib":"18:16","isha":"19:43"},"jamaat":{"fajr":"07:15","zuhr":"13:30","asr":"17:00","maghrib":"18:16","isha":"20:00"},"jummah":{"first":"13:30","second":"15:30"}},"2026-10-17":{"hijri":"6 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:04","sunrise":"07:41","zuhr":"13:02","asr":"16:15","maghrib":"18:14","isha":"19:40"},"jamaat":{"fajr":"07:15","zuhr":"13:45","asr":"17:00","maghrib":"18:14","isha":"20:00"}},"2026-10-18":{"hijri":"7 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:06","sunrise":"07:43","zuhr":"13:02","asr":"16:13","maghrib":"18:12","isha":"19:38"},"jamaat":{"fajr":"07:15","zuhr":"13:45","asr":"17:00","maghrib":"18:12","isha":"20:00"}},"2026-10-19":{"hijri":"8 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:08","sunrise":"07:45","zuhr":"13:02","asr":"16:11","maghrib":"18:09","isha":"19:37"},"jamaat":{"fajr":"07:15","zuhr":"13:45","asr":"17:00","maghrib":"18:09","isha":"20:00"}},"2026-10-20":{"hijri":"9 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:09","sunrise":"07:47","zuhr":"13:01","asr":"16:09","maghrib":"18:07","isha":"19:36"},"jamaat":{"fajr":"07:15","zuhr":"13:45","asr":"17:00","maghrib":"18:07","isha":"20:00"}},"2026-10-21":{"hijri":"10 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:11","sunrise":"07:48","zuhr":"13:01","asr":"16:07","maghrib":"18:05","isha":"19:34"},"jamaat":{"fajr":"07:15","zuhr":"13:45","asr":"17:00","maghrib":"18:05","isha":"20:00"}},"2026-10-22":{"hijri":"11 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:12","sunrise":"07:50","zuhr":"13:01","asr":"16:05","maghrib":"18:03","isha":"19:31"},"jamaat":{"fajr":"07:15","zuhr":"13:45","asr":"17:00","maghrib":"18:03","isha":"20:00"}},"2026-10-23":{"hijri":"12 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:15","sunrise":"07:52","zuhr":"13:01","asr":"16:03","maghrib":"18:01","isha":"19:30"},"jamaat":{"fajr":"07:15","zuhr":"13:30","asr":"17:00","maghrib":"18:01","isha":"19:45"},"jummah":{"first":"13:30","second":"15:30"}},"2026-10-24":{"hijri":"13 Jumada al-Awwal 1448 AH","begins":{"fajr":"06:15","sunrise":"07:54","zuhr":"13:01","asr":"16:01","maghrib":"17:58","isha":"19:29"},"jamaat":{"fajr":"07:15","zuhr":"13:45","asr":"17:00","maghrib":"17:58","isha":"19:45"}},"2026-10-25":{"hijri":"14 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:16","sunrise":"06:56","zuhr":"12:01","asr":"14:59","maghrib":"16:56","isha":"18:27"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:45","maghrib":"16:56","isha":"18:45"}},"2026-10-26":{"hijri":"15 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:18","sunrise":"06:58","zuhr":"12:01","asr":"14:57","maghrib":"16:54","isha":"18:25"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:45","maghrib":"16:54","isha":"19:30"}},"2026-10-27":{"hijri":"16 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:20","sunrise":"07:00","zuhr":"12:00","asr":"14:55","maghrib":"16:52","isha":"18:23"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:45","maghrib":"16:52","isha":"19:30"}},"2026-10-28":{"hijri":"17 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:21","sunrise":"07:02","zuhr":"12:00","asr":"14:53","maghrib":"16:50","isha":"18:21"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:45","maghrib":"16:50","isha":"19:30"}},"2026-10-29":{"hijri":"18 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:23","sunrise":"07:04","zuhr":"12:00","asr":"14:51","maghrib":"16:48","isha":"18:19"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:45","maghrib":"16:48","isha":"19:30"}},"2026-10-30":{"hijri":"19 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:25","sunrise":"07:06","zuhr":"12:00","asr":"14:49","maghrib":"16:46","isha":"18:17"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:30","maghrib":"16:46","isha":"19:30"},"jummah":{"first":"12:45","second":"14:15"}},"2026-10-31":{"hijri":"20 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:27","sunrise":"07:07","zuhr":"12:00","asr":"14:47","maghrib":"16:44","isha":"18:15"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:30","maghrib":"16:44","isha":"18:30"}},"2026-11-01":{"hijri":"21 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:29","sunrise":"07:09","zuhr":"12:00","asr":"14:45","maghrib":"16:42","isha":"18:15"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:30","maghrib":"16:42","isha":"18:30"}},"2026-11-02":{"hijri":"22 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:31","sunrise":"07:11","zuhr":"12:00","asr":"14:44","maghrib":"16:40","isha":"18:13"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:30","maghrib":"16:40","isha":"19:30"}},"2026-11-03":{"hijri":"23 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:32","sunrise":"07:13","zuhr":"12:00","asr":"14:42","maghrib":"16:38","isha":"18:12"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:30","maghrib":"16:38","isha":"19:30"}},"2026-11-04":{"hijri":"24 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:34","sunrise":"07:15","zuhr":"12:00","asr":"14:40","maghrib":"16:36","isha":"18:10"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:30","maghrib":"16:36","isha":"19:30"}},"2026-11-05":{"hijri":"25 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:35","sunrise":"07:17","zuhr":"12:00","asr":"14:38","maghrib":"16:34","isha":"18:09"},"jamaat":{"fajr":"06:30","zuhr":"12:45","asr":"15:30","maghrib":"16:34","isha":"19:30"}},"2026-11-06":{"hijri":"26 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:36","sunrise":"07:19","zuhr":"12:00","asr":"14:37","maghrib":"16:33","isha":"18:07"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"15:30","maghrib":"16:33","isha":"19:30"},"jummah":{"first":"12:45","second":"14:00"}},"2026-11-07":{"hijri":"27 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:38","sunrise":"07:21","zuhr":"12:00","asr":"14:35","maghrib":"16:31","isha":"18:06"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"15:30","maghrib":"16:31","isha":"18:30"}},"2026-11-08":{"hijri":"28 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:40","sunrise":"07:23","zuhr":"12:00","asr":"14:33","maghrib":"16:29","isha":"18:04"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"15:30","maghrib":"16:29","isha":"18:30"}},"2026-11-09":{"hijri":"29 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:41","sunrise":"07:25","zuhr":"12:00","asr":"14:32","maghrib":"16:27","isha":"18:03"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"15:30","maghrib":"16:27","isha":"19:30"}},"2026-11-10":{"hijri":"30 Jumada al-Awwal 1448 AH","begins":{"fajr":"05:43","sunrise":"07:27","zuhr":"12:01","asr":"14:30","maghrib":"16:25","isha":"18:01"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"15:30","maghrib":"16:25","isha":"19:30"}},"2026-11-11":{"hijri":"1 Jumada al-Thani 1448 AH","begins":{"fajr":"05:45","sunrise":"07:28","zuhr":"12:01","asr":"14:28","maghrib":"16:24","isha":"18:00"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"15:30","maghrib":"16:24","isha":"19:30"}},"2026-11-12":{"hijri":"2 Jumada al-Thani 1448 AH","begins":{"fajr":"05:46","sunrise":"07:30","zuhr":"12:01","asr":"14:27","maghrib":"16:22","isha":"17:59"},"jamaat":{"fajr":"06:45","zuhr":"12:45","asr":"15:30","maghrib":"16:22","isha":"19:30"}},"2026-11-13":{"hijri":"3 Jumada al-Thani 1448 AH","begins":{"fajr":"05:48","sunrise":"07:32","zuhr":"12:01","asr":"14:25","maghrib":"16:21","isha":"17:58"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:00","maghrib":"16:21","isha":"19:30"},"jummah":{"first":"12:45","second":"13:50"}},"2026-11-14":{"hijri":"4 Jumada al-Thani 1448 AH","begins":{"fajr":"05:50","sunrise":"07:34","zuhr":"12:01","asr":"14:24","maghrib":"16:19","isha":"17:57"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:00","maghrib":"16:19","isha":"18:30"}},"2026-11-15":{"hijri":"5 Jumada al-Thani 1448 AH","begins":{"fajr":"05:50","sunrise":"07:36","zuhr":"12:01","asr":"14:23","maghrib":"16:17","isha":"17:55"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:00","maghrib":"16:17","isha":"18:30"}},"2026-11-16":{"hijri":"6 Jumada al-Thani 1448 AH","begins":{"fajr":"05:52","sunrise":"07:38","zuhr":"12:01","asr":"14:21","maghrib":"16:16","isha":"17:54"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:00","maghrib":"16:16","isha":"19:30"}},"2026-11-17":{"hijri":"7 Jumada al-Thani 1448 AH","begins":{"fajr":"05:54","sunrise":"07:40","zuhr":"12:02","asr":"14:20","maghrib":"16:15","isha":"17:53"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:00","maghrib":"16:15","isha":"19:30"}},"2026-11-18":{"hijri":"8 Jumada al-Thani 1448 AH","begins":{"fajr":"05:56","sunrise":"07:41","zuhr":"12:02","asr":"14:19","maghrib":"16:13","isha":"17:52"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:00","maghrib":"16:13","isha":"19:30"}},"2026-11-19":{"hijri":"9 Jumada al-Thani 1448 AH","begins":{"fajr":"05:58","sunrise":"07:43","zuhr":"12:02","asr":"14:17","maghrib":"16:12","isha":"17:50"},"jamaat":{"fajr":"07:00","zuhr":"12:45","asr":"15:00","maghrib":"16:12","isha":"19:30"}},"2026-11-20":{"hijri":"10 Jumada al-Thani 1448 AH","begins":{"fajr":"05:59","sunrise":"07:45","zuhr":"12:02","asr":"14:16","maghrib":"16:10","isha":"17:49"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:10","isha":"19:30"},"jummah":{"first":"12:45","second":"13:40"}},"2026-11-21":{"hijri":"11 Jumada al-Thani 1448 AH","begins":{"fajr":"06:01","sunrise":"07:47","zuhr":"12:03","asr":"14:15","maghrib":"16:09","isha":"17:49"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:09","isha":"18:30"}},"2026-11-22":{"hijri":"12 Jumada al-Thani 1448 AH","begins":{"fajr":"06:03","sunrise":"07:49","zuhr":"12:03","asr":"14:14","maghrib":"16:08","isha":"17:48"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:08","isha":"18:30"}},"2026-11-23":{"hijri":"13 Jumada al-Thani 1448 AH","begins":{"fajr":"06:05","sunrise":"07:50","zuhr":"12:03","asr":"14:13","maghrib":"16:07","isha":"17:46"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:07","isha":"19:30"}},"2026-11-24":{"hijri":"14 Jumada al-Thani 1448 AH","begins":{"fajr":"06:06","sunrise":"07:52","zuhr":"12:03","asr":"14:12","maghrib":"16:06","isha":"17:45"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:06","isha":"19:30"}},"2026-11-25":{"hijri":"15 Jumada al-Thani 1448 AH","begins":{"fajr":"06:08","sunrise":"07:54","zuhr":"12:04","asr":"14:11","maghrib":"16:05","isha":"17:45"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:05","isha":"19:30"}},"2026-11-26":{"hijri":"16 Jumada al-Thani 1448 AH","begins":{"fajr":"06:10","sunrise":"07:55","zuhr":"12:04","asr":"14:10","maghrib":"16:04","isha":"17:44"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:04","isha":"19:30"}},"2026-11-27":{"hijri":"17 Jumada al-Thani 1448 AH","begins":{"fajr":"06:11","sunrise":"07:57","zuhr":"12:04","asr":"14:09","maghrib":"16:03","isha":"17:43"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:03","isha":"19:30"},"jummah":{"first":"12:45","second":"13:40"}},"2026-11-28":{"hijri":"18 Jumada al-Thani 1448 AH","begins":{"fajr":"06:13","sunrise":"07:59","zuhr":"12:05","asr":"14:08","maghrib":"16:02","isha":"17:43"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:02","isha":"18:30"}},"2026-11-29":{"hijri":"19 Jumada al-Thani 1448 AH","begins":{"fajr":"06:14","sunrise":"08:00","zuhr":"12:05","asr":"14:07","maghrib":"16:01","isha":"17:42"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:01","isha":"18:30"}},"2026-11-30":{"hijri":"20 Jumada al-Thani 1448 AH","begins":{"fajr":"06:15","sunrise":"08:02","zuhr":"12:05","asr":"14:07","maghrib":"16:00","isha":"17:42"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"16:00","isha":"19:30"}},"2026-12-01":{"hijri":"21 Jumada al-Thani 1448 AH","begins":{"fajr":"06:16","sunrise":"08:03","zuhr":"12:06","asr":"14:06","maghrib":"15:59","isha":"17:41"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:59","isha":"19:30"}},"2026-12-02":{"hijri":"22 Jumada al-Thani 1448 AH","begins":{"fajr":"06:17","sunrise":"08:05","zuhr":"12:06","asr":"14:05","maghrib":"15:59","isha":"17:40"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:59","isha":"19:30"}},"2026-12-03":{"hijri":"23 Jumada al-Thani 1448 AH","begins":{"fajr":"06:18","sunrise":"08:06","zuhr":"12:07","asr":"14:05","maghrib":"15:58","isha":"17:40"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:58","isha":"19:30"}},"2026-12-04":{"hijri":"24 Jumada al-Thani 1448 AH","begins":{"fajr":"06:20","sunrise":"08:08","zuhr":"12:07","asr":"14:04","maghrib":"15:57","isha":"17:39"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:57","isha":"19:30"},"jummah":{"first":"12:45","second":"13:35"}},"2026-12-05":{"hijri":"25 Jumada al-Thani 1448 AH","begins":{"fajr":"06:21","sunrise":"08:09","zuhr":"12:07","asr":"14:04","maghrib":"15:57","isha":"17:38"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:57","isha":"18:30"}},"2026-12-06":{"hijri":"26 Jumada al-Thani 1448 AH","begins":{"fajr":"06:22","sunrise":"08:10","zuhr":"12:08","asr":"14:03","maghrib":"15:56","isha":"17:38"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:56","isha":"18:30"}},"2026-12-07":{"hijri":"27 Jumada al-Thani 1448 AH","begins":{"fajr":"06:23","sunrise":"08:12","zuhr":"12:08","asr":"14:03","maghrib":"15:56","isha":"17:38"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:56","isha":"19:30"}},"2026-12-08":{"hijri":"28 Jumada al-Thani 1448 AH","begins":{"fajr":"06:24","sunrise":"08:13","zuhr":"12:09","asr":"14:03","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"19:30"}},"2026-12-09":{"hijri":"29 Jumada al-Thani 1448 AH","begins":{"fajr":"06:25","sunrise":"08:14","zuhr":"12:09","asr":"14:03","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"19:30"}},"2026-12-10":{"hijri":"1 Rajab 1448 AH","begins":{"fajr":"06:26","sunrise":"08:15","zuhr":"12:10","asr":"14:02","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"19:30"}},"2026-12-11":{"hijri":"2 Rajab 1448 AH","begins":{"fajr":"06:27","sunrise":"08:16","zuhr":"12:10","asr":"14:02","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"19:30"},"jummah":{"first":"12:45","second":"13:35"}},"2026-12-12":{"hijri":"3 Rajab 1448 AH","begins":{"fajr":"06:28","sunrise":"08:17","zuhr":"12:10","asr":"14:02","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"18:30"}},"2026-12-13":{"hijri":"4 Rajab 1448 AH","begins":{"fajr":"06:28","sunrise":"08:18","zuhr":"12:11","asr":"14:02","maghrib":"15:55","isha":"17:36"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"18:30"}},"2026-12-14":{"hijri":"5 Rajab 1448 AH","begins":{"fajr":"06:29","sunrise":"08:19","zuhr":"12:11","asr":"14:02","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"19:30"}},"2026-12-15":{"hijri":"6 Rajab 1448 AH","begins":{"fajr":"06:30","sunrise":"08:20","zuhr":"12:12","asr":"14:02","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"19:30"}},"2026-12-16":{"hijri":"7 Rajab 1448 AH","begins":{"fajr":"06:31","sunrise":"08:21","zuhr":"12:12","asr":"14:03","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"19:30"}},"2026-12-17":{"hijri":"8 Rajab 1448 AH","begins":{"fajr":"06:31","sunrise":"08:22","zuhr":"12:13","asr":"14:03","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"19:30"}},"2026-12-18":{"hijri":"9 Rajab 1448 AH","begins":{"fajr":"06:32","sunrise":"08:22","zuhr":"12:13","asr":"14:03","maghrib":"15:55","isha":"17:37"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:55","isha":"19:30"},"jummah":{"first":"12:45","second":"13:40"}},"2026-12-19":{"hijri":"10 Rajab 1448 AH","begins":{"fajr":"06:33","sunrise":"08:23","zuhr":"12:14","asr":"14:03","maghrib":"15:56","isha":"17:38"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:56","isha":"18:30"}},"2026-12-20":{"hijri":"11 Rajab 1448 AH","begins":{"fajr":"06:33","sunrise":"08:24","zuhr":"12:14","asr":"14:04","maghrib":"15:56","isha":"17:38"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:56","isha":"18:30"}},"2026-12-21":{"hijri":"12 Rajab 1448 AH","begins":{"fajr":"06:34","sunrise":"08:24","zuhr":"12:15","asr":"14:04","maghrib":"15:57","isha":"17:39"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:57","isha":"19:30"}},"2026-12-22":{"hijri":"13 Rajab 1448 AH","begins":{"fajr":"06:34","sunrise":"08:25","zuhr":"12:15","asr":"14:05","maghrib":"15:57","isha":"17:39"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:57","isha":"19:30"}},"2026-12-23":{"hijri":"14 Rajab 1448 AH","begins":{"fajr":"06:34","sunrise":"08:25","zuhr":"12:16","asr":"14:05","maghrib":"15:58","isha":"17:40"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:58","isha":"19:30"}},"2026-12-24":{"hijri":"15 Rajab 1448 AH","begins":{"fajr":"06:35","sunrise":"08:26","zuhr":"12:16","asr":"14:06","maghrib":"15:58","isha":"17:40"},"jamaat":{"fajr":"07:15","zuhr":"12:45","asr":"14:45","maghrib":"15:58","isha":"19:30"}},"2026-12-25":{"hijri":"16 Rajab 1448 AH","begins":{"fajr":"06:35","sunrise":"08:26","zuhr":"12:17","asr":"14:07","maghrib":"15:59","isha":"17:41"},"jamaat":{"fajr":"07:45","zuhr":"12:45","asr":"14:45","maghrib":"15:59","isha":"18:30"},"jummah":{"first":"12:45","second":"13:40"}},"2026-12-26":{"hijri":"17 Rajab 1448 AH","begins":{"fajr":"06:35","sunrise":"08:26","zuhr":"12:17","asr":"14:07","maghrib":"16:00","isha":"17:42"},"jamaat":{"fajr":"07:45","zuhr":"12:45","asr":"14:45","maghrib":"16:00","isha":"18:30"}},"2026-12-27":{"hijri":"18 Rajab 1448 AH","begins":{"fajr":"06:36","sunrise":"08:26","zuhr":"12:18","asr":"14:08","maghrib":"16:01","isha":"17:43"},"jamaat":{"fajr":"07:45","zuhr":"12:45","asr":"14:45","maghrib":"16:01","isha":"18:30"}},"2026-12-28":{"hijri":"19 Rajab 1448 AH","begins":{"fajr":"06:36","sunrise":"08:26","zuhr":"12:18","asr":"14:09","maghrib":"16:01","isha":"17:43"},"jamaat":{"fajr":"07:45","zuhr":"12:45","asr":"14:45","maghrib":"16:01","isha":"18:30"}},"2026-12-29":{"hijri":"20 Rajab 1448 AH","begins":{"fajr":"06:36","sunrise":"08:27","zuhr":"12:19","asr":"14:10","maghrib":"16:02","isha":"17:44"},"jamaat":{"fajr":"07:45","zuhr":"12:45","asr":"14:45","maghrib":"16:02","isha":"18:30"}},"2026-12-30":{"hijri":"21 Rajab 1448 AH","begins":{"fajr":"06:36","sunrise":"08:27","zuhr":"12:19","asr":"14:11","maghrib":"16:03","isha":"17:45"},"jamaat":{"fajr":"07:45","zuhr":"12:45","asr":"14:45","maghrib":"16:03","isha":"18:30"}},"2026-12-31":{"hijri":"22 Rajab 1448 AH","begins":{"fajr":"06:36","sunrise":"08:26","zuhr":"12:20","asr":"14:12","maghrib":"16:04","isha":"17:46"},"jamaat":{"fajr":"07:45","zuhr":"12:45","asr":"14:45","maghrib":"16:04","isha":"18:30"}}}};
+
+const PRAYERS = [
+  {key:"fajr",    en:"Fajr",    ar:"الفجر"},
+  {key:"sunrise", en:"Sunrise", ar:"الشروق"},
+  {key:"zuhr",    en:"Zuhr",    ar:"الظهر"},
+  {key:"asr",     en:"Asr",     ar:"العصر"},
+  {key:"maghrib", en:"Maghrib", ar:"المغرب"},
+  {key:"isha",    en:"Isha",    ar:"العشاء"}
+];
+const JAMAAT_ORDER = ["fajr","zuhr","asr","maghrib","isha"];
 
-var qrcode = function() {
-
-  //---------------------------------------------------------------------
-  // qrcode
-  //---------------------------------------------------------------------
-
-  /**
-   * qrcode
-   * @param typeNumber 1 to 40
-   * @param errorCorrectionLevel 'L','M','Q','H'
-   */
-  var qrcode = function(typeNumber, errorCorrectionLevel) {
-
-    var PAD0 = 0xEC;
-    var PAD1 = 0x11;
-
-    var _typeNumber = typeNumber;
-    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
-    var _modules = null;
-    var _moduleCount = 0;
-    var _dataCache = null;
-    var _dataList = [];
-
-    var _this = {};
-
-    var makeImpl = function(test, maskPattern) {
-
-      _moduleCount = _typeNumber * 4 + 17;
-      _modules = function(moduleCount) {
-        var modules = new Array(moduleCount);
-        for (var row = 0; row < moduleCount; row += 1) {
-          modules[row] = new Array(moduleCount);
-          for (var col = 0; col < moduleCount; col += 1) {
-            modules[row][col] = null;
-          }
-        }
-        return modules;
-      }(_moduleCount);
-
-      setupPositionProbePattern(0, 0);
-      setupPositionProbePattern(_moduleCount - 7, 0);
-      setupPositionProbePattern(0, _moduleCount - 7);
-      setupPositionAdjustPattern();
-      setupTimingPattern();
-      setupTypeInfo(test, maskPattern);
-
-      if (_typeNumber >= 7) {
-        setupTypeNumber(test);
-      }
-
-      if (_dataCache == null) {
-        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
-      }
-
-      mapData(_dataCache, maskPattern);
-    };
-
-    var setupPositionProbePattern = function(row, col) {
-
-      for (var r = -1; r <= 7; r += 1) {
-
-        if (row + r <= -1 || _moduleCount <= row + r) continue;
-
-        for (var c = -1; c <= 7; c += 1) {
-
-          if (col + c <= -1 || _moduleCount <= col + c) continue;
-
-          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
-              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
-              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
-            _modules[row + r][col + c] = true;
-          } else {
-            _modules[row + r][col + c] = false;
-          }
-        }
-      }
-    };
-
-    var getBestMaskPattern = function() {
-
-      var minLostPoint = 0;
-      var pattern = 0;
-
-      for (var i = 0; i < 8; i += 1) {
-
-        makeImpl(true, i);
-
-        var lostPoint = QRUtil.getLostPoint(_this);
-
-        if (i == 0 || minLostPoint > lostPoint) {
-          minLostPoint = lostPoint;
-          pattern = i;
-        }
-      }
-
-      return pattern;
-    };
-
-    var setupTimingPattern = function() {
-
-      for (var r = 8; r < _moduleCount - 8; r += 1) {
-        if (_modules[r][6] != null) {
-          continue;
-        }
-        _modules[r][6] = (r % 2 == 0);
-      }
-
-      for (var c = 8; c < _moduleCount - 8; c += 1) {
-        if (_modules[6][c] != null) {
-          continue;
-        }
-        _modules[6][c] = (c % 2 == 0);
-      }
-    };
-
-    var setupPositionAdjustPattern = function() {
-
-      var pos = QRUtil.getPatternPosition(_typeNumber);
-
-      for (var i = 0; i < pos.length; i += 1) {
-
-        for (var j = 0; j < pos.length; j += 1) {
-
-          var row = pos[i];
-          var col = pos[j];
-
-          if (_modules[row][col] != null) {
-            continue;
-          }
-
-          for (var r = -2; r <= 2; r += 1) {
-
-            for (var c = -2; c <= 2; c += 1) {
-
-              if (r == -2 || r == 2 || c == -2 || c == 2
-                  || (r == 0 && c == 0) ) {
-                _modules[row + r][col + c] = true;
-              } else {
-                _modules[row + r][col + c] = false;
-              }
-            }
-          }
-        }
-      }
-    };
-
-    var setupTypeNumber = function(test) {
-
-      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
-
-      for (var i = 0; i < 18; i += 1) {
-        var mod = (!test && ( (bits >> i) & 1) == 1);
-        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
-      }
-
-      for (var i = 0; i < 18; i += 1) {
-        var mod = (!test && ( (bits >> i) & 1) == 1);
-        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
-      }
-    };
-
-    var setupTypeInfo = function(test, maskPattern) {
-
-      var data = (_errorCorrectionLevel << 3) | maskPattern;
-      var bits = QRUtil.getBCHTypeInfo(data);
-
-      // vertical
-      for (var i = 0; i < 15; i += 1) {
-
-        var mod = (!test && ( (bits >> i) & 1) == 1);
-
-        if (i < 6) {
-          _modules[i][8] = mod;
-        } else if (i < 8) {
-          _modules[i + 1][8] = mod;
-        } else {
-          _modules[_moduleCount - 15 + i][8] = mod;
-        }
-      }
-
-      // horizontal
-      for (var i = 0; i < 15; i += 1) {
-
-        var mod = (!test && ( (bits >> i) & 1) == 1);
-
-        if (i < 8) {
-          _modules[8][_moduleCount - i - 1] = mod;
-        } else if (i < 9) {
-          _modules[8][15 - i - 1 + 1] = mod;
-        } else {
-          _modules[8][15 - i - 1] = mod;
-        }
-      }
-
-      // fixed module
-      _modules[_moduleCount - 8][8] = (!test);
-    };
-
-    var mapData = function(data, maskPattern) {
-
-      var inc = -1;
-      var row = _moduleCount - 1;
-      var bitIndex = 7;
-      var byteIndex = 0;
-      var maskFunc = QRUtil.getMaskFunction(maskPattern);
-
-      for (var col = _moduleCount - 1; col > 0; col -= 2) {
-
-        if (col == 6) col -= 1;
-
-        while (true) {
-
-          for (var c = 0; c < 2; c += 1) {
-
-            if (_modules[row][col - c] == null) {
-
-              var dark = false;
-
-              if (byteIndex < data.length) {
-                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
-              }
-
-              var mask = maskFunc(row, col - c);
-
-              if (mask) {
-                dark = !dark;
-              }
-
-              _modules[row][col - c] = dark;
-              bitIndex -= 1;
-
-              if (bitIndex == -1) {
-                byteIndex += 1;
-                bitIndex = 7;
-              }
-            }
-          }
-
-          row += inc;
-
-          if (row < 0 || _moduleCount <= row) {
-            row -= inc;
-            inc = -inc;
-            break;
-          }
-        }
-      }
-    };
-
-    var createBytes = function(buffer, rsBlocks) {
-
-      var offset = 0;
-
-      var maxDcCount = 0;
-      var maxEcCount = 0;
-
-      var dcdata = new Array(rsBlocks.length);
-      var ecdata = new Array(rsBlocks.length);
-
-      for (var r = 0; r < rsBlocks.length; r += 1) {
-
-        var dcCount = rsBlocks[r].dataCount;
-        var ecCount = rsBlocks[r].totalCount - dcCount;
-
-        maxDcCount = Math.max(maxDcCount, dcCount);
-        maxEcCount = Math.max(maxEcCount, ecCount);
-
-        dcdata[r] = new Array(dcCount);
-
-        for (var i = 0; i < dcdata[r].length; i += 1) {
-          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
-        }
-        offset += dcCount;
-
-        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
-        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
-
-        var modPoly = rawPoly.mod(rsPoly);
-        ecdata[r] = new Array(rsPoly.getLength() - 1);
-        for (var i = 0; i < ecdata[r].length; i += 1) {
-          var modIndex = i + modPoly.getLength() - ecdata[r].length;
-          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
-        }
-      }
-
-      var totalCodeCount = 0;
-      for (var i = 0; i < rsBlocks.length; i += 1) {
-        totalCodeCount += rsBlocks[i].totalCount;
-      }
-
-      var data = new Array(totalCodeCount);
-      var index = 0;
-
-      for (var i = 0; i < maxDcCount; i += 1) {
-        for (var r = 0; r < rsBlocks.length; r += 1) {
-          if (i < dcdata[r].length) {
-            data[index] = dcdata[r][i];
-            index += 1;
-          }
-        }
-      }
-
-      for (var i = 0; i < maxEcCount; i += 1) {
-        for (var r = 0; r < rsBlocks.length; r += 1) {
-          if (i < ecdata[r].length) {
-            data[index] = ecdata[r][i];
-            index += 1;
-          }
-        }
-      }
-
-      return data;
-    };
-
-    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
-
-      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
-
-      var buffer = qrBitBuffer();
-
-      for (var i = 0; i < dataList.length; i += 1) {
-        var data = dataList[i];
-        buffer.put(data.getMode(), 4);
-        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
-        data.write(buffer);
-      }
-
-      // calc num max data.
-      var totalDataCount = 0;
-      for (var i = 0; i < rsBlocks.length; i += 1) {
-        totalDataCount += rsBlocks[i].dataCount;
-      }
-
-      if (buffer.getLengthInBits() > totalDataCount * 8) {
-        throw 'code length overflow. ('
-          + buffer.getLengthInBits()
-          + '>'
-          + totalDataCount * 8
-          + ')';
-      }
-
-      // end code
-      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
-        buffer.put(0, 4);
-      }
-
-      // padding
-      while (buffer.getLengthInBits() % 8 != 0) {
-        buffer.putBit(false);
-      }
-
-      // padding
-      while (true) {
-
-        if (buffer.getLengthInBits() >= totalDataCount * 8) {
-          break;
-        }
-        buffer.put(PAD0, 8);
-
-        if (buffer.getLengthInBits() >= totalDataCount * 8) {
-          break;
-        }
-        buffer.put(PAD1, 8);
-      }
-
-      return createBytes(buffer, rsBlocks);
-    };
-
-    _this.addData = function(data, mode) {
-
-      mode = mode || 'Byte';
-
-      var newData = null;
-
-      switch(mode) {
-      case 'Numeric' :
-        newData = qrNumber(data);
-        break;
-      case 'Alphanumeric' :
-        newData = qrAlphaNum(data);
-        break;
-      case 'Byte' :
-        newData = qr8BitByte(data);
-        break;
-      case 'Kanji' :
-        newData = qrKanji(data);
-        break;
-      default :
-        throw 'mode:' + mode;
-      }
-
-      _dataList.push(newData);
-      _dataCache = null;
-    };
-
-    _this.isDark = function(row, col) {
-      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
-        throw row + ',' + col;
-      }
-      return _modules[row][col];
-    };
-
-    _this.getModuleCount = function() {
-      return _moduleCount;
-    };
-
-    _this.make = function() {
-      if (_typeNumber < 1) {
-        var typeNumber = 1;
-
-        for (; typeNumber < 40; typeNumber++) {
-          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
-          var buffer = qrBitBuffer();
-
-          for (var i = 0; i < _dataList.length; i++) {
-            var data = _dataList[i];
-            buffer.put(data.getMode(), 4);
-            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
-            data.write(buffer);
-          }
-
-          var totalDataCount = 0;
-          for (var i = 0; i < rsBlocks.length; i++) {
-            totalDataCount += rsBlocks[i].dataCount;
-          }
-
-          if (buffer.getLengthInBits() <= totalDataCount * 8) {
-            break;
-          }
-        }
-
-        _typeNumber = typeNumber;
-      }
-
-      makeImpl(false, getBestMaskPattern() );
-    };
-
-    _this.createTableTag = function(cellSize, margin) {
-
-      cellSize = cellSize || 2;
-      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
-
-      var qrHtml = '';
-
-      qrHtml += '<table style="';
-      qrHtml += ' border-width: 0px; border-style: none;';
-      qrHtml += ' border-collapse: collapse;';
-      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
-      qrHtml += '">';
-      qrHtml += '<tbody>';
-
-      for (var r = 0; r < _this.getModuleCount(); r += 1) {
-
-        qrHtml += '<tr>';
-
-        for (var c = 0; c < _this.getModuleCount(); c += 1) {
-          qrHtml += '<td style="';
-          qrHtml += ' border-width: 0px; border-style: none;';
-          qrHtml += ' border-collapse: collapse;';
-          qrHtml += ' padding: 0px; margin: 0px;';
-          qrHtml += ' width: ' + cellSize + 'px;';
-          qrHtml += ' height: ' + cellSize + 'px;';
-          qrHtml += ' background-color: ';
-          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
-          qrHtml += ';';
-          qrHtml += '"/>';
-        }
-
-        qrHtml += '</tr>';
-      }
-
-      qrHtml += '</tbody>';
-      qrHtml += '</table>';
-
-      return qrHtml;
-    };
-
-    _this.createSvgTag = function(cellSize, margin, alt, title) {
-
-      var opts = {};
-      if (typeof arguments[0] == 'object') {
-        // Called by options.
-        opts = arguments[0];
-        // overwrite cellSize and margin.
-        cellSize = opts.cellSize;
-        margin = opts.margin;
-        alt = opts.alt;
-        title = opts.title;
-      }
-
-      cellSize = cellSize || 2;
-      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
-
-      // Compose alt property surrogate
-      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
-      alt.text = alt.text || null;
-      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
-
-      // Compose title property surrogate
-      title = (typeof title === 'string') ? {text: title} : title || {};
-      title.text = title.text || null;
-      title.id = (title.text) ? title.id || 'qrcode-title' : null;
-
-      var size = _this.getModuleCount() * cellSize + margin * 2;
-      var c, mc, r, mr, qrSvg='', rect;
-
-      rect = 'l' + cellSize + ',0 0,' + cellSize +
-        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
-
-      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
-      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
-      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
-      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
-      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
-          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
-      qrSvg += '>';
-      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
-          escapeXml(title.text) + '</title>' : '';
-      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
-          escapeXml(alt.text) + '</description>' : '';
-      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
-      qrSvg += '<path d="';
-
-      for (r = 0; r < _this.getModuleCount(); r += 1) {
-        mr = r * cellSize + margin;
-        for (c = 0; c < _this.getModuleCount(); c += 1) {
-          if (_this.isDark(r, c) ) {
-            mc = c*cellSize+margin;
-            qrSvg += 'M' + mc + ',' + mr + rect;
-          }
-        }
-      }
-
-      qrSvg += '" stroke="transparent" fill="black"/>';
-      qrSvg += '</svg>';
-
-      return qrSvg;
-    };
-
-    _this.createDataURL = function(cellSize, margin) {
-
-      cellSize = cellSize || 2;
-      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
-
-      var size = _this.getModuleCount() * cellSize + margin * 2;
-      var min = margin;
-      var max = size - margin;
-
-      return createDataURL(size, size, function(x, y) {
-        if (min <= x && x < max && min <= y && y < max) {
-          var c = Math.floor( (x - min) / cellSize);
-          var r = Math.floor( (y - min) / cellSize);
-          return _this.isDark(r, c)? 0 : 1;
-        } else {
-          return 1;
-        }
-      } );
-    };
-
-    _this.createImgTag = function(cellSize, margin, alt) {
-
-      cellSize = cellSize || 2;
-      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
-
-      var size = _this.getModuleCount() * cellSize + margin * 2;
-
-      var img = '';
-      img += '<img';
-      img += '\u0020src="';
-      img += _this.createDataURL(cellSize, margin);
-      img += '"';
-      img += '\u0020width="';
-      img += size;
-      img += '"';
-      img += '\u0020height="';
-      img += size;
-      img += '"';
-      if (alt) {
-        img += '\u0020alt="';
-        img += escapeXml(alt);
-        img += '"';
-      }
-      img += '/>';
-
-      return img;
-    };
-
-    var escapeXml = function(s) {
-      var escaped = '';
-      for (var i = 0; i < s.length; i += 1) {
-        var c = s.charAt(i);
-        switch(c) {
-        case '<': escaped += '&lt;'; break;
-        case '>': escaped += '&gt;'; break;
-        case '&': escaped += '&amp;'; break;
-        case '"': escaped += '&quot;'; break;
-        default : escaped += c; break;
-        }
-      }
-      return escaped;
-    };
-
-    var _createHalfASCII = function(margin) {
-      var cellSize = 1;
-      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
-
-      var size = _this.getModuleCount() * cellSize + margin * 2;
-      var min = margin;
-      var max = size - margin;
-
-      var y, x, r1, r2, p;
-
-      var blocks = {
-        '██': '█',
-        '█ ': '▀',
-        ' █': '▄',
-        '  ': ' '
-      };
-
-      var blocksLastLineNoMargin = {
-        '██': '▀',
-        '█ ': '▀',
-        ' █': ' ',
-        '  ': ' '
-      };
-
-      var ascii = '';
-      for (y = 0; y < size; y += 2) {
-        r1 = Math.floor((y - min) / cellSize);
-        r2 = Math.floor((y + 1 - min) / cellSize);
-        for (x = 0; x < size; x += 1) {
-          p = '█';
-
-          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
-            p = ' ';
-          }
-
-          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
-            p += ' ';
-          }
-          else {
-            p += '█';
-          }
-
-          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
-          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
-        }
-
-        ascii += '\n';
-      }
-
-      if (size % 2 && margin > 0) {
-        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
-      }
-
-      return ascii.substring(0, ascii.length-1);
-    };
-
-    _this.createASCII = function(cellSize, margin) {
-      cellSize = cellSize || 1;
-
-      if (cellSize < 2) {
-        return _createHalfASCII(margin);
-      }
-
-      cellSize -= 1;
-      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
-
-      var size = _this.getModuleCount() * cellSize + margin * 2;
-      var min = margin;
-      var max = size - margin;
-
-      var y, x, r, p;
-
-      var white = Array(cellSize+1).join('██');
-      var black = Array(cellSize+1).join('  ');
-
-      var ascii = '';
-      var line = '';
-      for (y = 0; y < size; y += 1) {
-        r = Math.floor( (y - min) / cellSize);
-        line = '';
-        for (x = 0; x < size; x += 1) {
-          p = 1;
-
-          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
-            p = 0;
-          }
-
-          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
-          line += p ? white : black;
-        }
-
-        for (r = 0; r < cellSize; r += 1) {
-          ascii += line + '\n';
-        }
-      }
-
-      return ascii.substring(0, ascii.length-1);
-    };
-
-    _this.renderTo2dContext = function(context, cellSize) {
-      cellSize = cellSize || 2;
-      var length = _this.getModuleCount();
-      for (var row = 0; row < length; row++) {
-        for (var col = 0; col < length; col++) {
-          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
-          context.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
-        }
-      }
-    }
-
-    return _this;
-  };
-
-  //---------------------------------------------------------------------
-  // qrcode.stringToBytes
-  //---------------------------------------------------------------------
-
-  qrcode.stringToBytesFuncs = {
-    'default' : function(s) {
-      var bytes = [];
-      for (var i = 0; i < s.length; i += 1) {
-        var c = s.charCodeAt(i);
-        bytes.push(c & 0xff);
-      }
-      return bytes;
-    }
-  };
-
-  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
-
-  //---------------------------------------------------------------------
-  // qrcode.createStringToBytes
-  //---------------------------------------------------------------------
-
-  /**
-   * @param unicodeData base64 string of byte array.
-   * [16bit Unicode],[16bit Bytes], ...
-   * @param numChars
-   */
-  qrcode.createStringToBytes = function(unicodeData, numChars) {
-
-    // create conversion map.
-
-    var unicodeMap = function() {
-
-      var bin = base64DecodeInputStream(unicodeData);
-      var read = function() {
-        var b = bin.read();
-        if (b == -1) throw 'eof';
-        return b;
-      };
-
-      var count = 0;
-      var unicodeMap = {};
-      while (true) {
-        var b0 = bin.read();
-        if (b0 == -1) break;
-        var b1 = read();
-        var b2 = read();
-        var b3 = read();
-        var k = String.fromCharCode( (b0 << 8) | b1);
-        var v = (b2 << 8) | b3;
-        unicodeMap[k] = v;
-        count += 1;
-      }
-      if (count != numChars) {
-        throw count + ' != ' + numChars;
-      }
-
-      return unicodeMap;
-    }();
-
-    var unknownChar = '?'.charCodeAt(0);
-
-    return function(s) {
-      var bytes = [];
-      for (var i = 0; i < s.length; i += 1) {
-        var c = s.charCodeAt(i);
-        if (c < 128) {
-          bytes.push(c);
-        } else {
-          var b = unicodeMap[s.charAt(i)];
-          if (typeof b == 'number') {
-            if ( (b & 0xff) == b) {
-              // 1byte
-              bytes.push(b);
-            } else {
-              // 2bytes
-              bytes.push(b >>> 8);
-              bytes.push(b & 0xff);
-            }
-          } else {
-            bytes.push(unknownChar);
-          }
-        }
-      }
-      return bytes;
-    };
-  };
-
-  //---------------------------------------------------------------------
-  // QRMode
-  //---------------------------------------------------------------------
-
-  var QRMode = {
-    MODE_NUMBER :    1 << 0,
-    MODE_ALPHA_NUM : 1 << 1,
-    MODE_8BIT_BYTE : 1 << 2,
-    MODE_KANJI :     1 << 3
-  };
-
-  //---------------------------------------------------------------------
-  // QRErrorCorrectionLevel
-  //---------------------------------------------------------------------
-
-  var QRErrorCorrectionLevel = {
-    L : 1,
-    M : 0,
-    Q : 3,
-    H : 2
-  };
-
-  //---------------------------------------------------------------------
-  // QRMaskPattern
-  //---------------------------------------------------------------------
-
-  var QRMaskPattern = {
-    PATTERN000 : 0,
-    PATTERN001 : 1,
-    PATTERN010 : 2,
-    PATTERN011 : 3,
-    PATTERN100 : 4,
-    PATTERN101 : 5,
-    PATTERN110 : 6,
-    PATTERN111 : 7
-  };
-
-  //---------------------------------------------------------------------
-  // QRUtil
-  //---------------------------------------------------------------------
-
-  var QRUtil = function() {
-
-    var PATTERN_POSITION_TABLE = [
-      [],
-      [6, 18],
-      [6, 22],
-      [6, 26],
-      [6, 30],
-      [6, 34],
-      [6, 22, 38],
-      [6, 24, 42],
-      [6, 26, 46],
-      [6, 28, 50],
-      [6, 30, 54],
-      [6, 32, 58],
-      [6, 34, 62],
-      [6, 26, 46, 66],
-      [6, 26, 48, 70],
-      [6, 26, 50, 74],
-      [6, 30, 54, 78],
-      [6, 30, 56, 82],
-      [6, 30, 58, 86],
-      [6, 34, 62, 90],
-      [6, 28, 50, 72, 94],
-      [6, 26, 50, 74, 98],
-      [6, 30, 54, 78, 102],
-      [6, 28, 54, 80, 106],
-      [6, 32, 58, 84, 110],
-      [6, 30, 58, 86, 114],
-      [6, 34, 62, 90, 118],
-      [6, 26, 50, 74, 98, 122],
-      [6, 30, 54, 78, 102, 126],
-      [6, 26, 52, 78, 104, 130],
-      [6, 30, 56, 82, 108, 134],
-      [6, 34, 60, 86, 112, 138],
-      [6, 30, 58, 86, 114, 142],
-      [6, 34, 62, 90, 118, 146],
-      [6, 30, 54, 78, 102, 126, 150],
-      [6, 24, 50, 76, 102, 128, 154],
-      [6, 28, 54, 80, 106, 132, 158],
-      [6, 32, 58, 84, 110, 136, 162],
-      [6, 26, 54, 82, 110, 138, 166],
-      [6, 30, 58, 86, 114, 142, 170]
-    ];
-    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
-    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
-    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
-
-    var _this = {};
-
-    var getBCHDigit = function(data) {
-      var digit = 0;
-      while (data != 0) {
-        digit += 1;
-        data >>>= 1;
-      }
-      return digit;
-    };
-
-    _this.getBCHTypeInfo = function(data) {
-      var d = data << 10;
-      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
-        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
-      }
-      return ( (data << 10) | d) ^ G15_MASK;
-    };
-
-    _this.getBCHTypeNumber = function(data) {
-      var d = data << 12;
-      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
-        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
-      }
-      return (data << 12) | d;
-    };
-
-    _this.getPatternPosition = function(typeNumber) {
-      return PATTERN_POSITION_TABLE[typeNumber - 1];
-    };
-
-    _this.getMaskFunction = function(maskPattern) {
-
-      switch (maskPattern) {
-
-      case QRMaskPattern.PATTERN000 :
-        return function(i, j) { return (i + j) % 2 == 0; };
-      case QRMaskPattern.PATTERN001 :
-        return function(i, j) { return i % 2 == 0; };
-      case QRMaskPattern.PATTERN010 :
-        return function(i, j) { return j % 3 == 0; };
-      case QRMaskPattern.PATTERN011 :
-        return function(i, j) { return (i + j) % 3 == 0; };
-      case QRMaskPattern.PATTERN100 :
-        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
-      case QRMaskPattern.PATTERN101 :
-        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
-      case QRMaskPattern.PATTERN110 :
-        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
-      case QRMaskPattern.PATTERN111 :
-        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
-
-      default :
-        throw 'bad maskPattern:' + maskPattern;
-      }
-    };
-
-    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
-      var a = qrPolynomial([1], 0);
-      for (var i = 0; i < errorCorrectLength; i += 1) {
-        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
-      }
-      return a;
-    };
-
-    _this.getLengthInBits = function(mode, type) {
-
-      if (1 <= type && type < 10) {
-
-        // 1 - 9
-
-        switch(mode) {
-        case QRMode.MODE_NUMBER    : return 10;
-        case QRMode.MODE_ALPHA_NUM : return 9;
-        case QRMode.MODE_8BIT_BYTE : return 8;
-        case QRMode.MODE_KANJI     : return 8;
-        default :
-          throw 'mode:' + mode;
-        }
-
-      } else if (type < 27) {
-
-        // 10 - 26
-
-        switch(mode) {
-        case QRMode.MODE_NUMBER    : return 12;
-        case QRMode.MODE_ALPHA_NUM : return 11;
-        case QRMode.MODE_8BIT_BYTE : return 16;
-        case QRMode.MODE_KANJI     : return 10;
-        default :
-          throw 'mode:' + mode;
-        }
-
-      } else if (type < 41) {
-
-        // 27 - 40
-
-        switch(mode) {
-        case QRMode.MODE_NUMBER    : return 14;
-        case QRMode.MODE_ALPHA_NUM : return 13;
-        case QRMode.MODE_8BIT_BYTE : return 16;
-        case QRMode.MODE_KANJI     : return 12;
-        default :
-          throw 'mode:' + mode;
-        }
-
-      } else {
-        throw 'type:' + type;
-      }
-    };
-
-    _this.getLostPoint = function(qrcode) {
-
-      var moduleCount = qrcode.getModuleCount();
-
-      var lostPoint = 0;
-
-      // LEVEL1
-
-      for (var row = 0; row < moduleCount; row += 1) {
-        for (var col = 0; col < moduleCount; col += 1) {
-
-          var sameCount = 0;
-          var dark = qrcode.isDark(row, col);
-
-          for (var r = -1; r <= 1; r += 1) {
-
-            if (row + r < 0 || moduleCount <= row + r) {
-              continue;
-            }
-
-            for (var c = -1; c <= 1; c += 1) {
-
-              if (col + c < 0 || moduleCount <= col + c) {
-                continue;
-              }
-
-              if (r == 0 && c == 0) {
-                continue;
-              }
-
-              if (dark == qrcode.isDark(row + r, col + c) ) {
-                sameCount += 1;
-              }
-            }
-          }
-
-          if (sameCount > 5) {
-            lostPoint += (3 + sameCount - 5);
-          }
-        }
-      };
-
-      // LEVEL2
-
-      for (var row = 0; row < moduleCount - 1; row += 1) {
-        for (var col = 0; col < moduleCount - 1; col += 1) {
-          var count = 0;
-          if (qrcode.isDark(row, col) ) count += 1;
-          if (qrcode.isDark(row + 1, col) ) count += 1;
-          if (qrcode.isDark(row, col + 1) ) count += 1;
-          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
-          if (count == 0 || count == 4) {
-            lostPoint += 3;
-          }
-        }
-      }
-
-      // LEVEL3
-
-      for (var row = 0; row < moduleCount; row += 1) {
-        for (var col = 0; col < moduleCount - 6; col += 1) {
-          if (qrcode.isDark(row, col)
-              && !qrcode.isDark(row, col + 1)
-              &&  qrcode.isDark(row, col + 2)
-              &&  qrcode.isDark(row, col + 3)
-              &&  qrcode.isDark(row, col + 4)
-              && !qrcode.isDark(row, col + 5)
-              &&  qrcode.isDark(row, col + 6) ) {
-            lostPoint += 40;
-          }
-        }
-      }
-
-      for (var col = 0; col < moduleCount; col += 1) {
-        for (var row = 0; row < moduleCount - 6; row += 1) {
-          if (qrcode.isDark(row, col)
-              && !qrcode.isDark(row + 1, col)
-              &&  qrcode.isDark(row + 2, col)
-              &&  qrcode.isDark(row + 3, col)
-              &&  qrcode.isDark(row + 4, col)
-              && !qrcode.isDark(row + 5, col)
-              &&  qrcode.isDark(row + 6, col) ) {
-            lostPoint += 40;
-          }
-        }
-      }
-
-      // LEVEL4
-
-      var darkCount = 0;
-
-      for (var col = 0; col < moduleCount; col += 1) {
-        for (var row = 0; row < moduleCount; row += 1) {
-          if (qrcode.isDark(row, col) ) {
-            darkCount += 1;
-          }
-        }
-      }
-
-      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
-      lostPoint += ratio * 10;
-
-      return lostPoint;
-    };
-
-    return _this;
-  }();
-
-  //---------------------------------------------------------------------
-  // QRMath
-  //---------------------------------------------------------------------
-
-  var QRMath = function() {
-
-    var EXP_TABLE = new Array(256);
-    var LOG_TABLE = new Array(256);
-
-    // initialize tables
-    for (var i = 0; i < 8; i += 1) {
-      EXP_TABLE[i] = 1 << i;
-    }
-    for (var i = 8; i < 256; i += 1) {
-      EXP_TABLE[i] = EXP_TABLE[i - 4]
-        ^ EXP_TABLE[i - 5]
-        ^ EXP_TABLE[i - 6]
-        ^ EXP_TABLE[i - 8];
-    }
-    for (var i = 0; i < 255; i += 1) {
-      LOG_TABLE[EXP_TABLE[i] ] = i;
-    }
-
-    var _this = {};
-
-    _this.glog = function(n) {
-
-      if (n < 1) {
-        throw 'glog(' + n + ')';
-      }
-
-      return LOG_TABLE[n];
-    };
-
-    _this.gexp = function(n) {
-
-      while (n < 0) {
-        n += 255;
-      }
-
-      while (n >= 256) {
-        n -= 255;
-      }
-
-      return EXP_TABLE[n];
-    };
-
-    return _this;
-  }();
-
-  //---------------------------------------------------------------------
-  // qrPolynomial
-  //---------------------------------------------------------------------
-
-  function qrPolynomial(num, shift) {
-
-    if (typeof num.length == 'undefined') {
-      throw num.length + '/' + shift;
-    }
-
-    var _num = function() {
-      var offset = 0;
-      while (offset < num.length && num[offset] == 0) {
-        offset += 1;
-      }
-      var _num = new Array(num.length - offset + shift);
-      for (var i = 0; i < num.length - offset; i += 1) {
-        _num[i] = num[i + offset];
-      }
-      return _num;
-    }();
-
-    var _this = {};
-
-    _this.getAt = function(index) {
-      return _num[index];
-    };
-
-    _this.getLength = function() {
-      return _num.length;
-    };
-
-    _this.multiply = function(e) {
-
-      var num = new Array(_this.getLength() + e.getLength() - 1);
-
-      for (var i = 0; i < _this.getLength(); i += 1) {
-        for (var j = 0; j < e.getLength(); j += 1) {
-          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
-        }
-      }
-
-      return qrPolynomial(num, 0);
-    };
-
-    _this.mod = function(e) {
-
-      if (_this.getLength() - e.getLength() < 0) {
-        return _this;
-      }
-
-      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
-
-      var num = new Array(_this.getLength() );
-      for (var i = 0; i < _this.getLength(); i += 1) {
-        num[i] = _this.getAt(i);
-      }
-
-      for (var i = 0; i < e.getLength(); i += 1) {
-        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
-      }
-
-      // recursive call
-      return qrPolynomial(num, 0).mod(e);
-    };
-
-    return _this;
-  };
-
-  //---------------------------------------------------------------------
-  // QRRSBlock
-  //---------------------------------------------------------------------
-
-  var QRRSBlock = function() {
-
-    var RS_BLOCK_TABLE = [
-
-      // L
-      // M
-      // Q
-      // H
-
-      // 1
-      [1, 26, 19],
-      [1, 26, 16],
-      [1, 26, 13],
-      [1, 26, 9],
-
-      // 2
-      [1, 44, 34],
-      [1, 44, 28],
-      [1, 44, 22],
-      [1, 44, 16],
-
-      // 3
-      [1, 70, 55],
-      [1, 70, 44],
-      [2, 35, 17],
-      [2, 35, 13],
-
-      // 4
-      [1, 100, 80],
-      [2, 50, 32],
-      [2, 50, 24],
-      [4, 25, 9],
-
-      // 5
-      [1, 134, 108],
-      [2, 67, 43],
-      [2, 33, 15, 2, 34, 16],
-      [2, 33, 11, 2, 34, 12],
-
-      // 6
-      [2, 86, 68],
-      [4, 43, 27],
-      [4, 43, 19],
-      [4, 43, 15],
-
-      // 7
-      [2, 98, 78],
-      [4, 49, 31],
-      [2, 32, 14, 4, 33, 15],
-      [4, 39, 13, 1, 40, 14],
-
-      // 8
-      [2, 121, 97],
-      [2, 60, 38, 2, 61, 39],
-      [4, 40, 18, 2, 41, 19],
-      [4, 40, 14, 2, 41, 15],
-
-      // 9
-      [2, 146, 116],
-      [3, 58, 36, 2, 59, 37],
-      [4, 36, 16, 4, 37, 17],
-      [4, 36, 12, 4, 37, 13],
-
-      // 10
-      [2, 86, 68, 2, 87, 69],
-      [4, 69, 43, 1, 70, 44],
-      [6, 43, 19, 2, 44, 20],
-      [6, 43, 15, 2, 44, 16],
-
-      // 11
-      [4, 101, 81],
-      [1, 80, 50, 4, 81, 51],
-      [4, 50, 22, 4, 51, 23],
-      [3, 36, 12, 8, 37, 13],
-
-      // 12
-      [2, 116, 92, 2, 117, 93],
-      [6, 58, 36, 2, 59, 37],
-      [4, 46, 20, 6, 47, 21],
-      [7, 42, 14, 4, 43, 15],
-
-      // 13
-      [4, 133, 107],
-      [8, 59, 37, 1, 60, 38],
-      [8, 44, 20, 4, 45, 21],
-      [12, 33, 11, 4, 34, 12],
-
-      // 14
-      [3, 145, 115, 1, 146, 116],
-      [4, 64, 40, 5, 65, 41],
-      [11, 36, 16, 5, 37, 17],
-      [11, 36, 12, 5, 37, 13],
-
-      // 15
-      [5, 109, 87, 1, 110, 88],
-      [5, 65, 41, 5, 66, 42],
-      [5, 54, 24, 7, 55, 25],
-      [11, 36, 12, 7, 37, 13],
-
-      // 16
-      [5, 122, 98, 1, 123, 99],
-      [7, 73, 45, 3, 74, 46],
-      [15, 43, 19, 2, 44, 20],
-      [3, 45, 15, 13, 46, 16],
-
-      // 17
-      [1, 135, 107, 5, 136, 108],
-      [10, 74, 46, 1, 75, 47],
-      [1, 50, 22, 15, 51, 23],
-      [2, 42, 14, 17, 43, 15],
-
-      // 18
-      [5, 150, 120, 1, 151, 121],
-      [9, 69, 43, 4, 70, 44],
-      [17, 50, 22, 1, 51, 23],
-      [2, 42, 14, 19, 43, 15],
-
-      // 19
-      [3, 141, 113, 4, 142, 114],
-      [3, 70, 44, 11, 71, 45],
-      [17, 47, 21, 4, 48, 22],
-      [9, 39, 13, 16, 40, 14],
-
-      // 20
-      [3, 135, 107, 5, 136, 108],
-      [3, 67, 41, 13, 68, 42],
-      [15, 54, 24, 5, 55, 25],
-      [15, 43, 15, 10, 44, 16],
-
-      // 21
-      [4, 144, 116, 4, 145, 117],
-      [17, 68, 42],
-      [17, 50, 22, 6, 51, 23],
-      [19, 46, 16, 6, 47, 17],
-
-      // 22
-      [2, 139, 111, 7, 140, 112],
-      [17, 74, 46],
-      [7, 54, 24, 16, 55, 25],
-      [34, 37, 13],
-
-      // 23
-      [4, 151, 121, 5, 152, 122],
-      [4, 75, 47, 14, 76, 48],
-      [11, 54, 24, 14, 55, 25],
-      [16, 45, 15, 14, 46, 16],
-
-      // 24
-      [6, 147, 117, 4, 148, 118],
-      [6, 73, 45, 14, 74, 46],
-      [11, 54, 24, 16, 55, 25],
-      [30, 46, 16, 2, 47, 17],
-
-      // 25
-      [8, 132, 106, 4, 133, 107],
-      [8, 75, 47, 13, 76, 48],
-      [7, 54, 24, 22, 55, 25],
-      [22, 45, 15, 13, 46, 16],
-
-      // 26
-      [10, 142, 114, 2, 143, 115],
-      [19, 74, 46, 4, 75, 47],
-      [28, 50, 22, 6, 51, 23],
-      [33, 46, 16, 4, 47, 17],
-
-      // 27
-      [8, 152, 122, 4, 153, 123],
-      [22, 73, 45, 3, 74, 46],
-      [8, 53, 23, 26, 54, 24],
-      [12, 45, 15, 28, 46, 16],
-
-      // 28
-      [3, 147, 117, 10, 148, 118],
-      [3, 73, 45, 23, 74, 46],
-      [4, 54, 24, 31, 55, 25],
-      [11, 45, 15, 31, 46, 16],
-
-      // 29
-      [7, 146, 116, 7, 147, 117],
-      [21, 73, 45, 7, 74, 46],
-      [1, 53, 23, 37, 54, 24],
-      [19, 45, 15, 26, 46, 16],
-
-      // 30
-      [5, 145, 115, 10, 146, 116],
-      [19, 75, 47, 10, 76, 48],
-      [15, 54, 24, 25, 55, 25],
-      [23, 45, 15, 25, 46, 16],
-
-      // 31
-      [13, 145, 115, 3, 146, 116],
-      [2, 74, 46, 29, 75, 47],
-      [42, 54, 24, 1, 55, 25],
-      [23, 45, 15, 28, 46, 16],
-
-      // 32
-      [17, 145, 115],
-      [10, 74, 46, 23, 75, 47],
-      [10, 54, 24, 35, 55, 25],
-      [19, 45, 15, 35, 46, 16],
-
-      // 33
-      [17, 145, 115, 1, 146, 116],
-      [14, 74, 46, 21, 75, 47],
-      [29, 54, 24, 19, 55, 25],
-      [11, 45, 15, 46, 46, 16],
-
-      // 34
-      [13, 145, 115, 6, 146, 116],
-      [14, 74, 46, 23, 75, 47],
-      [44, 54, 24, 7, 55, 25],
-      [59, 46, 16, 1, 47, 17],
-
-      // 35
-      [12, 151, 121, 7, 152, 122],
-      [12, 75, 47, 26, 76, 48],
-      [39, 54, 24, 14, 55, 25],
-      [22, 45, 15, 41, 46, 16],
-
-      // 36
-      [6, 151, 121, 14, 152, 122],
-      [6, 75, 47, 34, 76, 48],
-      [46, 54, 24, 10, 55, 25],
-      [2, 45, 15, 64, 46, 16],
-
-      // 37
-      [17, 152, 122, 4, 153, 123],
-      [29, 74, 46, 14, 75, 47],
-      [49, 54, 24, 10, 55, 25],
-      [24, 45, 15, 46, 46, 16],
-
-      // 38
-      [4, 152, 122, 18, 153, 123],
-      [13, 74, 46, 32, 75, 47],
-      [48, 54, 24, 14, 55, 25],
-      [42, 45, 15, 32, 46, 16],
-
-      // 39
-      [20, 147, 117, 4, 148, 118],
-      [40, 75, 47, 7, 76, 48],
-      [43, 54, 24, 22, 55, 25],
-      [10, 45, 15, 67, 46, 16],
-
-      // 40
-      [19, 148, 118, 6, 149, 119],
-      [18, 75, 47, 31, 76, 48],
-      [34, 54, 24, 34, 55, 25],
-      [20, 45, 15, 61, 46, 16]
-    ];
-
-    var qrRSBlock = function(totalCount, dataCount) {
-      var _this = {};
-      _this.totalCount = totalCount;
-      _this.dataCount = dataCount;
-      return _this;
-    };
-
-    var _this = {};
-
-    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
-
-      switch(errorCorrectionLevel) {
-      case QRErrorCorrectionLevel.L :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
-      case QRErrorCorrectionLevel.M :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
-      case QRErrorCorrectionLevel.Q :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
-      case QRErrorCorrectionLevel.H :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
-      default :
-        return undefined;
-      }
-    };
-
-    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
-
-      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
-
-      if (typeof rsBlock == 'undefined') {
-        throw 'bad rs block @ typeNumber:' + typeNumber +
-            '/errorCorrectionLevel:' + errorCorrectionLevel;
-      }
-
-      var length = rsBlock.length / 3;
-
-      var list = [];
-
-      for (var i = 0; i < length; i += 1) {
-
-        var count = rsBlock[i * 3 + 0];
-        var totalCount = rsBlock[i * 3 + 1];
-        var dataCount = rsBlock[i * 3 + 2];
-
-        for (var j = 0; j < count; j += 1) {
-          list.push(qrRSBlock(totalCount, dataCount) );
-        }
-      }
-
-      return list;
-    };
-
-    return _this;
-  }();
-
-  //---------------------------------------------------------------------
-  // qrBitBuffer
-  //---------------------------------------------------------------------
-
-  var qrBitBuffer = function() {
-
-    var _buffer = [];
-    var _length = 0;
-
-    var _this = {};
-
-    _this.getBuffer = function() {
-      return _buffer;
-    };
-
-    _this.getAt = function(index) {
-      var bufIndex = Math.floor(index / 8);
-      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
-    };
-
-    _this.put = function(num, length) {
-      for (var i = 0; i < length; i += 1) {
-        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
-      }
-    };
-
-    _this.getLengthInBits = function() {
-      return _length;
-    };
-
-    _this.putBit = function(bit) {
-
-      var bufIndex = Math.floor(_length / 8);
-      if (_buffer.length <= bufIndex) {
-        _buffer.push(0);
-      }
-
-      if (bit) {
-        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
-      }
-
-      _length += 1;
-    };
-
-    return _this;
-  };
-
-  //---------------------------------------------------------------------
-  // qrNumber
-  //---------------------------------------------------------------------
-
-  var qrNumber = function(data) {
-
-    var _mode = QRMode.MODE_NUMBER;
-    var _data = data;
-
-    var _this = {};
-
-    _this.getMode = function() {
-      return _mode;
-    };
-
-    _this.getLength = function(buffer) {
-      return _data.length;
-    };
-
-    _this.write = function(buffer) {
-
-      var data = _data;
-
-      var i = 0;
-
-      while (i + 2 < data.length) {
-        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
-        i += 3;
-      }
-
-      if (i < data.length) {
-        if (data.length - i == 1) {
-          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
-        } else if (data.length - i == 2) {
-          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
-        }
-      }
-    };
-
-    var strToNum = function(s) {
-      var num = 0;
-      for (var i = 0; i < s.length; i += 1) {
-        num = num * 10 + chatToNum(s.charAt(i) );
-      }
-      return num;
-    };
-
-    var chatToNum = function(c) {
-      if ('0' <= c && c <= '9') {
-        return c.charCodeAt(0) - '0'.charCodeAt(0);
-      }
-      throw 'illegal char :' + c;
-    };
-
-    return _this;
-  };
-
-  //---------------------------------------------------------------------
-  // qrAlphaNum
-  //---------------------------------------------------------------------
-
-  var qrAlphaNum = function(data) {
-
-    var _mode = QRMode.MODE_ALPHA_NUM;
-    var _data = data;
-
-    var _this = {};
-
-    _this.getMode = function() {
-      return _mode;
-    };
-
-    _this.getLength = function(buffer) {
-      return _data.length;
-    };
-
-    _this.write = function(buffer) {
-
-      var s = _data;
-
-      var i = 0;
-
-      while (i + 1 < s.length) {
-        buffer.put(
-          getCode(s.charAt(i) ) * 45 +
-          getCode(s.charAt(i + 1) ), 11);
-        i += 2;
-      }
-
-      if (i < s.length) {
-        buffer.put(getCode(s.charAt(i) ), 6);
-      }
-    };
-
-    var getCode = function(c) {
-
-      if ('0' <= c && c <= '9') {
-        return c.charCodeAt(0) - '0'.charCodeAt(0);
-      } else if ('A' <= c && c <= 'Z') {
-        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
-      } else {
-        switch (c) {
-        case ' ' : return 36;
-        case '$' : return 37;
-        case '%' : return 38;
-        case '*' : return 39;
-        case '+' : return 40;
-        case '-' : return 41;
-        case '.' : return 42;
-        case '/' : return 43;
-        case ':' : return 44;
-        default :
-          throw 'illegal char :' + c;
-        }
-      }
-    };
-
-    return _this;
-  };
-
-  //---------------------------------------------------------------------
-  // qr8BitByte
-  //---------------------------------------------------------------------
-
-  var qr8BitByte = function(data) {
-
-    var _mode = QRMode.MODE_8BIT_BYTE;
-    var _data = data;
-    var _bytes = qrcode.stringToBytes(data);
-
-    var _this = {};
-
-    _this.getMode = function() {
-      return _mode;
-    };
-
-    _this.getLength = function(buffer) {
-      return _bytes.length;
-    };
-
-    _this.write = function(buffer) {
-      for (var i = 0; i < _bytes.length; i += 1) {
-        buffer.put(_bytes[i], 8);
-      }
-    };
-
-    return _this;
-  };
-
-  //---------------------------------------------------------------------
-  // qrKanji
-  //---------------------------------------------------------------------
-
-  var qrKanji = function(data) {
-
-    var _mode = QRMode.MODE_KANJI;
-    var _data = data;
-
-    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
-    if (!stringToBytes) {
-      throw 'sjis not supported.';
-    }
-    !function(c, code) {
-      // self test for sjis support.
-      var test = stringToBytes(c);
-      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
-        throw 'sjis not supported.';
-      }
-    }('\u53cb', 0x9746);
-
-    var _bytes = stringToBytes(data);
-
-    var _this = {};
-
-    _this.getMode = function() {
-      return _mode;
-    };
-
-    _this.getLength = function(buffer) {
-      return ~~(_bytes.length / 2);
-    };
-
-    _this.write = function(buffer) {
-
-      var data = _bytes;
-
-      var i = 0;
-
-      while (i + 1 < data.length) {
-
-        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
-
-        if (0x8140 <= c && c <= 0x9FFC) {
-          c -= 0x8140;
-        } else if (0xE040 <= c && c <= 0xEBBF) {
-          c -= 0xC140;
-        } else {
-          throw 'illegal char at ' + (i + 1) + '/' + c;
-        }
-
-        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
-
-        buffer.put(c, 13);
-
-        i += 2;
-      }
-
-      if (i < data.length) {
-        throw 'illegal char at ' + (i + 1);
-      }
-    };
-
-    return _this;
-  };
-
-  //=====================================================================
-  // GIF Support etc.
-  //
-
-  //---------------------------------------------------------------------
-  // byteArrayOutputStream
-  //---------------------------------------------------------------------
-
-  var byteArrayOutputStream = function() {
-
-    var _bytes = [];
-
-    var _this = {};
-
-    _this.writeByte = function(b) {
-      _bytes.push(b & 0xff);
-    };
-
-    _this.writeShort = function(i) {
-      _this.writeByte(i);
-      _this.writeByte(i >>> 8);
-    };
-
-    _this.writeBytes = function(b, off, len) {
-      off = off || 0;
-      len = len || b.length;
-      for (var i = 0; i < len; i += 1) {
-        _this.writeByte(b[i + off]);
-      }
-    };
-
-    _this.writeString = function(s) {
-      for (var i = 0; i < s.length; i += 1) {
-        _this.writeByte(s.charCodeAt(i) );
-      }
-    };
-
-    _this.toByteArray = function() {
-      return _bytes;
-    };
-
-    _this.toString = function() {
-      var s = '';
-      s += '[';
-      for (var i = 0; i < _bytes.length; i += 1) {
-        if (i > 0) {
-          s += ',';
-        }
-        s += _bytes[i];
-      }
-      s += ']';
-      return s;
-    };
-
-    return _this;
-  };
-
-  //---------------------------------------------------------------------
-  // base64EncodeOutputStream
-  //---------------------------------------------------------------------
-
-  var base64EncodeOutputStream = function() {
-
-    var _buffer = 0;
-    var _buflen = 0;
-    var _length = 0;
-    var _base64 = '';
-
-    var _this = {};
-
-    var writeEncoded = function(b) {
-      _base64 += String.fromCharCode(encode(b & 0x3f) );
-    };
-
-    var encode = function(n) {
-      if (n < 0) {
-        // error.
-      } else if (n < 26) {
-        return 0x41 + n;
-      } else if (n < 52) {
-        return 0x61 + (n - 26);
-      } else if (n < 62) {
-        return 0x30 + (n - 52);
-      } else if (n == 62) {
-        return 0x2b;
-      } else if (n == 63) {
-        return 0x2f;
-      }
-      throw 'n:' + n;
-    };
-
-    _this.writeByte = function(n) {
-
-      _buffer = (_buffer << 8) | (n & 0xff);
-      _buflen += 8;
-      _length += 1;
-
-      while (_buflen >= 6) {
-        writeEncoded(_buffer >>> (_buflen - 6) );
-        _buflen -= 6;
-      }
-    };
-
-    _this.flush = function() {
-
-      if (_buflen > 0) {
-        writeEncoded(_buffer << (6 - _buflen) );
-        _buffer = 0;
-        _buflen = 0;
-      }
-
-      if (_length % 3 != 0) {
-        // padding
-        var padlen = 3 - _length % 3;
-        for (var i = 0; i < padlen; i += 1) {
-          _base64 += '=';
-        }
-      }
-    };
-
-    _this.toString = function() {
-      return _base64;
-    };
-
-    return _this;
-  };
-
-  //---------------------------------------------------------------------
-  // base64DecodeInputStream
-  //---------------------------------------------------------------------
-
-  var base64DecodeInputStream = function(str) {
-
-    var _str = str;
-    var _pos = 0;
-    var _buffer = 0;
-    var _buflen = 0;
-
-    var _this = {};
-
-    _this.read = function() {
-
-      while (_buflen < 8) {
-
-        if (_pos >= _str.length) {
-          if (_buflen == 0) {
-            return -1;
-          }
-          throw 'unexpected end of file./' + _buflen;
-        }
-
-        var c = _str.charAt(_pos);
-        _pos += 1;
-
-        if (c == '=') {
-          _buflen = 0;
-          return -1;
-        } else if (c.match(/^\s$/) ) {
-          // ignore if whitespace.
-          continue;
-        }
-
-        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
-        _buflen += 6;
-      }
-
-      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
-      _buflen -= 8;
-      return n;
-    };
-
-    var decode = function(c) {
-      if (0x41 <= c && c <= 0x5a) {
-        return c - 0x41;
-      } else if (0x61 <= c && c <= 0x7a) {
-        return c - 0x61 + 26;
-      } else if (0x30 <= c && c <= 0x39) {
-        return c - 0x30 + 52;
-      } else if (c == 0x2b) {
-        return 62;
-      } else if (c == 0x2f) {
-        return 63;
-      } else {
-        throw 'c:' + c;
-      }
-    };
-
-    return _this;
-  };
-
-  //---------------------------------------------------------------------
-  // gifImage (B/W)
-  //---------------------------------------------------------------------
-
-  var gifImage = function(width, height) {
-
-    var _width = width;
-    var _height = height;
-    var _data = new Array(width * height);
-
-    var _this = {};
-
-    _this.setPixel = function(x, y, pixel) {
-      _data[y * _width + x] = pixel;
-    };
-
-    _this.write = function(out) {
-
-      //---------------------------------
-      // GIF Signature
-
-      out.writeString('GIF87a');
-
-      //---------------------------------
-      // Screen Descriptor
-
-      out.writeShort(_width);
-      out.writeShort(_height);
-
-      out.writeByte(0x80); // 2bit
-      out.writeByte(0);
-      out.writeByte(0);
-
-      //---------------------------------
-      // Global Color Map
-
-      // black
-      out.writeByte(0x00);
-      out.writeByte(0x00);
-      out.writeByte(0x00);
-
-      // white
-      out.writeByte(0xff);
-      out.writeByte(0xff);
-      out.writeByte(0xff);
-
-      //---------------------------------
-      // Image Descriptor
-
-      out.writeString(',');
-      out.writeShort(0);
-      out.writeShort(0);
-      out.writeShort(_width);
-      out.writeShort(_height);
-      out.writeByte(0);
-
-      //---------------------------------
-      // Local Color Map
-
-      //---------------------------------
-      // Raster Data
-
-      var lzwMinCodeSize = 2;
-      var raster = getLZWRaster(lzwMinCodeSize);
-
-      out.writeByte(lzwMinCodeSize);
-
-      var offset = 0;
-
-      while (raster.length - offset > 255) {
-        out.writeByte(255);
-        out.writeBytes(raster, offset, 255);
-        offset += 255;
-      }
-
-      out.writeByte(raster.length - offset);
-      out.writeBytes(raster, offset, raster.length - offset);
-      out.writeByte(0x00);
-
-      //---------------------------------
-      // GIF Terminator
-      out.writeString(';');
-    };
-
-    var bitOutputStream = function(out) {
-
-      var _out = out;
-      var _bitLength = 0;
-      var _bitBuffer = 0;
-
-      var _this = {};
-
-      _this.write = function(data, length) {
-
-        if ( (data >>> length) != 0) {
-          throw 'length over';
-        }
-
-        while (_bitLength + length >= 8) {
-          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
-          length -= (8 - _bitLength);
-          data >>>= (8 - _bitLength);
-          _bitBuffer = 0;
-          _bitLength = 0;
-        }
-
-        _bitBuffer = (data << _bitLength) | _bitBuffer;
-        _bitLength = _bitLength + length;
-      };
-
-      _this.flush = function() {
-        if (_bitLength > 0) {
-          _out.writeByte(_bitBuffer);
-        }
-      };
-
-      return _this;
-    };
-
-    var getLZWRaster = function(lzwMinCodeSize) {
-
-      var clearCode = 1 << lzwMinCodeSize;
-      var endCode = (1 << lzwMinCodeSize) + 1;
-      var bitLength = lzwMinCodeSize + 1;
-
-      // Setup LZWTable
-      var table = lzwTable();
-
-      for (var i = 0; i < clearCode; i += 1) {
-        table.add(String.fromCharCode(i) );
-      }
-      table.add(String.fromCharCode(clearCode) );
-      table.add(String.fromCharCode(endCode) );
-
-      var byteOut = byteArrayOutputStream();
-      var bitOut = bitOutputStream(byteOut);
-
-      // clear code
-      bitOut.write(clearCode, bitLength);
-
-      var dataIndex = 0;
-
-      var s = String.fromCharCode(_data[dataIndex]);
-      dataIndex += 1;
-
-      while (dataIndex < _data.length) {
-
-        var c = String.fromCharCode(_data[dataIndex]);
-        dataIndex += 1;
-
-        if (table.contains(s + c) ) {
-
-          s = s + c;
-
-        } else {
-
-          bitOut.write(table.indexOf(s), bitLength);
-
-          if (table.size() < 0xfff) {
-
-            if (table.size() == (1 << bitLength) ) {
-              bitLength += 1;
-            }
-
-            table.add(s + c);
-          }
-
-          s = c;
-        }
-      }
-
-      bitOut.write(table.indexOf(s), bitLength);
-
-      // end code
-      bitOut.write(endCode, bitLength);
-
-      bitOut.flush();
-
-      return byteOut.toByteArray();
-    };
-
-    var lzwTable = function() {
-
-      var _map = {};
-      var _size = 0;
-
-      var _this = {};
-
-      _this.add = function(key) {
-        if (_this.contains(key) ) {
-          throw 'dup key:' + key;
-        }
-        _map[key] = _size;
-        _size += 1;
-      };
-
-      _this.size = function() {
-        return _size;
-      };
-
-      _this.indexOf = function(key) {
-        return _map[key];
-      };
-
-      _this.contains = function(key) {
-        return typeof _map[key] != 'undefined';
-      };
-
-      return _this;
-    };
-
-    return _this;
-  };
-
-  var createDataURL = function(width, height, getPixel) {
-    var gif = gifImage(width, height);
-    for (var y = 0; y < height; y += 1) {
-      for (var x = 0; x < width; x += 1) {
-        gif.setPixel(x, y, getPixel(x, y) );
-      }
-    }
-
-    var b = byteArrayOutputStream();
-    gif.write(b);
-
-    var base64 = base64EncodeOutputStream();
-    var bytes = b.toByteArray();
-    for (var i = 0; i < bytes.length; i += 1) {
-      base64.writeByte(bytes[i]);
-    }
-    base64.flush();
-
-    return 'data:image/gif;base64,' + base64;
-  };
-
-  //---------------------------------------------------------------------
-  // returns qrcode function.
-
-  return qrcode;
-}();
-
-// multibyte support
-!function() {
-
-  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
-    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
-    function toUTF8Array(str) {
-      var utf8 = [];
-      for (var i=0; i < str.length; i++) {
-        var charcode = str.charCodeAt(i);
-        if (charcode < 0x80) utf8.push(charcode);
-        else if (charcode < 0x800) {
-          utf8.push(0xc0 | (charcode >> 6),
-              0x80 | (charcode & 0x3f));
-        }
-        else if (charcode < 0xd800 || charcode >= 0xe000) {
-          utf8.push(0xe0 | (charcode >> 12),
-              0x80 | ((charcode>>6) & 0x3f),
-              0x80 | (charcode & 0x3f));
-        }
-        // surrogate pair
-        else {
-          i++;
-          // UTF-16 encodes 0x10000-0x10FFFF by
-          // subtracting 0x10000 and splitting the
-          // 20 bits of 0x0-0xFFFFF into two halves
-          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
-            | (str.charCodeAt(i) & 0x3ff));
-          utf8.push(0xf0 | (charcode >>18),
-              0x80 | ((charcode>>12) & 0x3f),
-              0x80 | ((charcode>>6) & 0x3f),
-              0x80 | (charcode & 0x3f));
-        }
-      }
-      return utf8;
-    }
-    return toUTF8Array(s);
-  };
-
-}();
-
-(function (factory) {
-  if (typeof define === 'function' && define.amd) {
-      define([], factory);
-  } else if (typeof exports === 'object') {
-      module.exports = factory();
-  }
-}(function () {
-    return qrcode;
-}));
-
-</script>
-<script>
-// per-day Hijri lookup only (kept slim — this page doesn't need Salah times),
-// generated from the same yearly timetable used on the Salah screensaver.
-const HIJRI = {"2026-01-01":"12 Rajab 1447 AH","2026-01-02":"13 Rajab 1447 AH","2026-01-03":"14 Rajab 1447 AH","2026-01-04":"15 Rajab 1447 AH","2026-01-05":"16 Rajab 1447 AH","2026-01-06":"17 Rajab 1447 AH","2026-01-07":"18 Rajab 1447 AH","2026-01-08":"19 Rajab 1447 AH","2026-01-09":"20 Rajab 1447 AH","2026-01-10":"21 Rajab 1447 AH","2026-01-11":"22 Rajab 1447 AH","2026-01-12":"23 Rajab 1447 AH","2026-01-13":"24 Rajab 1447 AH","2026-01-14":"25 Rajab 1447 AH","2026-01-15":"26 Rajab 1447 AH","2026-01-16":"27 Rajab 1447 AH","2026-01-17":"28 Rajab 1447 AH","2026-01-18":"29 Rajab 1447 AH","2026-01-19":"30 Rajab 1447 AH","2026-01-20":"1 Sha'ban 1447 AH","2026-01-21":"2 Sha'ban 1447 AH","2026-01-22":"3 Sha'ban 1447 AH","2026-01-23":"4 Sha'ban 1447 AH","2026-01-24":"5 Sha'ban 1447 AH","2026-01-25":"6 Sha'ban 1447 AH","2026-01-26":"7 Sha'ban 1447 AH","2026-01-27":"8 Sha'ban 1447 AH","2026-01-28":"9 Sha'ban 1447 AH","2026-01-29":"10 Sha'ban 1447 AH","2026-01-30":"11 Sha'ban 1447 AH","2026-01-31":"12 Sha'ban 1447 AH","2026-02-01":"13 Sha'ban 1447 AH","2026-02-02":"14 Sha'ban 1447 AH","2026-02-03":"15 Sha'ban 1447 AH","2026-02-04":"16 Sha'ban 1447 AH","2026-02-05":"17 Sha'ban 1447 AH","2026-02-06":"18 Sha'ban 1447 AH","2026-02-07":"19 Sha'ban 1447 AH","2026-02-08":"20 Sha'ban 1447 AH","2026-02-09":"21 Sha'ban 1447 AH","2026-02-10":"22 Sha'ban 1447 AH","2026-02-11":"23 Sha'ban 1447 AH","2026-02-12":"24 Sha'ban 1447 AH","2026-02-13":"25 Sha'ban 1447 AH","2026-02-14":"26 Sha'ban 1447 AH","2026-02-15":"27 Sha'ban 1447 AH","2026-02-16":"28 Sha'ban 1447 AH","2026-02-17":"29 Sha'ban 1447 AH","2026-02-18":"1 Ramadan 1447 AH","2026-02-19":"2 Ramadan 1447 AH","2026-02-20":"3 Ramadan 1447 AH","2026-02-21":"4 Ramadan 1447 AH","2026-02-22":"5 Ramadan 1447 AH","2026-02-23":"6 Ramadan 1447 AH","2026-02-24":"7 Ramadan 1447 AH","2026-02-25":"8 Ramadan 1447 AH","2026-02-26":"9 Ramadan 1447 AH","2026-02-27":"10 Ramadan 1447 AH","2026-02-28":"11 Ramadan 1447 AH","2026-03-01":"12 Ramadan 1447 AH","2026-03-02":"13 Ramadan 1447 AH","2026-03-03":"14 Ramadan 1447 AH","2026-03-04":"15 Ramadan 1447 AH","2026-03-05":"16 Ramadan 1447 AH","2026-03-06":"17 Ramadan 1447 AH","2026-03-07":"18 Ramadan 1447 AH","2026-03-08":"19 Ramadan 1447 AH","2026-03-09":"20 Ramadan 1447 AH","2026-03-10":"21 Ramadan 1447 AH","2026-03-11":"22 Ramadan 1447 AH","2026-03-12":"23 Ramadan 1447 AH","2026-03-13":"24 Ramadan 1447 AH","2026-03-14":"25 Ramadan 1447 AH","2026-03-15":"26 Ramadan 1447 AH","2026-03-16":"27 Ramadan 1447 AH","2026-03-17":"28 Ramadan 1447 AH","2026-03-18":"29 Ramadan 1447 AH","2026-03-19":"30 Ramadan 1447 AH","2026-03-20":"1 Shawwal 1447 AH","2026-03-21":"2 Shawwal 1447 AH","2026-03-22":"3 Shawwal 1447 AH","2026-03-23":"4 Shawwal 1447 AH","2026-03-24":"5 Shawwal 1447 AH","2026-03-25":"6 Shawwal 1447 AH","2026-03-26":"7 Shawwal 1447 AH","2026-03-27":"8 Shawwal 1447 AH","2026-03-28":"9 Shawwal 1447 AH","2026-03-29":"10 Shawwal 1447 AH","2026-03-30":"11 Shawwal 1447 AH","2026-03-31":"12 Shawwal 1447 AH","2026-04-01":"13 Shawwal 1447 AH","2026-04-02":"14 Shawwal 1447 AH","2026-04-03":"15 Shawwal 1447 AH","2026-04-04":"16 Shawwal 1447 AH","2026-04-05":"17 Shawwal 1447 AH","2026-04-06":"18 Shawwal 1447 AH","2026-04-07":"19 Shawwal 1447 AH","2026-04-08":"20 Shawwal 1447 AH","2026-04-09":"21 Shawwal 1447 AH","2026-04-10":"22 Shawwal 1447 AH","2026-04-11":"23 Shawwal 1447 AH","2026-04-12":"24 Shawwal 1447 AH","2026-04-13":"25 Shawwal 1447 AH","2026-04-14":"26 Shawwal 1447 AH","2026-04-15":"27 Shawwal 1447 AH","2026-04-16":"28 Shawwal 1447 AH","2026-04-17":"29 Shawwal 1447 AH","2026-04-18":"1 Dhul Qa'dah 1447 AH","2026-04-19":"2 Dhul Qa'dah 1447 AH","2026-04-20":"3 Dhul Qa'dah 1447 AH","2026-04-21":"4 Dhul Qa'dah 1447 AH","2026-04-22":"5 Dhul Qa'dah 1447 AH","2026-04-23":"6 Dhul Qa'dah 1447 AH","2026-04-24":"7 Dhul Qa'dah 1447 AH","2026-04-25":"8 Dhul Qa'dah 1447 AH","2026-04-26":"9 Dhul Qa'dah 1447 AH","2026-04-27":"10 Dhul Qa'dah 1447 AH","2026-04-28":"11 Dhul Qa'dah 1447 AH","2026-04-29":"12 Dhul Qa'dah 1447 AH","2026-04-30":"13 Dhul Qa'dah 1447 AH","2026-05-01":"14 Dhul Qa'dah 1447 AH","2026-05-02":"15 Dhul Qa'dah 1447 AH","2026-05-03":"16 Dhul Qa'dah 1447 AH","2026-05-04":"17 Dhul Qa'dah 1447 AH","2026-05-05":"18 Dhul Qa'dah 1447 AH","2026-05-06":"19 Dhul Qa'dah 1447 AH","2026-05-07":"20 Dhul Qa'dah 1447 AH","2026-05-08":"21 Dhul Qa'dah 1447 AH","2026-05-09":"22 Dhul Qa'dah 1447 AH","2026-05-10":"23 Dhul Qa'dah 1447 AH","2026-05-11":"24 Dhul Qa'dah 1447 AH","2026-05-12":"25 Dhul Qa'dah 1447 AH","2026-05-13":"26 Dhul Qa'dah 1447 AH","2026-05-14":"27 Dhul Qa'dah 1447 AH","2026-05-15":"28 Dhul Qa'dah 1447 AH","2026-05-16":"29 Dhul Qa'dah 1447 AH","2026-05-17":"30 Dhul Qa'dah 1447 AH","2026-05-18":"1 Dhul Hijjah 1447 AH","2026-05-19":"2 Dhul Hijjah 1447 AH","2026-05-20":"3 Dhul Hijjah 1447 AH","2026-05-21":"4 Dhul Hijjah 1447 AH","2026-05-22":"5 Dhul Hijjah 1447 AH","2026-05-23":"6 Dhul Hijjah 1447 AH","2026-05-24":"7 Dhul Hijjah 1447 AH","2026-05-25":"8 Dhul Hijjah 1447 AH","2026-05-26":"9 Dhul Hijjah 1447 AH","2026-05-27":"10 Dhul Hijjah 1447 AH","2026-05-28":"11 Dhul Hijjah 1447 AH","2026-05-29":"12 Dhul Hijjah 1447 AH","2026-05-30":"13 Dhul Hijjah 1447 AH","2026-05-31":"14 Dhul Hijjah 1447 AH","2026-06-01":"15 Dhul Hijjah 1447 AH","2026-06-02":"16 Dhul Hijjah 1447 AH","2026-06-03":"17 Dhul Hijjah 1447 AH","2026-06-04":"18 Dhul Hijjah 1447 AH","2026-06-05":"19 Dhul Hijjah 1447 AH","2026-06-06":"20 Dhul Hijjah 1447 AH","2026-06-07":"21 Dhul Hijjah 1447 AH","2026-06-08":"22 Dhul Hijjah 1447 AH","2026-06-09":"23 Dhul Hijjah 1447 AH","2026-06-10":"24 Dhul Hijjah 1447 AH","2026-06-11":"25 Dhul Hijjah 1447 AH","2026-06-12":"26 Dhul Hijjah 1447 AH","2026-06-13":"27 Dhul Hijjah 1447 AH","2026-06-14":"28 Dhul Hijjah 1447 AH","2026-06-15":"29 Dhul Hijjah 1447 AH","2026-06-16":"1 Muharram 1448 AH","2026-06-17":"2 Muharram 1448 AH","2026-06-18":"3 Muharram 1448 AH","2026-06-19":"4 Muharram 1448 AH","2026-06-20":"5 Muharram 1448 AH","2026-06-21":"6 Muharram 1448 AH","2026-06-22":"7 Muharram 1448 AH","2026-06-23":"8 Muharram 1448 AH","2026-06-24":"9 Muharram 1448 AH","2026-06-25":"10 Muharram 1448 AH","2026-06-26":"11 Muharram 1448 AH","2026-06-27":"12 Muharram 1448 AH","2026-06-28":"13 Muharram 1448 AH","2026-06-29":"14 Muharram 1448 AH","2026-06-30":"15 Muharram 1448 AH","2026-07-01":"16 Muharram 1448 AH","2026-07-02":"17 Muharram 1448 AH","2026-07-03":"18 Muharram 1448 AH","2026-07-04":"19 Muharram 1448 AH","2026-07-05":"20 Muharram 1448 AH","2026-07-06":"21 Muharram 1448 AH","2026-07-07":"22 Muharram 1448 AH","2026-07-08":"23 Muharram 1448 AH","2026-07-09":"24 Muharram 1448 AH","2026-07-10":"25 Muharram 1448 AH","2026-07-11":"26 Muharram 1448 AH","2026-07-12":"27 Muharram 1448 AH","2026-07-13":"28 Muharram 1448 AH","2026-07-14":"29 Muharram 1448 AH","2026-07-15":"1 Safar 1448 AH","2026-07-16":"2 Safar 1448 AH","2026-07-17":"3 Safar 1448 AH","2026-07-18":"4 Safar 1448 AH","2026-07-19":"5 Safar 1448 AH","2026-07-20":"6 Safar 1448 AH","2026-07-21":"7 Safar 1448 AH","2026-07-22":"8 Safar 1448 AH","2026-07-23":"9 Safar 1448 AH","2026-07-24":"10 Safar 1448 AH","2026-07-25":"11 Safar 1448 AH","2026-07-26":"12 Safar 1448 AH","2026-07-27":"13 Safar 1448 AH","2026-07-28":"14 Safar 1448 AH","2026-07-29":"15 Safar 1448 AH","2026-07-30":"16 Safar 1448 AH","2026-07-31":"17 Safar 1448 AH","2026-08-01":"18 Safar 1448 AH","2026-08-02":"19 Safar 1448 AH","2026-08-03":"20 Safar 1448 AH","2026-08-04":"21 Safar 1448 AH","2026-08-05":"22 Safar 1448 AH","2026-08-06":"23 Safar 1448 AH","2026-08-07":"24 Safar 1448 AH","2026-08-08":"25 Safar 1448 AH","2026-08-09":"26 Safar 1448 AH","2026-08-10":"27 Safar 1448 AH","2026-08-11":"28 Safar 1448 AH","2026-08-12":"29 Safar 1448 AH","2026-08-13":"30 Safar 1448 AH","2026-08-14":"1 Rabi al-Awwal 1448 AH","2026-08-15":"2 Rabi al-Awwal 1448 AH","2026-08-16":"3 Rabi al-Awwal 1448 AH","2026-08-17":"4 Rabi al-Awwal 1448 AH","2026-08-18":"5 Rabi al-Awwal 1448 AH","2026-08-19":"6 Rabi al-Awwal 1448 AH","2026-08-20":"7 Rabi al-Awwal 1448 AH","2026-08-21":"8 Rabi al-Awwal 1448 AH","2026-08-22":"9 Rabi al-Awwal 1448 AH","2026-08-23":"10 Rabi al-Awwal 1448 AH","2026-08-24":"11 Rabi al-Awwal 1448 AH","2026-08-25":"12 Rabi al-Awwal 1448 AH","2026-08-26":"13 Rabi al-Awwal 1448 AH","2026-08-27":"14 Rabi al-Awwal 1448 AH","2026-08-28":"15 Rabi al-Awwal 1448 AH","2026-08-29":"16 Rabi al-Awwal 1448 AH","2026-08-30":"17 Rabi al-Awwal 1448 AH","2026-08-31":"18 Rabi al-Awwal 1448 AH","2026-09-01":"19 Rabi al-Awwal 1448 AH","2026-09-02":"20 Rabi al-Awwal 1448 AH","2026-09-03":"21 Rabi al-Awwal 1448 AH","2026-09-04":"22 Rabi al-Awwal 1448 AH","2026-09-05":"23 Rabi al-Awwal 1448 AH","2026-09-06":"24 Rabi al-Awwal 1448 AH","2026-09-07":"25 Rabi al-Awwal 1448 AH","2026-09-08":"26 Rabi al-Awwal 1448 AH","2026-09-09":"27 Rabi al-Awwal 1448 AH","2026-09-10":"28 Rabi al-Awwal 1448 AH","2026-09-11":"29 Rabi al-Awwal 1448 AH","2026-09-12":"1 Rabi al-Thani 1448 AH","2026-09-13":"2 Rabi al-Thani 1448 AH","2026-09-14":"3 Rabi al-Thani 1448 AH","2026-09-15":"4 Rabi al-Thani 1448 AH","2026-09-16":"5 Rabi al-Thani 1448 AH","2026-09-17":"6 Rabi al-Thani 1448 AH","2026-09-18":"7 Rabi al-Thani 1448 AH","2026-09-19":"8 Rabi al-Thani 1448 AH","2026-09-20":"9 Rabi al-Thani 1448 AH","2026-09-21":"10 Rabi al-Thani 1448 AH","2026-09-22":"11 Rabi al-Thani 1448 AH","2026-09-23":"12 Rabi al-Thani 1448 AH","2026-09-24":"13 Rabi al-Thani 1448 AH","2026-09-25":"14 Rabi al-Thani 1448 AH","2026-09-26":"15 Rabi al-Thani 1448 AH","2026-09-27":"16 Rabi al-Thani 1448 AH","2026-09-28":"17 Rabi al-Thani 1448 AH","2026-09-29":"18 Rabi al-Thani 1448 AH","2026-09-30":"19 Rabi al-Thani 1448 AH","2026-10-01":"20 Rabi al-Thani 1448 AH","2026-10-02":"21 Rabi al-Thani 1448 AH","2026-10-03":"22 Rabi al-Thani 1448 AH","2026-10-04":"23 Rabi al-Thani 1448 AH","2026-10-05":"24 Rabi al-Thani 1448 AH","2026-10-06":"25 Rabi al-Thani 1448 AH","2026-10-07":"26 Rabi al-Thani 1448 AH","2026-10-08":"27 Rabi al-Thani 1448 AH","2026-10-09":"28 Rabi al-Thani 1448 AH","2026-10-10":"29 Rabi al-Thani 1448 AH","2026-10-11":"30 Rabi al-Thani 1448 AH","2026-10-12":"1 Jumada al-Awwal 1448 AH","2026-10-13":"2 Jumada al-Awwal 1448 AH","2026-10-14":"3 Jumada al-Awwal 1448 AH","2026-10-15":"4 Jumada al-Awwal 1448 AH","2026-10-16":"5 Jumada al-Awwal 1448 AH","2026-10-17":"6 Jumada al-Awwal 1448 AH","2026-10-18":"7 Jumada al-Awwal 1448 AH","2026-10-19":"8 Jumada al-Awwal 1448 AH","2026-10-20":"9 Jumada al-Awwal 1448 AH","2026-10-21":"10 Jumada al-Awwal 1448 AH","2026-10-22":"11 Jumada al-Awwal 1448 AH","2026-10-23":"12 Jumada al-Awwal 1448 AH","2026-10-24":"13 Jumada al-Awwal 1448 AH","2026-10-25":"14 Jumada al-Awwal 1448 AH","2026-10-26":"15 Jumada al-Awwal 1448 AH","2026-10-27":"16 Jumada al-Awwal 1448 AH","2026-10-28":"17 Jumada al-Awwal 1448 AH","2026-10-29":"18 Jumada al-Awwal 1448 AH","2026-10-30":"19 Jumada al-Awwal 1448 AH","2026-10-31":"20 Jumada al-Awwal 1448 AH","2026-11-01":"21 Jumada al-Awwal 1448 AH","2026-11-02":"22 Jumada al-Awwal 1448 AH","2026-11-03":"23 Jumada al-Awwal 1448 AH","2026-11-04":"24 Jumada al-Awwal 1448 AH","2026-11-05":"25 Jumada al-Awwal 1448 AH","2026-11-06":"26 Jumada al-Awwal 1448 AH","2026-11-07":"27 Jumada al-Awwal 1448 AH","2026-11-08":"28 Jumada al-Awwal 1448 AH","2026-11-09":"29 Jumada al-Awwal 1448 AH","2026-11-10":"30 Jumada al-Awwal 1448 AH","2026-11-11":"1 Jumada al-Thani 1448 AH","2026-11-12":"2 Jumada al-Thani 1448 AH","2026-11-13":"3 Jumada al-Thani 1448 AH","2026-11-14":"4 Jumada al-Thani 1448 AH","2026-11-15":"5 Jumada al-Thani 1448 AH","2026-11-16":"6 Jumada al-Thani 1448 AH","2026-11-17":"7 Jumada al-Thani 1448 AH","2026-11-18":"8 Jumada al-Thani 1448 AH","2026-11-19":"9 Jumada al-Thani 1448 AH","2026-11-20":"10 Jumada al-Thani 1448 AH","2026-11-21":"11 Jumada al-Thani 1448 AH","2026-11-22":"12 Jumada al-Thani 1448 AH","2026-11-23":"13 Jumada al-Thani 1448 AH","2026-11-24":"14 Jumada al-Thani 1448 AH","2026-11-25":"15 Jumada al-Thani 1448 AH","2026-11-26":"16 Jumada al-Thani 1448 AH","2026-11-27":"17 Jumada al-Thani 1448 AH","2026-11-28":"18 Jumada al-Thani 1448 AH","2026-11-29":"19 Jumada al-Thani 1448 AH","2026-11-30":"20 Jumada al-Thani 1448 AH","2026-12-01":"21 Jumada al-Thani 1448 AH","2026-12-02":"22 Jumada al-Thani 1448 AH","2026-12-03":"23 Jumada al-Thani 1448 AH","2026-12-04":"24 Jumada al-Thani 1448 AH","2026-12-05":"25 Jumada al-Thani 1448 AH","2026-12-06":"26 Jumada al-Thani 1448 AH","2026-12-07":"27 Jumada al-Thani 1448 AH","2026-12-08":"28 Jumada al-Thani 1448 AH","2026-12-09":"29 Jumada al-Thani 1448 AH","2026-12-10":"1 Rajab 1448 AH","2026-12-11":"2 Rajab 1448 AH","2026-12-12":"3 Rajab 1448 AH","2026-12-13":"4 Rajab 1448 AH","2026-12-14":"5 Rajab 1448 AH","2026-12-15":"6 Rajab 1448 AH","2026-12-16":"7 Rajab 1448 AH","2026-12-17":"8 Rajab 1448 AH","2026-12-18":"9 Rajab 1448 AH","2026-12-19":"10 Rajab 1448 AH","2026-12-20":"11 Rajab 1448 AH","2026-12-21":"12 Rajab 1448 AH","2026-12-22":"13 Rajab 1448 AH","2026-12-23":"14 Rajab 1448 AH","2026-12-24":"15 Rajab 1448 AH","2026-12-25":"16 Rajab 1448 AH","2026-12-26":"17 Rajab 1448 AH","2026-12-27":"18 Rajab 1448 AH","2026-12-28":"19 Rajab 1448 AH","2026-12-29":"20 Rajab 1448 AH","2026-12-30":"21 Rajab 1448 AH","2026-12-31":"22 Rajab 1448 AH"};
-
-// fallback copy, used only if foyer-content.json can't be fetched (e.g. the
-// mosque's Wi-Fi is briefly down at the nightly reload) — kept in sync with
-// that file at build time so the screen never goes blank.
-const FALLBACK_CONTENT = {"_instructions":"Edit the text values below directly on GitHub (pencil icon on this file → edit → commit). Don't touch the field names (the part before each colon), only the text after it. The foyer screens re-fetch this file once a day (2am) plus on every full reload, so a change here reaches both foyer TVs within a day without touching the TVs themselves. Keep this a valid JSON file — if GitHub shows a red warning when you commit, something's broken (usually a missing comma or a stray quote mark) and the screens will fall back to the last-known-good content instead of using your edit.","newBuild":{"eyebrow":"The New Build","heading":"Building a lasting home for Taiyabah Masjid.","tagline":"A purpose-built centre for prayer, learning and community life — designed with the community, funded by the community.","phaseTag":"Current appeal · Phase 3.3","phaseTitle":"Internal fixtures & fittings","phaseDescription":"Help make the masjid ready for salah, Qur'an and remembrance for generations to come.","needs":["Tiling","Carpets","Heating","Lighting","Electrical","Decor"],"timeline":[{"date":"2018 – Ramadhan 2019","title":"Phase 1","status":"done"},{"date":"December 2021","title":"Phase 2","status":"done"},{"date":"2022","title":"Community fundraiser","status":"done"},{"date":"Now · Phase 3.3","title":"Internal fixtures & fittings","status":"active"},{"date":"What's next","title":"Full facilities complete","status":"upcoming"}],"give":{"scanLabel":"Scan to give any amount","otherAmountUrl":"https://www.taiyabahmasjid.com/product/dome-donation/","giftAidNote":"If you're a UK taxpayer, please add Gift Aid — it adds 25p to every £1 at no cost to you.","bankHeading":"Or transfer directly","bank":{"accountName":"Bolton Central Islamic Society (BCIS)","bankName":"HSBC","sortCode":"40-04-15","accountNumber":"02320258"},"note":"Bolton Central Islamic Society · Registered charity 1041569."}},"occasions":{"ramadan":{"enabled":true,"title":"Ramadan Mubarak","arabic":"رَمَضَان مُبَارَك","message":"May this blessed month bring peace, patience and closeness to Allah for you and your family."},"eidFitr":{"enabled":true,"title":"Eid Mubarak","arabic":"عِيد مُبَارَك","message":"Taqabbal Allahu minna wa minkum — may Allah accept it from us and from you.","durationDays":3},"eidAdha":{"enabled":true,"title":"Eid Mubarak","arabic":"عِيد مُبَارَك","message":"Taqabbal Allahu minna wa minkum — may Allah accept it from us and from you.","durationDays":4}}};
-
-function parseHijri(str){
-  // "5 Rabi al-Awwal 1448 AH" -> {day:5, month:"Rabi al-Awwal", year:1448}
-  const m = str.match(/^(\d+)\s+(.+?)\s+(\d+)\s+AH$/);
-  if(!m) return null;
-  return { day: parseInt(m[1],10), month: m[2], year: parseInt(m[3],10) };
-}
 function pad(n){ return String(n).padStart(2,"0"); }
 function dateKey(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
-function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+function withTime(base, hm){
+  const [h,m] = hm.split(":").map(Number);
+  const d = new Date(base);
+  d.setHours(h,m,0,0);
+  return d;
+}
+function hm12(hm){
+  let [h,m] = hm.split(":").map(Number);
+  const ap = h >= 12 ? "pm" : "am";
+  h = h % 12; if(h === 0) h = 12;
+  return h+":"+pad(m)+ap;
+}
+function dayRecord(d){ return DATA.days[dateKey(d)]; }
 
-function activeOccasion(content, now){
-  const occ = content.occasions || {};
-  // walk backwards a few days so a multi-day Eid window is caught on day 2/3 too
-  for(let back = 0; back <= 4; back++){
-    const d = addDays(now, -back);
-    const h = HIJRI[dateKey(d)];
-    if(!h) continue;
-    const p = parseHijri(h);
-    if(!p) continue;
-    if(occ.ramadan && occ.ramadan.enabled !== false && p.month === "Ramadan" && back === 0){
-      return occ.ramadan;
-    }
-    if(occ.eidFitr && occ.eidFitr.enabled !== false && p.day === 1 && p.month === "Shawwal"){
-      const dur = occ.eidFitr.durationDays || 1;
-      if(back < dur) return occ.eidFitr;
-    }
-    if(occ.eidAdha && occ.eidAdha.enabled !== false && p.day === 10 && p.month === "Dhul Hijjah"){
-      const dur = occ.eidAdha.durationDays || 1;
-      if(back < dur) return occ.eidAdha;
-    }
-  }
-  return null;
+function fmtCountdown(ms){
+  if(ms < 0) ms = 0;
+  const totalSec = Math.floor(ms/1000);
+  const h = Math.floor(totalSec/3600);
+  const m = Math.floor((totalSec%3600)/60);
+  const s = totalSec%60;
+  if(h > 0) return h+"h "+pad(m)+"m "+pad(s)+"s";
+  return m+"m "+pad(s)+"s";
 }
 
-function renderQR(url){
-  const box = document.getElementById("qr-box");
-  try{
-    const qr = qrcode(0, "M");
-    qr.addData(url);
-    qr.make();
-    const count = qr.getModuleCount();
-    const margin = 2;
-    const size = count + margin*2;
-    let rects = "";
-    for(let r=0;r<count;r++){
-      for(let c=0;c<count;c++){
-        if(qr.isDark(r,c)) rects += `<rect x="${c+margin}" y="${r+margin}" width="1" height="1"/>`;
-      }
-    }
-    box.innerHTML = `<svg viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges">`+
-      `<rect width="${size}" height="${size}" fill="#F5F1E8"/><g fill="#261B22">${rects}</g></svg>`;
-  } catch(e){ box.innerHTML = ""; }
-}
+const els = {
+  hm: document.getElementById("hm"),
+  ss: document.getElementById("ss"),
+  greg: document.getElementById("greg-date"),
+  hijri: document.getElementById("hijri-date"),
+  live: document.getElementById("live"),
+  fallback: document.getElementById("fallback"),
+  grid: document.getElementById("grid"),
+  nextLabel: document.getElementById("next-label"),
+  nextEn: document.getElementById("next-en"),
+  nextAr: document.getElementById("next-ar"),
+  nextTime: document.getElementById("next-time"),
+  nextCountdown: document.getElementById("next-countdown"),
+  sourceLine: document.getElementById("source-line"),
+};
+els.sourceLine.textContent = DATA.source || "";
 
-function renderNewBuild(nb){
-  document.getElementById("nb-eyebrow").textContent = nb.eyebrow || "The New Build";
-  document.getElementById("nb-heading").textContent = nb.heading || "";
-  document.getElementById("nb-tagline").textContent = nb.tagline || "";
-  document.getElementById("phase-tag").textContent = nb.phaseTag || "";
-  document.getElementById("phase-title").textContent = nb.phaseTitle || "";
-  document.getElementById("phase-desc").textContent = nb.phaseDescription || "";
-
-  const needsEl = document.getElementById("needs");
-  needsEl.innerHTML = "";
-  (nb.needs || []).forEach(n => {
-    const s = document.createElement("span"); s.textContent = n; needsEl.appendChild(s);
-  });
-
-  const tl = document.getElementById("timeline");
-  tl.innerHTML = "";
-  (nb.timeline || []).forEach(item => {
+function renderList(rec, now, isFri, activeKey, nextKey){
+  els.grid.innerHTML = "";
+  PRAYERS.forEach(p => {
     const row = document.createElement("div");
-    row.className = "t-row " + (item.status || "");
-    row.innerHTML = `<span class="t-dot"></span><span class="t-date tnum">${item.date}</span><span class="t-title">${item.title}</span>`;
-    tl.appendChild(row);
-  });
+    row.className = "row-item";
+    if(p.key === activeKey) row.classList.add("active");
+    if(p.key === nextKey) row.classList.add("next");
 
-  const give = nb.give || {};
-  document.getElementById("qr-label").textContent = give.scanLabel || "Scan to give";
-  document.getElementById("qr-sub").textContent = give.giftAidNote || "";
-  document.getElementById("bank-heading").textContent = give.bankHeading || "Or transfer directly";
-  const bank = give.bank || {};
-  const bankRows = document.getElementById("bank-rows");
-  bankRows.innerHTML = "";
-  [["Account name", bank.accountName], ["Bank", bank.bankName],
-   ["Sort code", bank.sortCode], ["Account number", bank.accountNumber]].forEach(([k,v]) => {
-    if(!v) return;
-    const row = document.createElement("div");
-    row.className = "bank-row";
-    row.innerHTML = `<span class="bank-k">${k}</span><span class="bank-v tnum">${v}</span>`;
-    bankRows.appendChild(row);
-  });
-  document.getElementById("give-note").textContent = give.note || "";
+    const showJumuah = isFri && p.key === "zuhr" && rec.jummah;
+    const enLabel = showJumuah ? "Jumuʿah" : p.en;
+    const arLabel = showJumuah ? "الجمعة" : p.ar;
 
-  if(give.otherAmountUrl) renderQR(give.otherAmountUrl);
+    let timesHtml = "";
+    if(p.key === "sunrise"){
+      timesHtml = `<div class="time-col"><span class="lab">Begins</span><span class="begins-v tnum">${hm12(rec.begins.sunrise)}</span></div>`;
+    } else if(showJumuah){
+      timesHtml =
+        `<div class="time-col"><span class="lab">1st Jumuʿah</span><span class="jamaat-v tnum">${hm12(rec.jummah.first)}</span></div>` +
+        (rec.jummah.second ? `<div class="time-col"><span class="lab">2nd Jumuʿah</span><span class="jamaat-v tnum">${hm12(rec.jummah.second)}</span></div>` : "");
+    } else {
+      timesHtml =
+        `<div class="time-col"><span class="lab">Begins</span><span class="begins-v tnum">${hm12(rec.begins[p.key])}</span></div>` +
+        `<div class="time-col"><span class="lab">Jamāʿah</span><span class="jamaat-v tnum">${hm12(rec.jamaat[p.key])}</span></div>`;
+    }
+
+    row.innerHTML =
+      `<div class="name-block"><span class="en">${enLabel}</span><span class="ar arabic">${arLabel}</span></div>` +
+      `<div class="times-block">${timesHtml}</div>`;
+    els.grid.appendChild(row);
+  });
 }
 
-function renderOccasion(o){
-  document.getElementById("o-title").textContent = o.title || "";
-  document.getElementById("o-arabic").textContent = o.arabic || "";
-  document.getElementById("o-message").textContent = o.message || "";
-}
+function tick(){
+  const stallCheck = Date.now();
+  if(stallCheck - lastTickAt > 15000){ location.reload(); return; }
+  lastTickAt = stallCheck;
 
-let CONTENT = FALLBACK_CONTENT;
-
-function applyContent(){
   const now = new Date();
-  const occ = activeOccasion(CONTENT, now);
-  const nbWrap = document.getElementById("nb-wrap");
-  const occEl = document.getElementById("occasion");
-  if(occ){
-    renderOccasion(occ);
-    occEl.classList.add("show");
-    nbWrap.classList.add("hide");
-  } else {
-    renderNewBuild(CONTENT.newBuild || {});
-    occEl.classList.remove("show");
-    nbWrap.classList.remove("hide");
+
+  els.hm.textContent = pad(now.getHours())+":"+pad(now.getMinutes());
+  els.ss.textContent = pad(now.getSeconds());
+  els.greg.textContent = now.toLocaleDateString("en-GB", {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+
+  const rec = dayRecord(now);
+  if(!rec){
+    els.live.hidden = true;
+    els.fallback.hidden = false;
+    els.hijri.textContent = "";
+    return;
   }
+  els.fallback.hidden = true;
+  els.live.hidden = false;
+  els.hijri.textContent = rec.hijri || "";
+
+  const isFri = now.getDay() === 5;
+
+  const b = rec.begins;
+  let activeKey = null;
+  const bounds = [
+    ["fajr", withTime(now,b.fajr), withTime(now,b.sunrise)],
+    ["zuhr", withTime(now,b.zuhr), withTime(now,b.asr)],
+    ["asr", withTime(now,b.asr), withTime(now,b.maghrib)],
+    ["maghrib", withTime(now,b.maghrib), withTime(now,b.isha)],
+  ];
+  for(const [key,start,end] of bounds){
+    if(now >= start && now < end){ activeKey = key; break; }
+  }
+  if(!activeKey && now >= withTime(now,b.isha)) activeKey = "isha";
+  if(!activeKey){
+    const yest = new Date(now); yest.setDate(yest.getDate()-1);
+    const yrec = dayRecord(yest);
+    if(yrec && now < withTime(now, b.fajr)) activeKey = "isha";
+  }
+
+  const slots = [];
+  JAMAAT_ORDER.forEach(key => {
+    if(key === "zuhr" && isFri && rec.jummah){
+      slots.push({key:"zuhr", en:"Jumuʿah", ar:"الجمعة", time: withTime(now, rec.jummah.first)});
+    } else {
+      const p = PRAYERS.find(pp => pp.key === key);
+      slots.push({key, en:p.en, ar:p.ar, time: withTime(now, rec.jamaat[key])});
+    }
+  });
+  let next = slots.find(s => s.time > now);
+  if(!next){
+    const tmr = new Date(now); tmr.setDate(tmr.getDate()+1);
+    const trec = dayRecord(tmr);
+    if(trec){
+      next = {key:"fajr", en:"Fajr", ar:"الفجر", time: withTime(tmr, trec.jamaat.fajr)};
+    }
+  }
+
+  if(next){
+    els.nextEn.textContent = next.en;
+    els.nextAr.textContent = next.ar;
+    let h = next.time.getHours(), m = next.time.getMinutes();
+    const ap = h >= 12 ? "pm" : "am"; h = h % 12; if(h === 0) h = 12;
+    els.nextTime.textContent = h+":"+pad(m)+ap;
+    els.nextCountdown.textContent = fmtCountdown(next.time - now);
+  } else {
+    els.nextEn.textContent = "—";
+    els.nextAr.textContent = "";
+    els.nextTime.textContent = "—";
+    els.nextCountdown.textContent = "—";
+  }
+
+  const nextIsToday = next && next.time.toDateString() === now.toDateString();
+  renderList(rec, now, isFri, activeKey, nextIsToday ? next.key : null);
 }
 
-fetch("foyer-content.json", {cache:"no-store"})
-  .then(r => r.ok ? r.json() : Promise.reject())
-  .then(json => { CONTENT = json; applyContent(); })
-  .catch(() => { CONTENT = FALLBACK_CONTENT; applyContent(); });
-
-applyContent();
-setInterval(applyContent, 60000); // re-check the calendar every minute (occasion boundaries only, not per-second)
-
-// ---- unattended-signage reliability net (same pattern as the Salah screen) ----
-let lastAliveAt = Date.now();
-setInterval(() => { lastAliveAt = Date.now(); }, 1000);
+let lastTickAt = Date.now();
+tick();
+setInterval(tick, 1000);
 
 function msUntilNext(hh, mm){
   const now = new Date();
@@ -2662,7 +338,7 @@ function msUntilNext(hh, mm){
 }
 setTimeout(() => location.reload(), msUntilNext(2, 0));
 document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState === "visible" && Date.now() - lastAliveAt > 15000){
+  if(document.visibilityState === "visible" && Date.now() - lastTickAt > 15000){
     location.reload();
   }
 });

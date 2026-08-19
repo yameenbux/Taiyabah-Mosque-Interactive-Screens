@@ -1,31 +1,37 @@
 # Taiyabah Masjid — TV signage setup
 
-Three files, one small job on GitHub, then a bookmark on each TV.
+Five files, one small job on GitHub, then a bookmark on each TV.
 
 ## 1. Put the files on GitHub Pages
 
-Add these three files to a repo that has GitHub Pages enabled (either a new
-`signage` folder in `Taiyabah-Mosque-Website-Rebrand`, or its own small repo
-— doesn't matter which, just keep `foyer.html` and `foyer-content.json` in
-the **same folder**, since `foyer.html` fetches `foyer-content.json` by a
-relative path):
+Add these files to a repo that has GitHub Pages enabled — keep `foyer.html`,
+`foyer-vertical.html` and `foyer-content.json` all in the **same folder**,
+since both foyer pages fetch `foyer-content.json` by a relative path:
 
 ```
-timetable.html        → the Salah times screensaver
-foyer.html             → the foyer display (new build appeal / Eid & Ramadan greetings)
-foyer-content.json     → editable text for foyer.html — see section 3
+timetable.html            → Salah times screensaver — landscape TVs
+timetable-vertical.html    → Salah times screensaver — portrait TVs
+foyer.html                  → foyer display — landscape TVs
+foyer-vertical.html          → foyer display — portrait TVs
+foyer-content.json            → editable text for both foyer pages — see section 3
 ```
 
 Once pushed, they'll be reachable at something like:
 `https://yameenbux.github.io/<repo-name>/timetable.html`
 `https://yameenbux.github.io/<repo-name>/foyer.html`
+(and the same with `-vertical` for the portrait screens)
 
 ## 2. Point each TV at the right page
 
-- **Prayer hall (2 TVs) + downstairs (2 TVs):** open `timetable.html`'s URL,
-  go fullscreen (double-click the screen, or press F if a keyboard's
-  plugged in), bookmark it or set it as the browser's home page.
-- **Foyer (2 TVs):** same, but with `foyer.html`'s URL.
+- **Prayer hall (2 TVs) + downstairs (2 TVs), landscape orientation:** open
+  `timetable.html`'s URL, go fullscreen (double-click the screen, or press F
+  if a keyboard's plugged in), bookmark it or set it as the browser's home
+  page.
+- **Any of those mounted in portrait instead:** use `timetable-vertical.html`
+  on that TV instead of `timetable.html` — same content, laid out as a
+  vertical list rather than a row of cards.
+- **Foyer (2 TVs):** `foyer.html` if landscape, `foyer-vertical.html` if
+  portrait.
 
 Do this once per TV. See the reliability checklist below — there are a
 couple of settings worth changing in each TV's own menu at the same time.
@@ -33,9 +39,9 @@ couple of settings worth changing in each TV's own menu at the same time.
 ## 3. Editing the foyer content yourself
 
 Open `foyer-content.json` on GitHub (the pencil/edit icon), change the text
-after any colon, leave the field names alone, and commit. Every foyer TV
-picks up the change within 24 hours on its own (nightly 2am refresh) — you
-don't need to touch the TVs.
+after any colon, leave the field names alone, and commit. Every foyer TV —
+landscape or portrait, both read the same file — picks up the change within
+24 hours on its own (nightly 2am refresh) — you don't need to touch the TVs.
 
 - `newBuild` — the everyday default: appeal status, phase, timeline, the
   give/donate details. All sourced from your website's New Build page.
@@ -75,16 +81,16 @@ nothing running in a browser tab can survive the TV itself losing power. So:
   and check the time looks right, not just that something's on screen — a
   frozen clock still looks fine from across a room.
 
-## 5. Next year's Salah timetable (timetable.html only)
+## 5. Next year's Salah timetable
 
-`timetable.html` has the whole year's timetable embedded directly in the
-file (for maximum reliability — it needs zero network once loaded, unlike
-the foyer page). When the masjid publishes next year's times, regenerate
-`timetable-2026.json`-equivalent for the new year the same way your app
-does, then ask me to rebuild `timetable.html` with it — that one does need
-a rebuild, not just a JSON edit, since it also needs the file's occasion
-calendar (Ramadan/Eid detection on the foyer page) to keep working with
-real dates.
+`timetable.html` and `timetable-vertical.html` both have the whole year's
+timetable embedded directly in the file (for maximum reliability — zero
+network needed once loaded, unlike the foyer pages). When the masjid
+publishes next year's times, regenerate `timetable-2026.json`-equivalent
+for the new year the same way your app does, then ask me to rebuild all
+four files with it — the foyer pages' Ramadan/Eid date detection reads the
+same data, so all four need refreshing together, not just the two
+timetable ones.
 
 ## 6. Custom domain, later
 
