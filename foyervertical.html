@@ -64,71 +64,89 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
   50%{transform:translate(-4px,5px)} 75%{transform:translate(-5px,-4px)}
   100%{transform:translate(0,0)}}
 .content{display:flex;flex-direction:column;align-items:center;
-  gap:clamp(16px,2.4vh,28px);transform-origin:center center;}
+  gap:clamp(20px,3vh,40px);transform-origin:center center;}
 
-.brand{display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1.4vh,16px);opacity:.95}
-.brand img{height:clamp(52px,6vw,88px);width:auto;display:block}
+.brand{display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1.6vh,18px);opacity:.95}
+.brand img{height:clamp(52px,8vw,120px);width:auto;display:block}
 .brand-text{text-align:center;line-height:1.3}
-.brand-text .name{font-size:clamp(15px,2.1vw,20px);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
-.brand-text .sub{font-size:clamp(11px,1.6vw,15px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85;margin-top:.25em}
+.brand-text .name{font-size:clamp(16px,2.8vw,28px);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.brand-text .sub{font-size:clamp(12px,2vw,20px);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright);opacity:.85;margin-top:.25em}
 
 /* ---- new build layout: single column ---- */
-.nb-wrap{display:flex;flex-direction:column;gap:clamp(22px,3vh,36px);width:100%;max-width:720px;text-align:left}
+.nb-wrap{display:flex;flex-direction:column;gap:clamp(24px,3.6vh,44px);width:100%;max-width:840px;text-align:left}
 .nb-head{text-align:center}
-.nb-eyebrow{font-size:clamp(11px,2.4vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
-.nb-heading{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(24px,6vw,34px);line-height:1.18;margin-top:.35em}
-.nb-tagline{font-size:clamp(13px,2.8vw,16px);color:var(--paper);opacity:.85;margin-top:.6em;line-height:1.55}
+.nb-eyebrow{font-size:clamp(12px,2.8vw,18px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
+.nb-heading{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(26px,7.2vw,44px);line-height:1.18;margin-top:.35em}
+.nb-tagline{font-size:clamp(14px,3.3vw,20px);color:var(--paper);opacity:.85;margin-top:.6em;line-height:1.55}
 
+/* ---- phase card: bordered plaque with a header bar, matching the
+   Salah table's .ptable-head language ---- */
 .phase-card{
-  background:rgba(252,250,243,.06);border:1px solid rgba(198,162,76,.3);border-radius:18px;
-  padding:clamp(18px,2.6vh,26px) clamp(18px,4.5vw,28px);
+  border:1px solid rgba(198,162,76,.4);border-radius:18px;overflow:hidden;
+  background:rgba(252,250,243,.045);
 }
-.phase-tag{display:inline-block;font-size:clamp(10px,2.2vw,12px);letter-spacing:.1em;text-transform:uppercase;
-  color:var(--brand-900);background:var(--gold-bright);border-radius:999px;padding:.35em 1em;font-weight:600}
-.phase-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(19px,4.6vw,25px);margin-top:.55em}
-.phase-desc{font-size:clamp(13px,2.8vw,15px);opacity:.85;margin-top:.4em;line-height:1.55}
-.needs{display:flex;flex-wrap:wrap;gap:8px;margin-top:clamp(12px,1.8vh,18px)}
-.needs span{font-size:clamp(11px,2.4vw,13px);border:1px solid rgba(252,250,243,.25);border-radius:999px;padding:.4em 1.1em;opacity:.85}
+.phase-card-head{padding:clamp(10px,1.6vh,16px) clamp(18px,4.5vw,28px);
+  background:rgba(198,162,76,.1);border-bottom:1px solid rgba(198,162,76,.32)}
+.phase-tag{font-size:clamp(10px,2.4vw,15px);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright);font-weight:600}
+.phase-card-body{padding:clamp(18px,2.8vh,28px) clamp(18px,4.5vw,28px)}
+.phase-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(20px,5vw,30px)}
+.phase-desc{font-size:clamp(14px,3.3vw,19px);opacity:.85;margin-top:.4em;line-height:1.55}
+.needs{display:flex;flex-wrap:wrap;gap:8px;margin-top:clamp(12px,1.8vh,20px)}
+.needs span{font-size:clamp(12px,2.8vw,16px);border:1px solid rgba(252,250,243,.25);border-radius:999px;padding:.4em 1.1em;opacity:.85}
 
-.timeline{display:flex;flex-direction:column;gap:clamp(12px,1.8vh,18px)}
-.t-row{display:flex;align-items:baseline;gap:.7em;font-size:clamp(13px,2.8vw,15px)}
-.t-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:rgba(245,241,232,.4)}
+.timeline{display:flex;flex-direction:column;gap:clamp(13px,2vh,20px)}
+.t-row{display:flex;align-items:baseline;gap:.7em;font-size:clamp(14px,3.3vw,19px)}
+.t-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;background:rgba(245,241,232,.4)}
 .t-row.done .t-dot{background:var(--good)}
 .t-row.active .t-dot{background:var(--gold-bright);box-shadow:0 0 0 3px rgba(198,162,76,.25)}
 .t-date{color:var(--gold-bright);opacity:.9;min-width:12ch}
 .t-title{font-weight:600}
 .t-row.upcoming{opacity:.65}
 
-/* ---- give card ---- */
+/* ---- give card: same bordered + header-bar treatment as .phase-card,
+   bank details as a proper bordered mini-table instead of a plain list ---- */
 .give-card{
-  background:linear-gradient(180deg, rgba(252,250,243,.09), rgba(252,250,243,.04));
-  border:1px solid rgba(198,162,76,.35);border-radius:22px;
-  padding:clamp(22px,3vh,32px) clamp(20px,4.5vw,32px);
-  display:flex;flex-direction:column;gap:clamp(16px,2.2vh,22px);
+  border:1px solid rgba(198,162,76,.4);border-radius:22px;overflow:hidden;
+  background:rgba(252,250,243,.045);
+  display:flex;flex-direction:column;
 }
-.give-head{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(17px,3.6vw,21px)}
-.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:clamp(14px,2vh,18px);text-align:center}
-.qr-box{width:clamp(120px,32vw,180px);height:clamp(120px,32vw,180px);border-radius:14px;overflow:hidden;flex:0 0 auto;
+.give-head-bar{padding:clamp(10px,1.6vh,16px) clamp(20px,4.5vw,32px);
+  background:rgba(198,162,76,.1);border-bottom:1px solid rgba(198,162,76,.32);
+  font-size:clamp(12px,2.6vw,17px);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-bright)}
+.give-body{padding:clamp(22px,3.2vh,36px) clamp(20px,4.5vw,32px);display:flex;flex-direction:column;gap:clamp(18px,2.6vh,26px)}
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:clamp(16px,2.2vh,22px);text-align:center}
+.qr-box{width:clamp(130px,34vw,230px);height:clamp(130px,34vw,230px);border-radius:14px;overflow:hidden;flex:0 0 auto;
   box-shadow:0 10px 24px -12px rgba(0,0,0,.5)}
 .qr-box svg{width:100%;height:100%;display:block}
-.qr-label{font-size:clamp(14px,3vw,17px);font-weight:600}
-.qr-sub{font-size:clamp(12px,2.6vw,14px);color:rgba(245,241,232,.7);margin-top:.4em;line-height:1.5}
+.qr-label{font-size:clamp(15px,3.6vw,21px);font-weight:600}
+.qr-sub{font-size:clamp(13px,3vw,17px);color:rgba(245,241,232,.7);margin-top:.4em;line-height:1.5}
 .give-divider{height:1px;background:rgba(198,162,76,.3)}
-.bank-rows{display:flex;flex-direction:column;gap:clamp(9px,1.4vh,13px)}
-.bank-row{display:flex;justify-content:space-between;gap:1em;font-size:clamp(12px,2.7vw,15px)}
+.bank-heading{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(15px,3.6vw,21px)}
+.bank-table{border:1px solid rgba(198,162,76,.3);border-radius:12px;overflow:hidden;margin-top:.3em}
+.bank-row{display:flex;justify-content:space-between;gap:1em;
+  padding:clamp(9px,1.4vh,14px) clamp(14px,3.2vw,20px);font-size:clamp(13px,3vw,17px)}
+.bank-row:nth-child(even){background:rgba(252,250,243,.03)}
+.bank-row+.bank-row{border-top:1px solid rgba(252,250,243,.09)}
 .bank-k{color:rgba(245,241,232,.62);font-weight:600;letter-spacing:.02em}
 .bank-v{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
-.give-note{font-size:clamp(10px,2.2vw,12px);opacity:.65;line-height:1.5;margin-top:.3em}
+.give-note{font-size:clamp(11px,2.4vw,14px);opacity:.65;line-height:1.5;margin-top:.3em}
 
-/* ---- occasion overlay ---- */
-.occasion{display:none;flex-direction:column;align-items:center;text-align:center;gap:clamp(12px,1.8vh,20px)}
+/* ---- occasion overlay: a bordered plaque like the New Build cards, with
+   generous padding so a short greeting still reads as a deliberate,
+   spacious design rather than small text floating in a lot of empty
+   screen ---- */
+.occasion{display:none;flex-direction:column;align-items:center;text-align:center;gap:clamp(20px,3.4vh,40px);
+  border:1px solid rgba(198,162,76,.4);border-radius:26px;
+  background:rgba(252,250,243,.045);
+  width:100%;max-width:900px;
+  padding:clamp(40px,9vh,140px) clamp(28px,7vw,64px);}
 .occasion.show{display:flex}
-.occasion .o-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(40px,11vw,76px);line-height:1.05}
-.occasion .o-arabic{font-family:"Amiri",serif;color:var(--gold-bright);font-size:clamp(24px,6.6vw,42px)}
-.occasion .o-message{font-size:clamp(13px,3vw,17px);opacity:.9;max-width:80vw;line-height:1.6;margin-top:.4em}
+.occasion .o-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(48px,16vw,150px);line-height:1.05}
+.occasion .o-arabic{font-family:"Amiri",serif;color:var(--gold-bright);font-size:clamp(28px,9.5vw,80px)}
+.occasion .o-message{font-size:clamp(16px,4.2vw,28px);opacity:.9;max-width:34ch;line-height:1.6;margin-top:.4em}
 .nb-wrap.hide{display:none}
 
-.footer{font-size:clamp(8px,1.9vw,11px);color:var(--paper);opacity:.55;letter-spacing:.02em;
+.footer{font-size:clamp(9px,2.2vw,14px);color:var(--paper);opacity:.55;letter-spacing:.02em;
   display:flex;flex-direction:column;align-items:center;gap:.3em}
 [hidden]{display:none !important}
 </style>
@@ -154,27 +172,31 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
     </div>
 
     <div class="phase-card">
-      <span class="phase-tag" id="phase-tag">—</span>
-      <div class="phase-title" id="phase-title"></div>
-      <div class="phase-desc" id="phase-desc"></div>
-      <div class="needs" id="needs"></div>
+      <div class="phase-card-head"><span class="phase-tag" id="phase-tag">—</span></div>
+      <div class="phase-card-body">
+        <div class="phase-title" id="phase-title"></div>
+        <div class="phase-desc" id="phase-desc"></div>
+        <div class="needs" id="needs"></div>
+      </div>
     </div>
 
     <div class="timeline" id="timeline"></div>
 
     <div class="give-card">
-      <div class="give-head">Give online</div>
-      <div class="qr-wrap">
-        <div class="qr-box" id="qr-box"></div>
-        <div>
-          <div class="qr-label" id="qr-label">Scan to give any amount</div>
-          <div class="qr-sub" id="qr-sub"></div>
+      <div class="give-head-bar">Give online</div>
+      <div class="give-body">
+        <div class="qr-wrap">
+          <div class="qr-box" id="qr-box"></div>
+          <div>
+            <div class="qr-label" id="qr-label">Scan to give any amount</div>
+            <div class="qr-sub" id="qr-sub"></div>
+          </div>
         </div>
+        <div class="give-divider"></div>
+        <div class="bank-heading" id="bank-heading">Or transfer directly</div>
+        <div class="bank-table" id="bank-rows"></div>
+        <div class="give-note" id="give-note"></div>
       </div>
-      <div class="give-divider"></div>
-      <div class="give-head" id="bank-heading" style="font-size:clamp(14px,3vw,17px)">Or transfer directly</div>
-      <div class="bank-rows" id="bank-rows"></div>
-      <div class="give-note" id="give-note"></div>
     </div>
   </div>
 
