@@ -53,8 +53,6 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
     radial-gradient(130% 55% at 50% -8%, rgba(198,162,76,.16), transparent 60%),
     radial-gradient(90% 55% at 50% 112%, rgba(119,33,87,.55), transparent 60%),
     linear-gradient(175deg, var(--brand-900), var(--brand-800) 55%, var(--brand-700));}
-.backdrop::after{content:"";position:absolute;inset:0;opacity:.05;
-  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon fill='%23C6A24C' points='50,2 57.3,32.4 83.9,16.1 67.6,42.7 98,50 67.6,57.3 83.9,83.9 57.3,67.6 50,98 42.7,67.6 16.1,83.9 32.4,57.3 2,50 32.4,42.7 16.1,16.1 42.7,32.4'/></svg>");background-size:9vmin 9vmin;background-repeat:repeat;}
 
 .stage{position:fixed;inset:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:clamp(10px,1.6vh,20px) clamp(16px,5vw,32px);}
@@ -72,8 +70,8 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
    screen — see fitToViewport() below — so its own size is unconstrained
    (no min-height, no viewport clipping) regardless of panel resolution. */
 .content{display:flex;flex-direction:column;align-items:center;
-  gap:clamp(14px,2.4vh,32px);text-align:center;transform-origin:center center;}
-#live{display:flex;flex-direction:column;align-items:center;gap:clamp(16px,2.6vh,34px);width:100%}
+  gap:clamp(10px,1.8vh,26px);text-align:center;transform-origin:center center;}
+#live{display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2vh,26px);width:100%}
 
 /* ---- corner widgets: Sunrise (left) + Sunset (right) — sized for a
    narrow portrait panel and pinned to the stage itself so fit-to-viewport
@@ -108,10 +106,10 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
 .dates .sep{display:none}
 .hijri{font-size:clamp(13px,2.6vw,19px);color:var(--gold-bright);opacity:.9}
 
-.next-card{display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.6vh,18px);
+.next-card{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.3vh,15px);
   background:linear-gradient(180deg, rgba(252,250,243,.09), rgba(252,250,243,.04));
   border:1px solid rgba(198,162,76,.35);border-radius:20px;
-  padding:clamp(16px,2.6vh,32px) clamp(20px,5.6vw,42px);width:100%;max-width:680px;
+  padding:clamp(12px,2vh,26px) clamp(20px,5.6vw,42px);width:100%;max-width:680px;
   box-shadow:0 20px 60px -30px rgba(0,0,0,.6);}
 .next-label{font-size:clamp(12px,2.6vw,16px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
 .next-name{display:flex;align-items:baseline;gap:.5em;justify-content:center}
@@ -123,34 +121,29 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
 .next-countdown .k{font-size:clamp(12px,2.6vw,16px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
 .next-countdown .v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(24px,6.2vw,42px)}
 
-/* ---- today's prayer table: a bordered plaque with a header row and one
-   row per prayer — same pattern as the landscape page, stacked as a
-   narrower single column here. ---- */
-.ptable{width:100%;max-width:720px;
-  border:1px solid rgba(198,162,76,.4);border-radius:16px;overflow:hidden;
-  background:rgba(252,250,243,.045);}
-.ptable-head{display:flex;align-items:center;
-  padding:clamp(8px,1.5vw,14px) clamp(14px,3.8vw,26px);
-  background:rgba(198,162,76,.1);
-  border-bottom:1px solid rgba(198,162,76,.32);}
-.ptable-head span{font-size:clamp(9px,2.1vw,13px);font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright)}
-.ptable-head .c-starts{flex:0 0 25vw;text-align:left}
-.ptable-head .c-name{flex:1 1 auto;text-align:left}
-.ptable-head .c-jamaah{flex:0 0 27vw;text-align:right}
-.prow{display:flex;align-items:center;
-  padding:clamp(13px,2.4vw,22px) clamp(14px,3.8vw,26px);}
-.prow:nth-child(even){background:rgba(252,250,243,.03)}
-.prow + .prow{border-top:1px solid rgba(252,250,243,.09)}
-.prow.active{background:linear-gradient(90deg, rgba(198,162,76,.26), rgba(198,162,76,.08))}
-.prow .starts{flex:0 0 25vw;text-align:left;
-  font-family:"Fraunces",Georgia,serif;font-size:clamp(15px,3.6vw,22px);color:var(--paper);opacity:.92}
-.prow .starts .dash{opacity:.4;font-weight:400}
-.prow .pname{flex:1 1 auto;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:.1em}
-.prow .pname .en{font-size:clamp(18px,4.3vw,26px);font-weight:600;letter-spacing:.02em}
-.prow .pname .ar{font-family:"Amiri",serif;color:var(--gold-bright);font-size:clamp(15px,3.6vw,21px)}
-.prow .jamaah{flex:0 0 27vw;display:flex;flex-direction:column;align-items:flex-end;gap:.1em}
-.prow .jamaah .jline{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(19px,4.6vw,29px);color:var(--gold-bright)}
-.prow .jamaah .dash{font-family:"Fraunces",Georgia,serif;font-weight:400;font-size:clamp(19px,4.6vw,29px);color:var(--gold-bright);opacity:.4}
+/* ---- today's prayers: one full-width card per prayer, stacked down the
+   screen — the vertical-screen counterpart of the landscape page's
+   horizontal row of cards. Name and Arabic are centred (not pooled to one
+   side of a shared row), each card its own bordered plaque. ---- */
+.pgrid{width:100%;max-width:820px;display:flex;flex-direction:column;gap:clamp(7px,1.1vh,14px);}
+.pcard{display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:clamp(6px,1vh,12px);
+  background:rgba(252,250,243,.045);
+  border:1px solid rgba(198,162,76,.4);
+  border-radius:16px;
+  padding:clamp(7px,1.3vh,15px) clamp(16px,4vw,28px);}
+.pcard.active{background:linear-gradient(180deg, rgba(198,162,76,.28), rgba(198,162,76,.09));border-color:rgba(198,162,76,.75)}
+.pc-name{display:flex;align-items:baseline;justify-content:center;gap:.45em}
+.pc-name .pc-en{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(20px,5.6vw,32px)}
+.pc-name .pc-ar{font-family:"Amiri",serif;color:var(--gold-bright);font-size:clamp(16px,4.4vw,25px)}
+.pc-div{width:70%;height:1px;background:rgba(198,162,76,.32)}
+.pc-times{display:flex;justify-content:space-around;align-items:flex-start;width:100%}
+.pc-row{display:flex;flex-direction:column;align-items:center;gap:.16em}
+.pc-row .lab{font-size:clamp(9px,2vw,12px);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,241,232,.55)}
+.pc-row .v{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(16px,3.8vw,23px);color:var(--paper);display:flex;flex-direction:column;align-items:center;gap:.08em}
+.pc-row .v .dash{opacity:.4;font-weight:400}
+.pc-row.jamaah .lab{color:var(--gold-bright);opacity:.9}
+.pc-row.jamaah .v{color:var(--gold-bright);font-size:clamp(19px,4.8vw,30px)}
 
 /* ---- Jumu'ah banner: a standing fixture below the table, visible every
    day (not just Fridays), matching the landscape page ---- */
@@ -158,7 +151,7 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
   display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.2vw,10px);
   background:linear-gradient(90deg, rgba(198,162,76,.22), rgba(198,162,76,.08));
   border:1px solid rgba(198,162,76,.4);border-radius:16px;
-  padding:clamp(12px,2.2vw,22px) clamp(16px,3.8vw,28px);}
+  padding:clamp(9px,1.8vw,18px) clamp(16px,3.8vw,28px);}
 .jbanner-label{display:flex;align-items:center;gap:clamp(6px,1.6vw,12px)}
 .jbanner-label .jb-k{font-size:clamp(11px,2.6vw,15px);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-bright)}
 .jbanner-label .jb-ar{font-family:"Amiri",serif;font-size:clamp(14px,3.4vw,20px);color:var(--paper)}
@@ -215,14 +208,7 @@ body{font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;color:var(-
       </div>
     </div>
 
-    <div class="ptable">
-      <div class="ptable-head">
-        <span class="c-starts">Beginning Time</span>
-        <span class="c-name"></span>
-        <span class="c-jamaah">Jamā&#703;ah</span>
-      </div>
-      <div id="grid"></div>
-    </div>
+    <div class="pgrid" id="grid"></div>
 
     <div class="jbanner" id="jbanner" hidden>
       <div class="jbanner-label">
@@ -331,33 +317,36 @@ function findJummah(now){
 function renderTable(rec, now, isFri, activeKey, nextKey){
   els.grid.innerHTML = "";
   PRAYERS.forEach(p => {
-    const row = document.createElement("div");
-    row.className = "prow";
-    if(p.key === activeKey) row.classList.add("active");
-    if(p.key === nextKey) row.classList.add("next");
+    const card = document.createElement("div");
+    card.className = "pcard";
+    if(p.key === activeKey) card.classList.add("active");
+    if(p.key === nextKey) card.classList.add("next");
 
     const showJumuah = isFri && p.key === "zuhr" && rec.jummah;
     const enLabel = showJumuah ? "Jumuʿah" : p.en;
     const arLabel = showJumuah ? "الجمعة" : p.ar;
 
-    let startsHtml, jamaahHtml;
+    let beginsHtml, jamaahHtml;
     if(p.key === "sunrise"){
-      startsHtml = hm12(rec.begins.sunrise);
+      beginsHtml = `<span class="tnum">${hm12(rec.begins.sunrise)}</span>`;
       jamaahHtml = `<span class="dash">—</span>`;
     } else if(showJumuah){
-      startsHtml = `<span class="dash">—</span>`;
-      jamaahHtml = `<span class="jline tnum">${hm12(rec.jummah.first)}</span>` +
-        (rec.jummah.second ? `<span class="jline tnum">${hm12(rec.jummah.second)}</span>` : "");
+      beginsHtml = `<span class="dash">—</span>`;
+      jamaahHtml = `<span class="tnum">${hm12(rec.jummah.first)}</span>` +
+        (rec.jummah.second ? `<span class="tnum">${hm12(rec.jummah.second)}</span>` : "");
     } else {
-      startsHtml = hm12(rec.begins[p.key]);
-      jamaahHtml = `<span class="jline tnum">${hm12(rec.jamaat[p.key])}</span>`;
+      beginsHtml = `<span class="tnum">${hm12(rec.begins[p.key])}</span>`;
+      jamaahHtml = `<span class="tnum">${hm12(rec.jamaat[p.key])}</span>`;
     }
 
-    row.innerHTML =
-      `<div class="starts tnum">${startsHtml}</div>` +
-      `<div class="pname"><span class="en">${enLabel}</span><span class="ar arabic">${arLabel}</span></div>` +
-      `<div class="jamaah">${jamaahHtml}</div>`;
-    els.grid.appendChild(row);
+    card.innerHTML =
+      `<div class="pc-name"><span class="pc-en">${enLabel}</span><span class="pc-ar arabic">${arLabel}</span></div>` +
+      `<div class="pc-div"></div>` +
+      `<div class="pc-times">` +
+        `<div class="pc-row"><span class="lab">Beginning Time</span><span class="v">${beginsHtml}</span></div>` +
+        `<div class="pc-row jamaah"><span class="lab">Jamā&#703;ah</span><span class="v">${jamaahHtml}</span></div>` +
+      `</div>`;
+    els.grid.appendChild(card);
   });
 }
 
