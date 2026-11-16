@@ -1,4 +1,70 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><title>Taiyabah Masjid</title><style>{{CSS}}</style></head>
-<body class="{{BODYCLASS}}">{{LOGO}}<img src="{{BADGE_APPLE}}" alt=""><img src="{{BADGE_GOOGLE}}" alt="">
-<script>{{DATA}}{{CONTENT}}</script><script>{{JS}}</script></body></html>
+<!--
+  Taiyabah Masjid: the foyer screen. The New Build appeal, and the Ramadan
+  and Eid greetings on their dates.
+  Bolton Central Islamic Society · Registered charity 1041569
+  31a Draycott Street, Bolton BL1 8HD
+
+  Built by build.py from src/foyer/ and src/shared/. The words come from
+  foyer-content.json beside this file, re-read every ten minutes; a copy is
+  built in, so the screen never goes blank if that file can't be reached.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#3C0B2A">
+<title>Taiyabah Masjid · Foyer</title>
+<style>{{CSS}}</style>
+</head>
+<body class="{{BODYCLASS}}">
+<div class="ground"></div>
+<div class="stage">
+ <div id="content">
+  <div class="star" data-deco><svg viewBox="0 0 100 100"><polygon fill="currentColor" points="50,2 57.3,32.4 83.9,16.1 67.6,42.7 98,50 67.6,57.3 83.9,83.9 57.3,67.6 50,98 42.7,67.6 16.1,83.9 32.4,57.3 2,50 32.4,42.7 16.1,16.1 42.7,32.4"/></svg></div>
+  <div id="clock"></div>
+  <div class="hdr">{{LOGO}}<div class="dates"><span id="greg"></span><span id="hijri"></span></div></div>
+
+  <div id="newbuild">
+   <div class="col" id="nbcol"><div class="fit" id="nbfit">
+    <div class="eyebrow" id="nb-eyebrow"></div>
+    <h1 id="nb-heading"></h1>
+    <div class="appeal">
+     <div class="eyebrow" id="phase-tag"></div>
+     <h2 id="phase-title"></h2>
+     <p id="phase-desc"></p>
+     <div class="chips" id="needs"></div>
+    </div>
+    <div id="timeline"></div>
+   </div></div>
+   <div class="side" id="side">
+    <div class="card give">
+     <div class="eyebrow">Give to the New Build</div>
+     <div class="qrrow">
+      <div class="qr" id="qr" data-qr></div>
+      <div class="qrtxt"><h3 id="qr-label"></h3><p id="qr-sub"></p></div>
+     </div>
+    </div>
+    <div class="card app">
+     <div class="eyebrow" id="app-eyebrow"></div>
+     <h3 id="app-heading"></h3>
+     <p id="app-line"></p>
+     <div class="badges"><img class="badge ap" src="{{BADGE_APPLE}}" alt="Download on the App Store"><img class="badge gp" src="{{BADGE_GOOGLE}}" alt="Get it on Google Play"></div>
+    </div>
+   </div>
+  </div>
+
+  <div id="occasion" hidden>
+   <div class="o-ar ar" id="o-arabic" lang="ar" dir="rtl"></div>
+   <h1 id="o-title"></h1>
+   <p id="o-message"></p>
+   <div class="o-day" id="oday" hidden></div>
+  </div>
+
+  <div class="bar" id="fbar"><span id="next"></span><span id="jum"></span></div>
+ </div>
+</div>
+<script>{{DATA}}{{CONTENT}}</script>
+<script>{{JS}}</script>
+</body>
+</html>
