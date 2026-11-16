@@ -183,28 +183,25 @@ timetable's frame and components so the six TVs read as one set:
   centre (12-hour, no seconds), and the Gregorian and Hijri dates top right.
 - **The same plum radial ground and star watermark**, card style, gold
   eyebrows and type scale.
-- **A next-jamāʿah strip** along the bottom, the same pill as the timetable,
-  because people pass the foyer on their way in. *Builder's proposal; the
-  masjid can drop it at sign-off.*
+- **A next-jamāʿah and Jumuʿah bar** along the bottom, the same as the
+  timetable's (kept by the masjid, 16 Nov).
 - **Ramadan and Eid greetings** sit on the same ground as everything else,
   with the same date-driven switching as today (`durationDays` and `enabled`
   are honoured).
-- **A "Get the app" card under the Give card** (added by the masjid, 16 Nov)
-  carries two QR codes, labelled "iPhone · App Store" and "Android · Google
-  Play". They point to
-  `https://apps.apple.com/gb/app/taiyabah-masjid/id6822250468` and
-  `https://play.google.com/store/apps/details?id=com.taiyabahmasjid.app`,
-  the links the app repo already uses, and both answered 200 on 16 Nov. The
-  links live in `foyer-content.json` (`app.appStoreUrl`, `app.playStoreUrl`)
-  and are drawn with the same QR library as the donate code, so a volunteer
-  can change them. Neither card shows the Apple or Google logos: their badge
-  rules are strict, and the plain text labels are enough. To make room, the
+- **An app card under the Give card** (the masjid, 16 Nov). Its eyebrow reads
+  "The Taiyabah Masjid app" and its heading "Now available on the app
+  stores", with the line: Search "Taiyabah Masjid" · prayer times, notices,
+  live radio. Under it sit the **official** "Download on the App Store" and
+  "Get it on Google Play" badges, copied unmodified from the app repo's
+  `docs/store-assets/poster/badges/` (see its README: never redrawn,
+  recoloured or cropped, only scaled whole). Google's badge carries its clear
+  space inside the image, so it is drawn about 1.5× Apple's height to read
+  the same size. **No app QR codes:** the masjid chose badges over codes, so
+  the donate code is the only QR on the screen. To make room, the
   next-jamāʿah bar sits under the left column only, and the right column runs
   to the bottom.
-- **The three QR codes must never be confused.** The donate code is larger
-  and sits in the Give card. The app codes are smaller, paired and labelled.
-  The test suite decodes every QR code on the rendered foyer page and checks
-  that it equals the URL in the JSON.
+- **The test suite decodes the donate QR code** on the rendered foyer page
+  and checks that it equals the URL in the JSON.
 - **The QR code is drawn live from `give.otherAmountUrl`** in
   `foyer-content.json`, by a small QR library embedded in the page. That is
   how the current foyer already works, whatever SETUP.md says, so the
@@ -216,9 +213,9 @@ timetable's frame and components so the six TVs read as one set:
   corrected.
 
 Mockups of the landscape default and Ramadan states were shown on 16 Nov.
-They add one line to the greeting that is not in today's foyer: "Day 11 of
-Ramadan · Iftār 5:31 pm", where Iftār is that day's Maghrib time from the
-data. The New Build timeline is drawn as a gold line with dots, echoing the
+They add one line to the Ramadan greeting that is not in today's foyer: "Day
+11 of Ramadan · Maghrib 5:31 pm", taken from that day's Maghrib time in the
+data. The masjid chose the word "Maghrib", not "Iftār", on 16 Nov. The New Build timeline is drawn as a gold line with dots, echoing the
 timetable's arc.
 
 ## Checks (`tests/`)
