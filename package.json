@@ -1,0 +1,13 @@
+{
+  "name": "taiyabah-masjid-screens",
+  "private": true,
+  "description": "Builds and tests the masjid's TV screens. Playwright is expected to be installed already (it is in the cloud sessions); elsewhere: npm i -D playwright.",
+  "scripts": {
+    "build": "python3 build.py",
+    "test": "node --test --test-concurrency=1 tests/"
+  },
+  "devDependencies": {
+    "jsqr": "^1.4.0",
+    "pngjs": "^7.0.0"
+  }
+}
