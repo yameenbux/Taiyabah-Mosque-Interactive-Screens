@@ -189,6 +189,22 @@ timetable's frame and components so the six TVs read as one set:
 - **Ramadan and Eid greetings** sit on the same ground as everything else,
   with the same date-driven switching as today (`durationDays` and `enabled`
   are honoured).
+- **A "Get the app" card under the Give card** (added by the masjid, 16 Nov)
+  carries two QR codes, labelled "iPhone · App Store" and "Android · Google
+  Play". They point to
+  `https://apps.apple.com/gb/app/taiyabah-masjid/id6822250468` and
+  `https://play.google.com/store/apps/details?id=com.taiyabahmasjid.app`,
+  the links the app repo already uses, and both answered 200 on 16 Nov. The
+  links live in `foyer-content.json` (`app.appStoreUrl`, `app.playStoreUrl`)
+  and are drawn with the same QR library as the donate code, so a volunteer
+  can change them. Neither card shows the Apple or Google logos: their badge
+  rules are strict, and the plain text labels are enough. To make room, the
+  next-jamāʿah bar sits under the left column only, and the right column runs
+  to the bottom.
+- **The three QR codes must never be confused.** The donate code is larger
+  and sits in the Give card. The app codes are smaller, paired and labelled.
+  The test suite decodes every QR code on the rendered foyer page and checks
+  that it equals the URL in the JSON.
 - **The QR code is drawn live from `give.otherAmountUrl`** in
   `foyer-content.json`, by a small QR library embedded in the page. That is
   how the current foyer already works, whatever SETUP.md says, so the
