@@ -146,8 +146,8 @@ format.
   fades. After Isha's jamāʿah, all five are faded until midnight, then reset
   to the new day.
 - **Fridays:** the Zuhr card becomes "Jumuʿah / الجمعة". Its Begins line shows
-  Zuhr's begin time, and the Jamāʿah line shows both times ("12:45 & 1:40
-  pm"). When the 1st time passes, the next jamāʿah becomes Asr. The 2nd
+  Zuhr's begin time, and the Jamāʿah line shows both times, labelled
+  ("1st 12:45 · 2nd 1:40 pm"). When the 1st time passes, the next jamāʿah becomes Asr. The 2nd
   Jumuʿah is not a separate "next" target, as today.
 - **Maghrib**, where begins equals jamāʿah, shows both, as the app does.
 - **No data for today:** the cards, arc and pill are replaced by a plain
@@ -184,7 +184,10 @@ timetable's frame and components so the six TVs read as one set:
 - **The same plum radial ground and star watermark**, card style, gold
   eyebrows and type scale.
 - **A next-jamāʿah and Jumuʿah bar** along the bottom, the same as the
-  timetable's (kept by the masjid, 16 Nov).
+  timetable's (kept by the masjid, 16 Nov). **The two Jumuʿah times are
+  always labelled "1st" and "2nd"**, never joined by "&", on every screen
+  (the masjid, 16 Nov). The foyer bar drops the day ("Fri") because "Fri 1st"
+  reads as a date. The timetable's wider bar keeps its "Friday 20 November".
 - **Ramadan and Eid greetings** sit on the same ground as everything else,
   with the same date-driven switching as today (`durationDays` and `enabled`
   are honoured).
