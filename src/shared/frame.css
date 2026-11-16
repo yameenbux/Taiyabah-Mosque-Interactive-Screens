@@ -1,1 +1,41 @@
 [hidden]{display:none!important}
+/* The frame every screen shares: plum ground, star, header, the drifting
+   stage, and the next-jamāʿah / Jumuʿah bar. Laid out at a fixed reference
+   size (1920×1080, or 1080×1920 portrait) and scaled down to the TV by
+   fitToViewport(), never up. */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--deep)}
+body{font-family:var(--sans);color:var(--cream);-webkit-font-smoothing:antialiased;cursor:none}
+.ground{position:fixed;inset:0;background:radial-gradient(ellipse 120% 90% at 50% 0%,var(--plum-hi) 0%,var(--plum) 45%,var(--deep) 100%)}
+.stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;animation:drift 150s ease-in-out infinite}
+@keyframes drift{0%{transform:translate(0,0)}25%{transform:translate(6px,-5px)}50%{transform:translate(-4px,4px)}75%{transform:translate(-6px,-3px)}100%{transform:translate(0,0)}}
+#content{position:relative;width:1920px;height:1080px;flex:none;transform-origin:center center;overflow:hidden}
+body.portrait #content{width:1080px;height:1920px}
+.star{position:absolute;color:var(--goldb);opacity:.06;width:900px;left:510px;top:-330px;pointer-events:none}
+body.portrait .star{width:760px;left:160px;top:-250px}
+.star svg{width:100%;display:block}
+.serif{font-family:var(--serif)} .ar{font-family:var(--arabic)}
+.tn{font-variant-numeric:tabular-nums lining-nums}
+.ampm{font-size:.45em;font-weight:500;letter-spacing:.02em}
+.eyebrow{font-size:17px;letter-spacing:.24em;text-transform:uppercase;font-weight:600;color:var(--goldb)}
+.mut{color:var(--cream-60)}
+.ayn{font-family:var(--sans);font-weight:400}
+
+/* header */
+.hdr{position:absolute;left:80px;right:80px;top:52px;display:flex;justify-content:space-between;align-items:flex-start}
+.logo{height:110px;width:auto;color:var(--goldb);display:block}
+.dates{font-size:23px;line-height:1.6;text-align:right}
+.dates #hijri{color:var(--goldb);font-weight:500;display:block}
+#clock{position:absolute;left:0;right:0;top:36px;text-align:center;font-family:var(--serif);font-size:132px;font-weight:500;line-height:1;letter-spacing:-.02em}
+#clock .ampm{color:var(--goldb);font-size:.28em}
+body.portrait .hdr{left:64px;right:64px;top:56px}
+body.portrait .logo{height:100px}
+body.portrait #clock{top:200px;font-size:170px}
+
+/* the bar: next jamāʿah, then Jumuʿah */
+.bar{position:absolute;display:flex;justify-content:space-between;align-items:center;gap:24px;padding:20px 40px;border-radius:18px;background:var(--gold-fill);border:1px solid var(--gold-line);font-size:24px;white-space:nowrap}
+.bar .eyebrow{margin-right:16px}
+.bar b{font-family:var(--serif);font-size:38px;font-weight:600}
+.bar .in{color:var(--goldb);font-weight:600}
+.bar .lab{color:var(--cream-60);margin:0 6px 0 18px}
+.bar .lab:first-of-type{margin-left:0}

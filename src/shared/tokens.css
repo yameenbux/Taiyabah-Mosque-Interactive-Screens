@@ -1,1 +1,10 @@
 [hidden]{display:none!important}
+/* The masjid's palette and type, shared with the website and the app. */
+:root{
+  --plum:#3C0B2A; --plum-8:#4B1136; --plum-hi:#5A1742; --deep:#24091A;
+  --gold:#C6A24C; --goldb:#DCBB63; --cream:#F3EFE3; --card:#FCFAF3; --ink:#261B22;
+  --cream-80:rgba(243,239,227,.8); --cream-60:rgba(243,239,227,.6); --cream-55:rgba(243,239,227,.55);
+  --panel:rgba(243,239,227,.05); --panel-line:rgba(243,239,227,.12);
+  --gold-fill:rgba(220,187,99,.10); --gold-line:rgba(220,187,99,.28);
+  --serif:"Fraunces",Georgia,serif; --sans:"Hanken Grotesk",system-ui,sans-serif; --arabic:"Amiri",serif;
+}

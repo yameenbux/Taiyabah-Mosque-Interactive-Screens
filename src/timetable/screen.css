@@ -1,1 +1,47 @@
 [hidden]{display:none!important}
+/* Timetable, design B. Landscape: arc across the top, five columns.
+   Portrait: the same, stacked, with the five prayers as rows. */
+#arcwrap{position:absolute;left:140px;right:140px;top:230px;height:240px}
+#arc{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#arc text{font-family:var(--sans);font-size:18px;letter-spacing:3px;fill:var(--cream-60)}
+.pill{position:absolute;left:50%;top:104px;transform:translateX(-50%);display:flex;gap:30px;align-items:center;white-space:nowrap;background:rgba(243,239,227,.06);border:1px solid rgba(220,187,99,.35);border-radius:999px;padding:16px 46px}
+.pill:empty{display:none}
+.pill b{font-family:var(--serif);font-size:44px;font-weight:600}
+.pill .in{font-size:30px;color:var(--goldb);font-weight:600}
+
+#cards{position:absolute;left:80px;right:80px;top:522px;height:408px;display:grid;grid-template-columns:repeat(5,1fr);gap:22px}
+.card{border-radius:22px;background:var(--panel);border:1px solid var(--panel-line);padding:24px 16px 26px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.card .ic{width:44px;height:44px;margin-bottom:8px;color:var(--goldb)}
+.card .nm{font-family:var(--serif);font-size:50px;font-weight:600;line-height:1.15}
+.card .ar{color:var(--goldb);font-size:34px;line-height:1.3}
+.card .k{font-size:15px;letter-spacing:.24em;color:var(--cream-55);font-weight:600;margin-top:14px;text-transform:uppercase}
+.card .b{font-size:34px;margin-top:4px;color:var(--cream-80)}
+.card .j{font-family:var(--serif);font-size:66px;font-weight:600;color:var(--goldb);line-height:1.1;margin-top:2px}
+.card .j.two{font-size:40px;line-height:1.2}
+.card .j.two .lab{font-family:var(--sans);font-size:20px;font-weight:500;color:var(--cream-60);margin-right:8px}
+.card.past{opacity:.45}
+.card.isnext{background:linear-gradient(180deg,rgba(220,187,99,.20),rgba(220,187,99,.07));border:2px solid var(--goldb);box-shadow:0 0 60px rgba(220,187,99,.18)}
+
+#nodata{position:absolute;left:240px;right:240px;top:460px;text-align:center;font-family:var(--serif);font-size:52px;line-height:1.3;color:var(--goldb)}
+#tbar{left:80px;right:80px;bottom:44px;height:88px}
+#tbar #jum .mut{margin-right:24px}
+#sun{font-size:24px}
+
+/* ---- portrait ---- */
+body.portrait #arcwrap{left:64px;right:64px;top:440px;height:300px}
+body.portrait .pill{top:auto;bottom:-40px;padding:14px 36px;gap:22px}
+body.portrait .pill b{font-size:40px}
+body.portrait #cards{left:64px;right:64px;top:850px;height:auto;grid-template-columns:1fr;gap:18px}
+body.portrait .card{flex-direction:row;align-items:center;text-align:left;padding:20px 34px;height:150px;gap:0}
+body.portrait .card .ic{margin:0 26px 0 0;flex:none}
+body.portrait .card .who{flex:1;display:flex;align-items:baseline;gap:18px}
+body.portrait .card .k{margin:0 10px 0 0}
+body.portrait .card .bk,body.portrait .card .jk{display:flex;flex-direction:column;align-items:flex-end}
+body.portrait .card .bk{width:200px}
+body.portrait .card .jk{width:280px}
+body.portrait .card .j{font-size:62px}
+body.portrait .card .j.two{font-size:34px}
+body.portrait #nodata{left:100px;right:100px;top:900px}
+body.portrait #tbar{left:64px;right:64px;bottom:60px;height:auto;flex-direction:column;align-items:flex-start;gap:12px;padding:24px 36px}
+#sun .ampm,.bar .lab+b .ampm{font-size:.7em}
+.card .b .ampm{font-size:.6em}
