@@ -241,8 +241,9 @@ timetable's arc.
 
 ## Checks (`tests/`)
 
-Run with `python3 tests/run.py`, which drives the built files in headless
-Chromium through Playwright, the way the website's `_test/` suites do:
+Run with `npm test` (Node's built-in test runner). It drives the built files
+in headless Chromium through Playwright, the way the website's `_test/` suites
+do. Node, not Python, because Playwright is installed for Node here:
 
 1. **Times are right:** for a set of fixed clock times on real 2026 dates,
    the next-jamāʿah name, time and countdown, and which cards are faded,
