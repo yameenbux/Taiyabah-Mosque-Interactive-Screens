@@ -35,7 +35,9 @@
     // winter days and summer evenings, so no fixed rule works all year.
     var line_ = [], k;
     for (k = 0; k <= 200; k++) line_.push(xy(k / 200));
-    var taken = [{ x0: nowP[0] - 34, x1: nowP[0] + 34, y0: nowP[1] - 34, y1: nowP[1] + 34 }];
+    var taken = [{ x0: nowP[0] - 36, x1: nowP[0] + 36, y0: nowP[1] - 36, y1: nowP[1] + 36 }];
+    // The sky as it is: the sun from sunrise until Maghrib, the moon otherwise.
+    var sky = now >= T.at(now, rec.begins.sunrise) && now < T.at(now, rec.begins.maghrib) ? "sun" : "moon";
     // The next-jamāʿah pill sits over the arc: keep labels off it too.
     var el0 = document.getElementById("arc"), pill = document.getElementById("next");
     if (pill && pill.offsetWidth) {
@@ -57,16 +59,38 @@
       var label = o.m[1].toUpperCase(), w = label.length * 14 + 6, x = o.q[0], y = o.q[1];
       var anchor = o.p < 0.02 ? "start" : o.p > 0.98 ? "end" : "middle";
       var x0 = anchor === "start" ? x - 4 : anchor === "end" ? x - w + 4 : x - w / 2;
-      var spots = [-22, 38, -46, 62, -70, 86], base = spots[0], box;
-      for (var s2 = 0; s2 < spots.length; s2++) {
-        box = { x0: x0, x1: x0 + w, y0: y + spots[s2] - 16, y1: y + spots[s2] + 3 };
-        if (clear(box)) { base = spots[s2]; break; }
+      // Above or below the dot, near then further out; the two end labels
+      // may also sit beside their dot, outside the arc.
+      var spots = [[0, -22, anchor], [0, 38, anchor]];
+      if (o.p > 0.98) spots.push([18, 6, "start"]);
+      if (o.p < 0.02) spots.push([-18, 6, "end"]);
+      spots = spots.concat([[0, -46, anchor], [0, 62, anchor], [0, -70, anchor], [0, 86, anchor]]);
+      function boxFor(sp) {
+        var left = sp[2] === "start" ? x + sp[0] - 4 : sp[2] === "end" ? x + sp[0] - w + 4 : x + sp[0] - w / 2;
+        return { x0: left, x1: left + w, y0: y + sp[1] - 16, y1: y + sp[1] + 3 };
       }
-      taken.push({ x0: x0 - 6, x1: x0 + w + 6, y0: y + base - 16, y1: y + base + 3 });
-      svg += '<text x="' + x.toFixed(1) + '" y="' + (y + base).toFixed(1) + '" text-anchor="' + anchor + '">' + label + "</text>";
+      var pick = spots[0];
+      for (var s2 = 0; s2 < spots.length; s2++) if (clear(boxFor(spots[s2]))) { pick = spots[s2]; break; }
+      var bx = boxFor(pick);
+      taken.push({ x0: bx.x0 - 6, x1: bx.x1 + 6, y0: bx.y0, y1: bx.y1 });
+      svg += '<text x="' + (x + pick[0]).toFixed(1) + '" y="' + (y + pick[1]).toFixed(1) + '" text-anchor="' + pick[2] + '">' + label + "</text>";
     });
-    svg += '<circle cx="' + nowP[0].toFixed(1) + '" cy="' + nowP[1].toFixed(1) + '" r="16" fill="#DCBB63"/>';
-    svg += '<circle cx="' + nowP[0].toFixed(1) + '" cy="' + nowP[1].toFixed(1) + '" r="30" fill="none" stroke="rgba(220,187,99,.35)" stroke-width="2"/>';
+    // "Now": a plain gold sun or crescent moon (never a face) on a dark
+    // disc that the arc passes behind. It does not animate; it only moves
+    // along the arc as the day goes.
+    var mark;
+    if (sky === "sun") {
+      var rays = "";
+      for (var a = 0; a < 8; a++) {
+        var t = a * Math.PI / 4;
+        rays += "M" + (Math.cos(t) * 18).toFixed(1) + " " + (Math.sin(t) * 18).toFixed(1) + "L" + (Math.cos(t) * 25).toFixed(1) + " " + (Math.sin(t) * 25).toFixed(1);
+      }
+      mark = '<circle r="12" fill="#DCBB63"/><path d="' + rays + '" stroke="#DCBB63" stroke-width="3" stroke-linecap="round"/>';
+    } else {
+      mark = '<path d="M6 -17A18 18 0 1 0 6 17A14 14 0 1 1 6 -17Z" fill="#DCBB63"/>';
+    }
+    svg += '<g data-now="' + sky + '" transform="translate(' + nowP[0].toFixed(1) + "," + nowP[1].toFixed(1) + ')">' +
+      '<circle r="32" fill="#2C0A20" stroke="rgba(220,187,99,.35)" stroke-width="2"/>' + mark + "</g>";
     var el = document.getElementById("arc");
     el.setAttribute("viewBox", "0 0 " + W + " " + H);
     if (el.__svg !== svg) { el.innerHTML = svg; el.__svg = svg; }

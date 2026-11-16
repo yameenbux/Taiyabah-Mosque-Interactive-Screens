@@ -103,9 +103,10 @@ for (const [file, width, height] of FILES) {
         const texts = [...svg.querySelectorAll("text")].map((e) => ({ t: e.textContent, r: e.getBoundingClientRect() }));
         const pr = document.getElementById("next").getBoundingClientRect();
         const obstacles = [{ what: "pill", x0: pr.left, x1: pr.right, y0: pr.top, y1: pr.bottom }];
-        for (const c of svg.querySelectorAll("circle")) {
-          const p = pt(+c.getAttribute("cx"), +c.getAttribute("cy")), rr = +c.getAttribute("r") * m.a;
-          obstacles.push({ what: "dot", x0: p.x - rr, x1: p.x + rr, y0: p.y - rr, y1: p.y + rr });
+        // Where each dot, and the sun or moon, actually is on screen.
+        for (const c of svg.querySelectorAll("circle, [data-now]")) {
+          const r = c.getBoundingClientRect();
+          obstacles.push({ what: c.hasAttribute("data-now") ? c.getAttribute("data-now") : "dot", x0: r.left, x1: r.right, y0: r.top, y1: r.bottom });
         }
         for (const pl of svg.querySelectorAll("polyline"))
           for (const xy of pl.getAttribute("points").trim().split(/\s+/)) {
@@ -121,6 +122,21 @@ for (const [file, width, height] of FILES) {
       });
       assert.equal(found.n, 6);
       assert.deepEqual(found.bad, []);
+      await ctx.close();
+    });
+  }
+}
+
+/* The arc marks "now" with the sky as it is: the moon until sunrise, the sun
+   until Maghrib, the moon again after. Sunrise and Maghrib stay plain dots. */
+for (const [file, width, height] of FILES) {
+  for (const [when, sky] of [["2026-11-16T07:10:00", "moon"], ["2026-11-16T07:40:00", "sun"], ["2026-11-16T13:05:00", "sun"],
+                             ["2026-11-16T16:15:00", "sun"], ["2026-11-16T16:17:00", "moon"], ["2026-11-16T19:45:00", "moon"]]) {
+    test(`${file} shows the ${sky} at ${when.slice(11, 16)}`, async () => {
+      const { page, ctx } = await openAt(browser, srv.base, file, when, { width, height });
+      const marks = await page.$$eval("#arc [data-now]", (els) => els.map((e) => e.getAttribute("data-now")));
+      assert.deepEqual(marks, [sky]);
+      assert.equal(await page.locator("#arc [data-mark]").count(), 0, "sunrise and Maghrib stay plain dots");
       await ctx.close();
     });
   }
