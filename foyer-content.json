@@ -1,6 +1,5 @@
 {
-  "_instructions": "Edit the text values below directly on GitHub (pencil icon on this file → edit → commit). Don't touch the field names (the part before each colon), only the text after it. The foyer screens re-fetch this file once a day (2am) plus on every full reload, so a change here reaches both foyer TVs within a day without touching the TVs themselves. Keep this a valid JSON file — if GitHub shows a red warning when you commit, something's broken (usually a missing comma or a stray quote mark) and the screens will fall back to the last-known-good content instead of using your edit.",
-
+  "_instructions": "Edit the text values below directly on GitHub (pencil icon on this file → edit → commit). Don't touch the field names (the part before each colon), only the text after it. The foyer screens re-read this file every ten minutes, so a change here reaches both foyer TVs within about twenty minutes (GitHub takes a few minutes to publish it) without touching the TVs. Keep this a valid JSON file — if GitHub shows a red warning when you commit, something's broken (usually a missing comma or a stray quote mark) and the screens will keep showing the built-in copy instead of your edit. The donate QR code is drawn from newBuild.give.otherAmountUrl, so changing that link changes the code. Not shown on the screens, kept for anything else that reads this file: newBuild.tagline, newBuild.give.bankHeading, newBuild.give.bank, newBuild.give.note.",
   "newBuild": {
     "eyebrow": "The New Build",
     "heading": "Building a lasting home for Taiyabah Masjid.",
@@ -8,13 +7,40 @@
     "phaseTag": "Current appeal · Phase 3.3",
     "phaseTitle": "Internal fixtures & fittings",
     "phaseDescription": "Help make the masjid ready for salah, Qur'an and remembrance for generations to come.",
-    "needs": ["Tiling", "Carpets", "Heating", "Lighting", "Electrical", "Decor"],
+    "needs": [
+      "Tiling",
+      "Carpets",
+      "Heating",
+      "Lighting",
+      "Electrical",
+      "Decor"
+    ],
     "timeline": [
-      { "date": "2018 – Ramadhan 2019", "title": "Phase 1", "status": "done" },
-      { "date": "December 2021", "title": "Phase 2", "status": "done" },
-      { "date": "2022", "title": "Community fundraiser", "status": "done" },
-      { "date": "Now · Phase 3.3", "title": "Internal fixtures & fittings", "status": "active" },
-      { "date": "What's next", "title": "Full facilities complete", "status": "upcoming" }
+      {
+        "date": "2018 – Ramadhan 2019",
+        "title": "Phase 1",
+        "status": "done"
+      },
+      {
+        "date": "December 2021",
+        "title": "Phase 2",
+        "status": "done"
+      },
+      {
+        "date": "2022",
+        "title": "Community fundraiser",
+        "status": "done"
+      },
+      {
+        "date": "Now · Phase 3.3",
+        "title": "Internal fixtures & fittings",
+        "status": "active"
+      },
+      {
+        "date": "What's next",
+        "title": "Full facilities complete",
+        "status": "upcoming"
+      }
     ],
     "give": {
       "scanLabel": "Scan to give any amount",
@@ -30,7 +56,6 @@
       "note": "Bolton Central Islamic Society · Registered charity 1041569."
     }
   },
-
   "occasions": {
     "ramadan": {
       "enabled": true,
@@ -52,5 +77,10 @@
       "message": "Taqabbal Allahu minna wa minkum — may Allah accept it from us and from you.",
       "durationDays": 4
     }
+  },
+  "app": {
+    "eyebrow": "The Taiyabah Masjid app",
+    "heading": "Now available on the app stores",
+    "line": "Search “Taiyabah Masjid” · prayer times, notices, live radio"
   }
 }

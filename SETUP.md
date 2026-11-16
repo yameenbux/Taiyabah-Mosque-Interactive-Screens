@@ -4,6 +4,8 @@ Five files, one small job on GitHub, then a bookmark on each TV.
 
 ## 1. Put the files on GitHub Pages
 
+*(Already done. This is how it works if it ever needs doing again.)*
+
 Add these files to a repo that has GitHub Pages enabled — keep `foyer.html`,
 `foyervertical.html` and `foyer-content.json` all in the **same folder**,
 since both foyer pages fetch `foyer-content.json` by a relative path:
@@ -39,31 +41,14 @@ couple of settings worth changing in each TV's own menu at the same time.
 
 ## 3. Editing the foyer content yourself
 
-Open `foyer-content.json` on GitHub (the pencil/edit icon), change the text
-after any colon, leave the field names alone, and commit. Every foyer TV —
-landscape or portrait, both read the same file — picks up the change within
-24 hours on its own (nightly 2am refresh) — you don't need to touch the TVs.
+Open `foyer-content.json` on GitHub (the pencil icon), change the text after any colon, leave the field names alone, and commit. Both foyer TVs read the file every ten minutes, so a change shows within about twenty minutes. You don't need to touch the TVs.
 
-- `newBuild` — the everyday default: appeal status, phase, timeline, the
-  give/donate details. All sourced from your website's New Build page.
-- `occasions` — the Ramadan/Eid greetings. These switch on and off
-  **automatically** based on the Islamic calendar dates already in your
-  timetable data, so you don't need to do anything for them to appear —
-  only edit them if you want to change the wording.
-  - Set `"enabled": false` on any occasion to turn its auto-switch off
-    entirely.
-  - `durationDays` controls how many days an Eid greeting stays up before
-    it reverts to the New Build screen.
+- `newBuild`: the appeal (heading, phase, needs, timeline) and `give`, the donate link and its words. **The QR code is drawn from `give.otherAmountUrl`**, so changing that link changes the code. Scan it with a phone afterwards to check.
+- `app`: the words on the app card. The App Store and Google Play badges are fixed artwork and cannot be edited here.
+- `occasions`: the Ramadan and Eid greetings. They switch on and off by themselves from the Hijri dates in the timetable. Set `"enabled": false` to turn one off; `durationDays` sets how many days an Eid greeting stays up.
+- Kept in the file but **not shown on the screens**: `newBuild.tagline` and the bank details. Nobody copies an account number off a TV.
 
-If you ever break the JSON syntax (a missing comma, a stray quote), GitHub
-will usually warn you before you can commit. If something does slip through,
-the screens don't go blank — they fall back to the last version that worked.
-
-**One thing that *won't* auto-update from this file:** the QR code on the
-give card is generated from `newBuild.give.otherAmountUrl` at the moment
-I built these files. If you change that URL in the JSON, the donate *text*
-updates everywhere, but the QR image itself was baked in from the old URL
-— come back to me (or re-run the build) if the donate link ever changes.
+If you break the JSON (a missing comma or a stray quote), GitHub usually warns you before you commit. If something does slip through, the screens don't go blank: they keep showing the last good words, or the copy built into the page.
 
 ## 4. Reliability checklist — do this once per TV
 
@@ -84,14 +69,14 @@ nothing running in a browser tab can survive the TV itself losing power. So:
 
 ## 5. Next year's Salah timetable
 
-`timetable.html` and `timetablevertical.html` both have the whole year's
-timetable embedded directly in the file (for maximum reliability — zero
-network needed once loaded, unlike the foyer pages). When the masjid
-publishes next year's times, regenerate `timetable-2026.json`-equivalent
-for the new year the same way your app does, then ask me to rebuild all
-four files with it — the foyer pages' Ramadan/Eid date detection reads the
-same data, so all four need refreshing together, not just the two
-timetable ones.
+The prayer times for every year in `data/` are built into all four pages, and the foyer's Ramadan and Eid dates come from the same files. When the masjid publishes a new year:
+
+1. Parse it into the app repo's `data/timetable-YYYY.json`, as the app's `data/README.md` describes.
+2. Copy that file into this repo's `data/`.
+3. Run `python3 build.py`, then `npm test`.
+4. Commit and push to `main`. Every TV has the new year after its next 2am reload.
+
+2026 and 2027 are both built in now. Do this for 2028 before December 2027.
 
 ## 6. Custom domain, later
 
