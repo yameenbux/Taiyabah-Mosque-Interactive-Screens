@@ -56,3 +56,10 @@ export async function overflowing(page) {
     return bad;
   });
 }
+
+/* Read the QR code inside `selector` off the rendered page. */
+export async function decodeQR(page, selector = "#qr") {
+  const png = require_("pngjs").PNG.sync.read(await page.locator(selector).screenshot({ animations: "disabled" }));
+  const q = require_("jsqr")(new Uint8ClampedArray(png.data), png.width, png.height);
+  return q && q.data;
+}

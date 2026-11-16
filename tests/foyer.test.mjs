@@ -7,9 +7,8 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { createRequire } from "node:module";
-import { serve, openAt, overflowing, chromium, ROOT } from "./helpers.mjs";
+import { serve, openAt, overflowing, chromium, ROOT, decodeQR } from "./helpers.mjs";
 const require_ = createRequire(import.meta.url);
-const jsQR = require_("jsqr"), { PNG } = require_("pngjs");
 const CONTENT = JSON.parse(fs.readFileSync(path.join(ROOT, "foyer-content.json"), "utf8"));
 
 let srv, browser;
@@ -22,11 +21,6 @@ const withContent = (mutate) => async (page) => {
   await page.route("**/foyer-content.json", (r) => r.fulfill({ contentType: "application/json", body: JSON.stringify(c) }));
 };
 
-export async function decodeQR(page, selector = "#qr") {
-  const png = PNG.sync.read(await page.locator(selector).screenshot({ animations: "disabled" }));
-  const q = jsQR(new Uint8ClampedArray(png.data), png.width, png.height);
-  return q && q.data;
-}
 
 for (const [file, width, height] of FILES) {
   test(`${file} on an ordinary day shows the New Build`, async () => {

@@ -32,3 +32,6 @@ __pycache__/
 # OS noise
 .DS_Store
 Thumbs.db
+
+# Throwaway broken copies made by tests/negative.test.mjs
+tests/.negative/

@@ -15,52 +15,68 @@ All four pages are single, self-contained HTML files (fonts and images embedded 
 
 ## What's here
 
-**`timetable.html`** / **`timetablevertical.html`** — the Salah times screensaver, for the prayer hall (×2) and downstairs (×2), in landscape and portrait. Live clock, Gregorian and Hijri date, a countdown to the next jamā'ah, and the full day's begin/jamā'ah times. Sunrise and sunset are pinned in the top corners; a standing Jumu'ah banner below the table always shows the *next* Friday's times, not just on Fridays themselves — on Friday, Zuhr's own row in the table is replaced with the Jumu'ah times too. The whole year's timetable is embedded in the file itself, so once it's loaded, it needs no network at all — it will keep showing the correct time for the correct prayer even if the masjid's Wi-Fi goes down.
+**`timetable.html`** / **`timetablevertical.html`**: Salah times for the prayer hall (×2) and downstairs (×2), landscape and portrait. Design B: the clock, an arc across the day from Fajr to Isha with a gold dot at "now", the next jamāʿah and how long until it, and the day's five prayers with their beginning and jamāʿah times. Prayers whose jamāʿah has passed fade. On a Friday, Zuhr becomes Jumuʿah with both times, labelled 1st and 2nd. Every year of prayer times in `data/` is built into the file, so once loaded it needs no network.
 
-**`foyer.html`** / **`foyervertical.html`** — the foyer display (×2), in landscape and portrait. Defaults to the New Build appeal (current phase, timeline, and how to give — a QR code plus the masjid's bank details), pulled from the website's New Build page. Automatically switches to a full-screen "Ramadan Mubarak" or "Eid Mubarak" greeting on the correct Islamic calendar dates and reverts on its own once the occasion ends — no one needs to remember to turn it on or off.
+**`foyer.html`** / **`foyervertical.html`**: the foyer (×2), landscape and portrait. The New Build appeal, a large donate QR code, and a card saying the app is on the App Store and Google Play. During Ramadan and for the days of each Eid it shows the greeting instead, switching on and off by itself from the Hijri dates in the timetable. A bar along the bottom shows the next jamāʿah and Jumuʿah.
 
-**`foyer-content.json`** — the editable text behind both foyer pages: the New Build copy and the Ramadan/Eid wording. Edit this file directly on GitHub (pencil icon → edit → commit) and every foyer TV picks it up within a day, without anyone touching the screens. Must stay in the same folder as `foyer.html` and `foyervertical.html` — it's loaded by a relative path, and the filenames have to match exactly (`foyer-content.json`, with the hyphen).
+**`foyer-content.json`**: the foyer's words, the donate link and the app card. Edit it on GitHub and the foyer TVs pick it up within about twenty minutes. See SETUP.md.
 
-**`SETUP.md`** — the full walkthrough: which TV gets which URL, the per-TV settings worth changing once (auto power-off, screensaver, clock sync), and how the annual timetable refresh works.
+**The four `.html` files are built, not written.** The source is in `src/`. Change it there and run `python3 build.py`. Line 1 of each built file says so.
 
 ## Repository structure
 
 ```
-├── timetable.html          Salah times screensaver, landscape — prayer hall
-│                            & downstairs. Self-contained; the year's
-│                            timetable is embedded, so it needs no network
-│                            once loaded.
-├── timetablevertical.html   Same as above, laid out for portrait TVs.
-├── foyer.html               Foyer display, landscape — New Build appeal by
-│                            default, Ramadan/Eid greetings on the right
-│                            dates. Fetches foyer-content.json at runtime.
-├── foyervertical.html       Same as above, laid out for portrait TVs.
-├── foyer-content.json       Editable copy for both foyer pages. Edit this,
-│                            not foyer.html/foyervertical.html, to change
-│                            what the foyer TVs show.
-└── SETUP.md                 Full setup & maintenance instructions.
+├── timetable.html, timetablevertical.html,
+│   foyer.html, foyervertical.html   BUILT by build.py; the TVs open these.
+├── foyer-content.json     Editable foyer words, donate link, app card.
+├── build.py               Builds the four pages (Python 3, no installs).
+├── data/
+│   └── timetable-YYYY.json   One per year, copied from the app repo.
+├── src/
+│   ├── shared/            Colours, fonts, logo, store badges, the frame
+│   │                      (clock, dates, bar, reliability), times.js (the
+│   │                      prayer-time rules), the QR code library.
+│   ├── timetable/         The timetable screen.
+│   └── foyer/             The foyer screen.
+├── tests/                 npm test: the rules, both screens, the build, and
+│                          checks that the checks can fail.
+├── docs/superpowers/      The design and the plan behind design B.
+└── SETUP.md               Which TV gets which page, and the yearly update.
 ```
 
-## Reliability — this is signage, not a webpage
+## Reliability: this is signage, not a webpage
 
-These run for months, unattended, on TVs nobody's actively looking after. A few things are built in because of that, not despite it:
+These run for months on TVs nobody is looking after.
 
-- **Zero external requests on `timetable.html` / `timetablevertical.html`.** Fonts, logo and the full timetable are embedded as base64 — no CDN, no API, nothing that can fail partway through the year.
-- **Daily 2am reload on all four pages**, timed to sit after the latest Isha jamā'ah and before the earliest Fajr begins even at midsummer, to clear any memory build-up from weeks of uptime.
-- **A stall watchdog** that reloads immediately if the tab was suspended or throttled by the TV's browser and has just woken back up, rather than carry on with a clock that silently drifted while it was asleep.
-- **A slow, near-invisible position drift** (~150 second cycle) as basic burn-in protection for content that sits static for hours at a time.
-- **A viewport-fit safety net** on all four pages that scales content down (never up) to guarantee nothing clips off-screen, regardless of the exact TV resolution.
-- **`foyer.html` / `foyervertical.html` never go blank on a failed fetch** — if `foyer-content.json` can't be reached (e.g. Wi-Fi blips during the nightly reload), they fall back to a copy baked into the file itself.
+- **No network needed for the times.** Fonts, logo, badges and every year of prayer times are inside each page.
+- **A 2am reload, but only if the network can serve the page.** If the Wi-Fi is down, the screen keeps what it has and tries again every fifteen minutes, rather than showing the browser's error page. The reload is also how an update reaches the TVs.
+- **A stall watchdog.** If the TV's browser froze the tab and has just woken it, the page reloads (the same guarded way) instead of showing a clock that stopped.
+- **A slow drift** of a few pixels every 150 seconds, against burn-in.
+- **Fit to screen.** Each page is laid out at 1920×1080 (or 1080×1920) and scaled down to the TV, never up, so nothing is ever cut off.
+- **The foyer never goes blank.** If `foyer-content.json` cannot be reached, it shows the copy built into the page.
+- **No data, no guess.** On a date with no prayer times the timetable says so ("Please use the printed timetable"). It never shows a time it is not sure of.
 
-None of this can recover a TV that's been fully power-cycled — that's a TV-settings problem, not a code problem. See the reliability checklist in `SETUP.md`.
+## Each new year
 
-## Annual refresh
+Copy the app repo's `data/timetable-YYYY.json` into `data/`, then:
 
-`timetable.html` / `timetablevertical.html`'s Salah times, and both foyer pages' Ramadan/Eid date detection, all come from the same year's published timetable and are pinned to that year. When the masjid publishes the next year's timetable, **all four files** need rebuilding with it, together — see `SETUP.md` for the exact steps. `foyer-content.json`'s wording has no such expiry and can be edited any time.
+```bash
+python3 build.py
+```
+
+```bash
+npm test
+```
+
+Commit, and every TV has the new year after its next 2am reload. `build.py` refuses a timetable with a missing or out-of-order time. Both 2026 and 2027 are in already.
+
+## Building and testing
+
+`python3 build.py` needs only Python 3. `npm test` needs Node 22 and Playwright: `npm install`, and `npm i -D playwright` plus `npx playwright install chromium` if Playwright is not already there. The tests drive the built pages in a real browser at fixed times on real dates: midnight, after Isha, a Friday between the two Jumuʿahs, both clock changes, Ramadan, both Eids, and the end of the data. They decode the donate QR code, check nothing runs off the screen at five TV sizes, and prove each check can fail.
 
 ## Deploying
 
-GitHub Pages, serving from this repo's root on `main`. If Pages isn't already on: **Settings → Pages → Deploy from a branch → `main` / `(root)`**. Once live:
+GitHub Pages, from this repo's root on `main`. A push to `main` reaches every TV at its next 2am reload, so test before merging. The four addresses are unchanged:
 
 ```
 https://yameenbux.github.io/Taiyabah-Mosque-Interactive-Screens/timetable.html
@@ -68,8 +84,6 @@ https://yameenbux.github.io/Taiyabah-Mosque-Interactive-Screens/timetablevertica
 https://yameenbux.github.io/Taiyabah-Mosque-Interactive-Screens/foyer.html
 https://yameenbux.github.io/Taiyabah-Mosque-Interactive-Screens/foyervertical.html
 ```
-
-A custom domain later is a `CNAME` file plus one DNS record — doesn't change anything else about this structure.
 
 ## Credits
 
