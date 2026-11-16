@@ -189,14 +189,21 @@ timetable's frame and components so the six TVs read as one set:
 - **Ramadan and Eid greetings** sit on the same ground as everything else,
   with the same date-driven switching as today (`durationDays` and `enabled`
   are honoured).
-- **The QR code stays as the image baked in today.** It encodes
-  `taiyabahmasjid.com/product/dome-donation/`, a domain the website's own
+- **The QR code is drawn live from `give.otherAmountUrl`** in
+  `foyer-content.json`, by a small QR library embedded in the page. That is
+  how the current foyer already works, whatever SETUP.md says, so the
+  library comes across. Editing the link in the JSON changes the code within
+  a day. The link it holds today is
+  `taiyabahmasjid.com/product/dome-donation/`, on a domain the website's own
   notes say is not yet settled. **Before go-live, the masjid confirms that
-  link still takes money.** Without a dependency-free way to make QR codes,
-  a changed link means a new image, as SETUP already says.
+  link still takes money.** SETUP.md's paragraph saying the QR is baked in is
+  corrected.
 
-The foyer has no approved mockup, so its landscape and portrait screenshots
-go into the same sign-off as the timetable (below).
+Mockups of the landscape default and Ramadan states were shown on 16 Nov.
+They add one line to the greeting that is not in today's foyer: "Day 11 of
+Ramadan · Iftār 5:31 pm", where Iftār is that day's Maghrib time from the
+data. The New Build timeline is drawn as a gold line with dots, echoing the
+timetable's arc.
 
 ## Checks (`tests/`)
 
