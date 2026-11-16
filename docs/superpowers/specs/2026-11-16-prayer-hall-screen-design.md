@@ -1,6 +1,6 @@
-# Prayer Hall screen — design B, built from one source
+# TV screens — design B, built from one source
 
-Date: 16 November 2026 · Status: draft for approval
+Date: 16 November 2026 · Status: draft for approval · scope widened 16 Nov to all six TVs
 
 ## Why
 
@@ -21,14 +21,21 @@ loaded" unless 2027 is added.
 
 ## Scope
 
-**In:** the Prayer Hall timetable screen, landscape (`timetable.html`) and
-portrait (`timetablevertical.html`), rebuilt to design B and generated from a
-shared source.
+**In** (decided by the masjid, 16 Nov):
+- **All four timetable TVs**, two in the prayer hall and two downstairs, switch
+  to design B together. They already share `timetable.html` and
+  `timetablevertical.html`.
+- **The two foyer TVs** (`foyer.html`, `foyervertical.html`) move into the
+  same source and take on design B's visual language. Their **content and
+  behaviour stay as they are**: the New Build appeal by default; the Ramadan
+  and Eid greetings switching on by Hijri date; text from
+  `foyer-content.json`, fetched at runtime with a baked-in fallback.
+- **Hijri dates for the foyer** come from the same `data/` files, so one
+  build covers all six TVs each year.
 
-**Out (non-goals):** the foyer screens (`foyer.html`, `foyervertical.html`),
-which keep working untouched and move to the shared source later. Also out:
-new content such as notices, announcements or an iqāmah overlay, and any
-network fetching.
+**Out (non-goals):** new content such as notices, announcements or an iqāmah
+overlay. Also out: any network dependency for showing times. The foyer's
+existing fetch of its own text file stays.
 
 **Anti-goals: it has failed, even if it looks right, if any of these happen:**
 - a TV needs a new URL or someone has to touch it to get the new version;
@@ -55,19 +62,23 @@ Three were considered:
 
 ```
 src/
-  timetable/            the prayer-hall screen
+  timetable/            the timetable screen (prayer hall + downstairs)
     page.html           markup with placeholders
     screen.css          both orientations; portrait via a body class
-    screen.js           clock, next-jamāʿah, arc, cards, reliability net
+    screen.js           arc, cards, timetable-specific logic
+  foyer/                the foyer screen
+    page.html, screen.css, screen.js   appeal, occasions, content fetch
   shared/
     tokens.css          colours, type scale, [hidden] rule
+    frame.css/.js       header, clock, dates, next-jamāʿah pill, star,
+                        reliability net (guarded reload, watchdog, drift,
+                        fit-to-viewport, fullscreen); used by both screens
     fonts/              woff2 subsets actually used
     logo.svg            from the app's logo.svg, ink set by CSS
 data/
   timetable-2026.json   identical format to the app's data/timetable-2026.json
 build.py                inlines fonts, logo, CSS, JS and every data/*.json
-                        into timetable.html and timetablevertical.html
-                        at the repo root
+                        into all four screen files at the repo root
 tests/                  checks the build output (below)
 ```
 
@@ -163,6 +174,30 @@ format.
 - The TV's own clock is trusted. `SETUP.md` already tells staff to keep it
   network-synced.
 
+## The foyer in design B
+
+The foyer keeps its two-column structure and its copy. It takes the
+timetable's frame and components so the six TVs read as one set:
+
+- **Same header as the timetable:** the logo top left, the clock at top
+  centre (12-hour, no seconds), and the Gregorian and Hijri dates top right.
+- **The same plum radial ground and star watermark**, card style, gold
+  eyebrows and type scale.
+- **A next-jamāʿah strip** along the bottom, the same pill as the timetable,
+  because people pass the foyer on their way in. *Builder's proposal; the
+  masjid can drop it at sign-off.*
+- **Ramadan and Eid greetings** sit on the same ground as everything else,
+  with the same date-driven switching as today (`durationDays` and `enabled`
+  are honoured).
+- **The QR code stays as the image baked in today.** It encodes
+  `taiyabahmasjid.com/product/dome-donation/`, a domain the website's own
+  notes say is not yet settled. **Before go-live, the masjid confirms that
+  link still takes money.** Without a dependency-free way to make QR codes,
+  a changed link means a new image, as SETUP already says.
+
+The foyer has no approved mockup, so its landscape and portrait screenshots
+go into the same sign-off as the timetable (below).
+
 ## Checks (`tests/`)
 
 Run with `python3 tests/run.py`, which drives the built files in headless
@@ -181,9 +216,13 @@ Chromium through Playwright, the way the website's `_test/` suites do:
    file itself. The guarded reload's one same-URL request is the only
    exception. A test covers it: with the network blocked, the 02:00 reload
    leaves the timetable on screen.
-4. **Nothing clipped:** screenshots at 1920×1080, 1366×768, 3840×2160,
+4. **Foyer occasions:** on dates inside Ramadan, Eid al-Fitr and Eid al-Adha
+   in the data (2026, and 2027 once added), the matching greeting shows; the
+   day after `durationDays` it reverts. With `foyer-content.json` unreachable
+   the page still renders from its fallback.
+5. **Nothing clipped:** screenshots at 1920×1080, 1366×768, 3840×2160,
    1080×1920 and 768×1366, with every element inside the viewport.
-5. **The guards can fail:** the test suite proves at least one of the checks
+6. **The guards can fail:** the test suite proves at least one of the checks
    above goes red against a deliberately broken throwaway copy of the build,
    never by breaking the real one.
 
@@ -192,8 +231,10 @@ Chromium through Playwright, the way the website's `_test/` suites do:
 There is no staging site: Pages serves `main`, and every TV picks up `main`
 at its next 02:00 reload. So the branch *is* the staging. Before anything
 reaches `main`, screenshots of the built landscape **and portrait** files go
-to the masjid for sign-off, at several times of day and on a Friday. Portrait
-has no approved mockup yet, so this is its approval step *(builder's call)*.
+to the masjid for sign-off: the timetable at several times of day and on a
+Friday, and the foyer in its default, Ramadan and Eid states. Portrait and the
+foyer have no approved mockup yet, so this is their approval step *(builder's
+call)*. All six TVs switch on the same night.
 
 ## Left to the builder
 
@@ -208,6 +249,8 @@ has no approved mockup yet, so this is its approval step *(builder's call)*.
 
 ## Open: needs the masjid, not code
 
-**The 2027 timetable.** Without it, from 1 January both this design and the
-current screen show the no-data message. Once the app has
-`timetable-2027.json`, adding it here takes minutes.
+- **The 2027 timetable.** The masjid is sending it. It is parsed into
+  `timetable-2027.json` in the app's format and added to **both** this repo
+  and the app. The app runs out on the same date, and per the app's rule it
+  then needs a release to both stores.
+- **The foyer QR link**, as above.
