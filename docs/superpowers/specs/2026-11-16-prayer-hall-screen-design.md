@@ -249,8 +249,12 @@ call)*. All six TVs switch on the same night.
 
 ## Open: needs the masjid, not code
 
-- **The 2027 timetable.** The masjid is sending it. It is parsed into
-  `timetable-2027.json` in the app's format and added to **both** this repo
-  and the app. The app runs out on the same date, and per the app's rule it
-  then needs a release to both stores.
+- **The 2027 timetable** has been received and parsed into the app repo's
+  `data/timetable-2027.json` (branch `claude/mosque-screen-display-design-q965ww`).
+  It is copied into this repo's `data/` as part of the build. One value is
+  inferred: 2nd Jumuʿah on Fri 31 Dec 2027, which the printed list omits. The
+  parser carries 24 Dec's 1:40 pm forward, and the masjid confirms it.
+  The app does not need a store release for 2027: it downloads published
+  years from the committee's database. The committee publishes 2027 from the
+  admin side.
 - **The foyer QR link**, as above.
