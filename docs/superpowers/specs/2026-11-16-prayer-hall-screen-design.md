@@ -191,6 +191,13 @@ timetable's frame and components so the six TVs read as one set:
 - **Ramadan and Eid greetings** sit on the same ground as everything else,
   with the same date-driven switching as today (`durationDays` and `enabled`
   are honoured).
+- **The left column has no tagline** (the masjid, 16 Nov). It shows the
+  eyebrow, the heading, the appeal card and the timeline. The `tagline` field
+  stays in `foyer-content.json`, unused by the screen. The space it freed
+  goes to larger text: heading 64 px, appeal title 52 px, appeal text 25 px,
+  timeline titles 28 px and dates 20 px. **Timeline labels are evenly spaced
+  and centred under their dots, and the tests check that no label's text
+  touches its neighbour** (it did, once, at a larger size).
 - **The Give card shows no bank details** (the masjid, 16 Nov: nobody copies
   an account number off a TV). It holds only the eyebrow "Give to the New
   Build", a large donate QR code (about 380 px at 1080p), "Scan to give any
