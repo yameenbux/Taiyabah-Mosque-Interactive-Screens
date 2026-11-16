@@ -195,6 +195,10 @@ timetable's frame and components so the six TVs read as one set:
   on the screen and takes the space the bank rows had. The `bank` fields stay
   in `foyer-content.json`, unused by the screen, so nothing that reads that
   file breaks. The right column is 740 px wide.
+- **The QR code is drawn as one crisp vector path:** square modules,
+  `shape-rendering: crispEdges`, ink `#261B22` on a cream `#FCFAF3` tile, and a
+  quiet zone of at least three modules inside the tile's rounded corners, so
+  the rounding never clips a module. It is never a scaled bitmap.
 - **An app card under the Give card** (the masjid, 16 Nov). Its eyebrow reads
   "The Taiyabah Masjid app" and its heading "Now available on the app
   stores", with the line: Search "Taiyabah Masjid" · prayer times, notices,
