@@ -188,6 +188,13 @@ timetable's frame and components so the six TVs read as one set:
 - **Ramadan and Eid greetings** sit on the same ground as everything else,
   with the same date-driven switching as today (`durationDays` and `enabled`
   are honoured).
+- **The Give card shows no bank details** (the masjid, 16 Nov: nobody copies
+  an account number off a TV). It holds only the eyebrow "Give to the New
+  Build", a large donate QR code (about 380 px at 1080p), "Scan to give any
+  amount" in 52 px Fraunces, and the Gift Aid line. It is the largest element
+  on the screen and takes the space the bank rows had. The `bank` fields stay
+  in `foyer-content.json`, unused by the screen, so nothing that reads that
+  file breaks. The right column is 740 px wide.
 - **An app card under the Give card** (the masjid, 16 Nov). Its eyebrow reads
   "The Taiyabah Masjid app" and its heading "Now available on the app
   stores", with the line: Search "Taiyabah Masjid" · prayer times, notices,
