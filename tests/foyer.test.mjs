@@ -167,3 +167,79 @@ for (const [file, width, height] of FILES) {
     await ctx.close();
   });
 }
+
+/* Review finding 1: valid JSON in the wrong shape must not blank or break
+   the screen. The built-in copy stays up, and the greetings keep working. */
+for (const [label, body] of [["null", "null"], ["{}", "{}"], ["needs as text", JSON.stringify({ ...CONTENT, newBuild: { ...CONTENT.newBuild, needs: "Tiling, Carpets" } })]]) {
+  test(`a wrong-shaped foyer-content.json (${label}) keeps the good copy`, async () => {
+    const errors = [];
+    const { page, ctx } = await openAt(browser, srv.base, "foyer.html", "2026-11-16T13:05:00", { route: (p) => { p.on("pageerror", (e) => errors.push(e.message)); return p.route("**/foyer-content.json", (r) => r.fulfill({ contentType: "application/json", body })); } });
+    await page.waitForTimeout(1500);
+    assert.equal((await page.textContent("#nb-heading")).trim(), CONTENT.newBuild.heading);
+    assert.equal(await decodeQR(page), CONTENT.newBuild.give.otherAmountUrl);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+}
+
+/* Review finding 2: long words anywhere on the foyer shrink to fit. */
+test("long text in the Give card, app card and greeting still fits", async () => {
+  const long = withContent((c) => {
+    c.newBuild.give.scanLabel = "Scan here with your phone camera to give any amount you wish";
+    c.newBuild.give.giftAidNote += " Please remember the masjid in your duas, and tell your family about the new build.";
+    c.app.line = "Search “Taiyabah Masjid” on the App Store or Google Play · prayer times, notices, live radio, madrasah news";
+    c.occasions.ramadan.title = "Ramadan Mubarak to the whole community";
+    c.occasions.ramadan.message = "May this blessed month bring peace. May it bring patience. May it bring closeness to Allah for you and your family. May Allah accept your fasts and your prayers.";
+  });
+  for (const [file, width, height] of FILES) for (const when of ["2026-11-16T13:05:00", "2027-02-18T13:05:00"]) {
+    const { page, ctx } = await openAt(browser, srv.base, file, when, { width, height, route: long });
+    await page.waitForTimeout(400);
+    assert.match(await page.evaluate(() => document.body.innerText), /any amount you wish|whole community/);
+    assert.deepEqual(await overflowing(page), [], `${file} ${when}`);
+    const hit = await page.evaluate(() => {
+      const b = document.getElementById("fbar").getBoundingClientRect(), c = document.getElementById("clock").getBoundingClientRect();
+      for (const el of document.querySelectorAll("#oin > *:not([hidden]), #side .card")) {
+        const r = el.getBoundingClientRect();
+        if (!r.height) continue;
+        if (r.bottom > b.top && r.top < b.bottom && r.right > b.left && r.left < b.right) return el.id || el.className;
+        if (r.top < c.bottom && r.bottom > c.top && r.right > c.left && r.left < c.right) return (el.id || el.className) + " on the clock";
+      }
+      return null;
+    });
+    assert.equal(hit, null, `${file} ${when}`);
+    await ctx.close();
+  }
+});
+
+/* Review finding 3: adding a phase must not make the timeline labels collide. */
+test("a seven-phase timeline keeps its labels apart", async () => {
+  const seven = withContent((c) => {
+    c.newBuild.timeline = [...c.newBuild.timeline.slice(0, 4), { date: "Spring 2027", title: "Phase 3.4 roof and dome", status: "upcoming" }, { date: "2028", title: "Landscaping and car park", status: "upcoming" }, c.newBuild.timeline[4]];
+  });
+  for (const [file, width, height] of FILES) {
+    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-16T13:05:00", { width, height, route: seven });
+    await page.waitForTimeout(400);
+    const ink = await page.$$eval("#timeline .lab", (labs) => labs.map((l) => {
+      let a = Infinity, z = -Infinity, t = Infinity, b = -Infinity;
+      for (const e of l.querySelectorAll("b,span")) { const r = document.createRange(); r.selectNodeContents(e); const q = r.getBoundingClientRect(); a = Math.min(a, q.left); z = Math.max(z, q.right); t = Math.min(t, q.top); b = Math.max(b, q.bottom); }
+      return { a, z, t, b };
+    }));
+    assert.equal(ink.length, 7);
+    for (let i = 1; i < ink.length; i++) {
+      const p = ink[i - 1], q = ink[i];
+      assert.ok(q.a >= p.z + 8 || p.a >= q.z + 8 || q.t >= p.b + 8 || p.t >= q.b + 8, `${file}: labels ${i - 1} and ${i} touch`);
+    }
+    assert.deepEqual(await overflowing(page), [], file);
+    await ctx.close();
+  }
+});
+
+test("a null foyer-content.json still lets Eid show", async () => {
+  const errors = [];
+  const { page, ctx } = await openAt(browser, srv.base, "foyer.html", "2027-03-10T10:00:00", { route: (p) => { p.on("pageerror", (e) => errors.push(e.message)); return p.route("**/foyer-content.json", (r) => r.fulfill({ contentType: "application/json", body: "null" })); } });
+  await page.waitForTimeout(1500);
+  await page.clock.runFor(3000);
+  assert.equal(await page.isVisible("#occasion"), true);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});

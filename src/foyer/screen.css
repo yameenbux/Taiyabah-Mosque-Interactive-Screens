@@ -13,9 +13,9 @@ h1{font-family:var(--serif);font-size:64px;font-weight:600;line-height:1.08;lett
 .appeal p{font-size:25px;color:var(--cream-80);margin-top:10px;line-height:1.45}
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
 .chips span{border:1px solid rgba(220,187,99,.45);color:var(--goldb);border-radius:999px;padding:8px 20px;font-size:22px}
-#timeline{position:relative;margin-top:26px;height:190px}
+#timeline{position:relative;margin-top:26px;min-height:120px}
 #timeline svg{position:absolute;left:0;top:0;width:100%;height:60px;overflow:visible}
-#timeline .lab{position:absolute;top:58px;width:188px;transform:translateX(-50%);text-align:center}
+#timeline .lab{position:absolute;top:58px;transform:translateX(-50%);text-align:center}
 #timeline .lab b{display:block;font-family:var(--serif);font-size:28px;font-weight:600;line-height:1.2}
 #timeline .lab span{display:block;font-size:20px;color:var(--cream-60);margin-top:6px}
 #timeline .lab.active b{color:var(--goldb)}
@@ -69,3 +69,5 @@ body.portrait .app{display:grid;grid-template-columns:1fr auto;grid-template-row
 body.portrait .app>.eyebrow,body.portrait .app>h3,body.portrait .app>p{grid-column:1}
 body.portrait .app .badges{grid-column:2;grid-row:1/4;flex-direction:column;align-items:center;gap:14px;margin-top:0}
 .o-day .ampm{font-size:.75em}
+.o-in{display:flex;flex-direction:column;align-items:center;width:100%}
+#occasion{overflow:visible}

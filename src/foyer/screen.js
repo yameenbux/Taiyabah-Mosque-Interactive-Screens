@@ -46,8 +46,11 @@
 
   /* Evenly spaced dots on a gold line, each label centred under its dot. */
   function drawTimeline(items) {
-    var W = PORTRAIT ? 952 : 964, w = 188, n = items.length;
+    var W = PORTRAIT ? 952 : 964, n = items.length;
     if (!n) { setHTML("timeline", ""); return; }
+    // Label width from the room between dots, so a seventh phase cannot
+    // make neighbours collide; the type shrinks with it.
+    var w = Math.min(188, (W - 12 * (n - 1)) / n), f = w / 188;
     var xs = items.map(function (_, i) { return n === 1 ? W / 2 : w / 2 + i * (W - w) / (n - 1); });
     var act = -1;
     items.forEach(function (t, i) { if (t.status === "active") act = i; });
@@ -60,9 +63,12 @@
       var st = t.status || "upcoming";
       svg += '<circle cx="' + xs[i] + '" cy="24" r="' + (st === "active" ? 14 : 9) + '" fill="' + (st === "upcoming" ? "#3C0B2A" : "#DCBB63") + '" stroke="#DCBB63" stroke-width="2.5"/>';
       if (st === "active") svg += '<circle cx="' + xs[i] + '" cy="24" r="26" fill="none" stroke="rgba(220,187,99,.35)" stroke-width="2"/>';
-      labs += '<div class="lab ' + esc(st) + '" style="left:' + xs[i] + 'px"><b>' + esc(t.title) + "</b><span>" + esc(t.date) + "</span></div>";
+      labs += '<div class="lab ' + esc(st) + '" style="left:' + xs[i] + "px;width:" + w + 'px"><b style="font-size:' + Math.max(18, 28 * f) + 'px">' + esc(t.title) + '</b><span style="font-size:' + Math.max(14, 20 * f) + 'px">' + esc(t.date) + "</span></div>";
     });
     setHTML("timeline", svg + "</svg>" + labs);
+    var tl = document.getElementById("timeline"), h = 0;
+    for (var k = 0; k < tl.children.length; k++) h = Math.max(h, tl.children[k].offsetTop + tl.children[k].offsetHeight);
+    tl.style.height = h + "px";
   }
 
   /* Shrink the left column's contents (never clip them) if an edit to
@@ -76,6 +82,17 @@
       fit.style.width = W / k + "px";
     }
     if (k < 1) fit.style.transform = "scale(" + k + ")";
+  }
+
+  /* Shrink `el` (never clip it) when its contents need more room than
+   * `box` (default: itself) has. Used for the Give/app column and the
+   * greeting, after fitColumn did the same for the left column. */
+  function fitBox(el, origin, box) {
+    if (!el || el.offsetParent === null) return;
+    box = box || el;
+    el.style.transform = "none";
+    var need = box === el ? el.scrollHeight : el.offsetHeight, have = box.clientHeight;
+    if (need > have + 1) { el.style.transformOrigin = origin; el.style.transform = "scale(" + (have / need) + ")"; }
   }
 
   function renderNewBuild(c) {
@@ -98,7 +115,8 @@
 
   function tick(now) {
     renderFrame(now, { short: true });
-    var a = activeOccasion(CONTENT, DAYS, now);
+    var a = null;
+    try { a = activeOccasion(CONTENT, DAYS, now); } catch (e) { a = null; }
     document.getElementById("occasion").hidden = !a;
     document.getElementById("newbuild").hidden = !!a;
     document.body.classList.toggle("occ", !!a);
@@ -110,16 +128,33 @@
       day.hidden = !(a.ramadanDay && rec);
       if (a.ramadanDay && rec) setHTML("oday", "Day " + a.ramadanDay + " of Ramadan · Maghrib " + fmtTime(rec.begins.maghrib));
     } else if (tick.dirty || tick.last !== T.dayKey(now)) {
-      renderNewBuild(CONTENT);
+      try { renderNewBuild(CONTENT); } catch (e) { if (CONTENT !== window.TT_CONTENT) { CONTENT = window.TT_CONTENT; renderNewBuild(CONTENT); } }
     }
+    fitBox(document.getElementById("side"), "top center");
+    fitBox(document.getElementById("oin"), "center center", document.getElementById("occasion"));
     tick.dirty = false; tick.last = a ? null : T.dayKey(now);
     fitToViewport();
+  }
+
+  /* A volunteer edits this file in GitHub's editor. Valid JSON in the wrong
+   * shape (a list typed as text, a section deleted) must not blank the
+   * screen: keep the last good copy unless the new one has every part. */
+  function isObj(x) { return !!x && typeof x === "object" && !Array.isArray(x); }
+  function wellFormed(c) {
+    if (!isObj(c) || !isObj(c.newBuild) || !isObj(c.occasions)) return false;
+    var nb = c.newBuild;
+    return typeof nb.heading === "string" && Array.isArray(nb.needs) && Array.isArray(nb.timeline) && isObj(nb.give) &&
+      nb.timeline.every(isObj) && nb.needs.every(function (n) { return typeof n === "string"; }) &&
+      (c.app === undefined || isObj(c.app));
   }
 
   function load() {
     fetch("foyer-content.json", { cache: "no-store" })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-      .then(function (json) { CONTENT = json; tick.dirty = true; tick(new Date()); })
+      .then(function (json) {
+        if (!wellFormed(json)) return;
+        CONTENT = json; tick.dirty = true; tick(new Date());
+      })
       .catch(function () { /* keep what is showing: the last good copy, or the built-in one */ });
   }
 
