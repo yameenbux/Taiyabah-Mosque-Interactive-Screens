@@ -17,7 +17,7 @@ for (const [file, width, height] of FILES) {
     const cds = await page.$$eval(".card .cd", (els) => els.map((e) => [e.closest(".card").className, e.textContent.trim()]).filter((x) => x[1]));
     assert.deepEqual(cds, [["card asr isnext", "in 1h 54m"]], "the countdown is in the next card, and only there");
     assert.equal(await page.locator("#arc, #arcwrap, #next, .pill, .star").count(), 0, "no arc, pill or star");
-    const jum = await page.textContent("#jum");
+    const jum = await page.textContent("#jbox");
     assert.match(jum, /1st/); assert.doesNotMatch(jum, /Friday|November|\b20\b/, "the Jumuʿah bar carries no date");
     assert.equal((await page.textContent(".card.isnext .nm")).trim(), "Asr");
     assert.equal(await page.locator("#clock .sec").count(), 0, "no seconds on the clock");
@@ -32,7 +32,7 @@ for (const [file, width, height] of FILES) {
     const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-20T12:00:00", { width, height });
     const card = await page.textContent(".card.zuhr");
     assert.match(card, /Jumuʿah/); assert.match(card, /1st/); assert.match(card, /2nd/); assert.doesNotMatch(card, /&/);
-    const bar = await page.textContent("#jum");
+    const bar = await page.textContent("#jbox");
     assert.match(bar, /1st/); assert.match(bar, /2nd/); assert.doesNotMatch(bar, /&/);
     await ctx.close();
   });
@@ -138,6 +138,56 @@ for (const [file, width, height] of FILES) {
         return bad;
       }, width < height);
       assert.deepEqual(r, []);
+      await ctx.close();
+    });
+  }
+}
+
+/* The bottom is two separate boxes: Jumuʿah (gold label above the two
+   times) and the sun (a sunrise and a sunset icon, each with its time to
+   the right). They line up with the cards' outer edges and don't touch. */
+for (const [file, width, height] of FILES) {
+  for (const when of ["2026-11-16T13:05:00", "2026-11-20T12:00:00"]) {
+    test(`${file} bottom boxes at ${when.slice(0, 10)}`, async () => {
+      const { page, ctx } = await openAt(browser, srv.base, file, when, { width, height });
+      const r = await page.evaluate(() => {
+        const bad = [], box = (s) => document.querySelector(s) && document.querySelector(s).getBoundingClientRect();
+        const jb = box("#jbox"), sb = box("#sbox"), cards = box("#cards");
+        if (!jb || !sb) return ["the two boxes are missing"];
+        if (Math.abs(jb.left - cards.left) > 1) bad.push("Jumuʿah box not on the cards' left edge");
+        if (Math.abs(sb.right - cards.right) > 1) bad.push("sun box not on the cards' right edge");
+        if (jb.right > sb.left - 16) bad.push("the boxes touch");
+        if (Math.abs(jb.top - sb.top) > 1 || Math.abs(jb.bottom - sb.bottom) > 1) bad.push("the boxes are not the same height");
+        const eb = document.querySelector("#jbox .eyebrow").getBoundingClientRect(), times = document.querySelector("#jbox .times").getBoundingClientRect();
+        if (!(eb.bottom <= times.top + 2)) bad.push("the Jumuʿah label is not above the times");
+        // both boxes centre their contents the same way
+        const mid = (r) => (r.left + r.right) / 2;
+        const g = document.createRange(); g.selectNodeContents(document.querySelector("#jbox .times"));
+        if (Math.abs(mid(g.getBoundingClientRect()) - mid(jb)) > 3) bad.push("the Jumuʿah times are not centred in their box");
+        if (Math.abs(mid(eb) - mid(jb)) > 3) bad.push("the Jumuʿah label is not centred in its box");
+        const ts = [...document.querySelectorAll("#sbox .t")].map((t) => t.getBoundingClientRect());
+        if (innerWidth > innerHeight) {
+          const tops = [eb, ...[...document.querySelectorAll("#sbox .k")].map((k) => k.getBoundingClientRect())].map((r) => Math.round(r.top));
+          if (Math.max(...tops) - Math.min(...tops) > 1) bad.push("the three bottom labels are not on one line: " + tops.join(","));
+        }
+        if (innerWidth < innerHeight && ts.length === 2 && Math.abs(ts[0].left - ts[1].left) > 1) bad.push("the sun times do not line up");
+        const suns = [...document.querySelectorAll("#sbox .sunpart")];
+        if (suns.length !== 2) bad.push(suns.length + " sun parts");
+        for (const s of suns) {
+          const ic = s.querySelector("svg").getBoundingClientRect(), t = s.querySelector(".t").getBoundingClientRect();
+          if (!(ic.right <= t.left)) bad.push("a time is not to the right of its icon");
+        }
+        for (const el of [document.querySelector("#jbox .times"), ...document.querySelectorAll("#sbox .t")]) {
+          const g = document.createRange(); g.selectNodeContents(el); const q = g.getBoundingClientRect();
+          // against the largest type in the line, not the small "1st"/"2nd"
+          const fs = Math.max(...[el, ...el.querySelectorAll("*")].map((e) => parseFloat(getComputedStyle(e).fontSize)));
+          if (q.height > fs * 1.7) bad.push("a bottom time wraps");
+        }
+        return bad;
+      });
+      assert.deepEqual(r, []);
+      const sun = await page.textContent("#sbox");
+      assert.match(sun, /Sunrise/i); assert.match(sun, /Sunset/i);
       await ctx.close();
     });
   }

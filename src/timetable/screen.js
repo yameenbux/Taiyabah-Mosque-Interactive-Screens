@@ -16,6 +16,15 @@
     isha: '<path d="M30 8a15 15 0 1 0 10 25A13 13 0 0 1 30 8z" stroke-linejoin="round"/>',
   };
 
+  var SUN = {
+    sunrise: '<path d="M6 34h36M13 34a11 11 0 0 1 22 0M24 19V6M18 12l6-6 6 6M10 41h28"/>',
+    sunset: '<path d="M6 34h36M13 34a11 11 0 0 1 22 0M24 6v13M18 13l6 6 6-6M10 41h28"/>',
+  };
+  function sunPart(key, label, hhmm) {
+    return '<div class="sunpart ' + key + '"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      SUN[key] + '</svg><div><div class="k">' + label + '</div><div class="t">' + fmtTime(hhmm) + "</div></div></div>";
+  }
+
   function icon(key) {
     return '<svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">' + ICON[key] + "</svg>";
   }
@@ -34,11 +43,14 @@
   }
 
   function tick(now) {
-    var rec = renderFrame(now, { short: true });   // the Jumuʿah bar carries no date
+    var rec = renderFrame(now, { short: true });
     var have = !!rec;
     document.getElementById("nodata").hidden = have;
     document.getElementById("cards").hidden = !have;
-    document.getElementById("sun").hidden = !have;
+    document.getElementById("sbox").hidden = !have;
+    var j = T.nextJumuah(DAYS, now);
+    document.getElementById("jbox").hidden = !j;
+    if (j) setHTML("jtimes", '<span class="lab">1st</span><b>' + fmtTime(j.first) + '</b><span class="lab">2nd</span><b>' + fmtTime(j.second) + "</b>");
     if (have) {
       var n = T.nextJamaah(DAYS, now);
       // Only today's next jamāʿah is marked: after Isha the next one is
@@ -47,7 +59,7 @@
       var countdown = nextKey ? T.countdown(n.at - now) : "";
       var passed = T.passedKeys(DAYS, now);
       setHTML("cards", T.slotsFor(DAYS, now).map(function (s) { return card(s, rec, passed, nextKey, countdown); }).join(""));
-      setHTML("sun", "Sunrise " + fmtTime(rec.begins.sunrise) + '<span class="dot">·</span>Sunset ' + fmtTime(rec.begins.maghrib));
+      setHTML("sbox", sunPart("sunrise", "Sunrise", rec.begins.sunrise) + sunPart("sunset", "Sunset", rec.begins.maghrib));
     }
     fitToViewport();
   }
