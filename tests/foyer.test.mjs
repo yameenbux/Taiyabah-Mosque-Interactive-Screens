@@ -243,3 +243,37 @@ test("a null foyer-content.json still lets Eid show", async () => {
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+/* The foyer matches the timetable: the same header (larger logo, no star),
+   the same readability rules, and the bottom as two boxes, the next
+   jamāʿah and Jumuʿah, each with its gold label above. */
+import { textAudit } from "./helpers.mjs";
+for (const [file, width, height, logoMin] of [["foyer.html", 1920, 1080, 150], ["foyervertical.html", 1080, 1920, 122]]) {
+  for (const when of ["2026-11-16T13:05:00", "2027-02-18T13:05:00", "2027-03-10T10:00:00"]) {
+    test(`${file} is readable at ${when.slice(0, 10)}`, async () => {
+      const { page, ctx } = await openAt(browser, srv.base, file, when, { width, height });
+      const bad = [];
+      for (const t of await textAudit(page)) {
+        if (t.px < 24) bad.push(`"${t.text}" is ${t.px}px`);
+        if (t.contrast < 4.5) bad.push(`"${t.text}" contrast ${t.contrast.toFixed(1)}`);
+      }
+      assert.deepEqual([...new Set(bad)], []);
+      await ctx.close();
+    });
+  }
+  test(`${file} has the timetable's header and two bottom boxes`, async () => {
+    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-16T13:05:00", { width, height });
+    assert.equal(await page.locator(".star").count(), 0, "no star");
+    const r = await page.evaluate(() => {
+      const b = (s) => document.querySelector(s) && document.querySelector(s).getBoundingClientRect().toJSON();
+      const ebAbove = (box) => { const e = document.querySelector(box + " .eyebrow"), v = document.querySelector(box + " b"); return !!(e && v && e.getBoundingClientRect().bottom <= v.getBoundingClientRect().top + 2); };
+      return { logo: b(".logo"), next: b("#next"), jum: b("#jum"), nextAbove: ebAbove("#next"), jumAbove: ebAbove("#jum") };
+    });
+    assert.ok(r.logo.height >= logoMin, `logo ${Math.round(r.logo.height)}px`);
+    assert.ok(r.next && r.jum, "two boxes");
+    assert.ok(r.next.right + 16 <= r.jum.left || r.next.bottom + 16 <= r.jum.top, "the boxes touch");
+    assert.ok(Math.abs(r.next.height - r.jum.height) <= 1, "the boxes differ in height");
+    assert.ok(r.nextAbove && r.jumAbove, "gold labels sit above the times");
+    await ctx.close();
+  });
+}

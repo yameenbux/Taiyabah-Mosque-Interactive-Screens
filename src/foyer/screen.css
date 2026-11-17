@@ -40,13 +40,6 @@ h1{font-family:var(--serif);font-size:64px;font-weight:600;line-height:1.08;lett
    taller to read the same size as Apple's. Both are scaled whole, never altered. */
 .badge.gp{height:92px;margin:-15px 0}
 
-#fbar{left:80px;right:876px;bottom:44px;padding:18px 28px;font-size:22px}
-#fbar b{font-size:32px}
-#fbar .in{font-size:26px;margin-left:12px}
-#fbar .eyebrow{font-size:15px;margin-right:14px}
-#fbar .ampm{font-size:.7em}
-body.occ #fbar{right:80px;padding:20px 40px;font-size:24px}
-body.occ #fbar b{font-size:38px}
 
 #occasion{position:absolute;left:120px;right:120px;top:240px;bottom:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 #occasion .o-ar{font-size:150px;color:var(--goldb);line-height:1.45;margin-bottom:36px}
@@ -60,7 +53,6 @@ body.portrait .fit{width:952px}
 body.portrait .side{left:64px;right:64px;top:1110px;bottom:226px}
 body.portrait .qr{width:270px;height:270px;padding:22px}
 body.portrait .qrtxt h3{font-size:50px}
-body.portrait #fbar{left:64px;right:64px;bottom:60px;flex-direction:column;align-items:flex-start;gap:10px;padding:20px 32px}
 body.portrait #occasion{left:64px;right:64px;top:420px;bottom:220px}
 body.portrait #occasion .o-ar{font-size:130px}
 body.portrait #occasion h1{font-size:96px}
@@ -71,3 +63,67 @@ body.portrait .app .badges{grid-column:2;grid-row:1/4;flex-direction:column;alig
 .o-day .ampm{font-size:.75em}
 .o-in{display:flex;flex-direction:column;align-items:center;width:100%}
 #occasion{overflow:visible}
+
+/* ==== matched to the timetable (17 Nov) ====
+   The same header (larger logo, larger dates, no star) and the same
+   readability rules: no text under 24px of the layout, everything at
+   4.5:1 contrast or better. The bottom is two boxes, the next jamāʿah and
+   Jumuʿah, each with its gold label above the time.
+
+   Landscape: header 40–208 · content 240–888 · boxes 912–1032. */
+#clock{top:40px;font-size:168px}
+#clock .ampm{font-size:.26em}
+.hdr{top:48px;height:152px;align-items:center}
+.logo{height:152px}
+.dates{font-size:28px;line-height:1.5}
+.eyebrow{font-size:24px;letter-spacing:.18em}
+.col{top:240px;bottom:192px}
+.side{top:240px;bottom:48px}
+h1{font-size:56px;margin-top:8px;line-height:1.06}
+.appeal{margin-top:18px;padding:22px 32px}
+.appeal h2{font-size:48px;margin-top:6px}
+.appeal p{font-size:26px;margin-top:4px;line-height:1.38}
+.chips{margin-top:14px}
+.chips span{font-size:24px;padding:6px 18px}
+#timeline{margin-top:20px}
+#timeline .lab span{color:rgba(243,239,227,.78)}
+#timeline .lab.upcoming{opacity:1}
+#timeline .lab.upcoming b{color:rgba(243,239,227,.72)}
+#timeline .lab.upcoming span{color:rgba(243,239,227,.72)}
+.give .eyebrow{font-size:24px}
+.qrtxt p{font-size:26px}
+.app h3{font-size:34px}
+.app p{font-size:24px;color:rgba(243,239,227,.82)}
+
+/* the bottom: two boxes under the appeal, like the timetable's */
+#fbar{position:absolute;left:80px;right:876px;top:912px;height:120px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.fbox{border-radius:20px;background:var(--gold-fill);border:1px solid var(--gold-line);display:flex;flex-wrap:wrap;align-content:center;align-items:baseline;justify-content:center;column-gap:10px;row-gap:4px;padding:0 20px;white-space:nowrap;min-width:0}
+.fbox .eyebrow{flex-basis:100%;text-align:center;margin:0;line-height:30px}
+.fbox b{font-family:var(--serif);font-size:44px;font-weight:600;line-height:56px}
+.fbox b .ampm{font-size:.6em}
+.fbox .in{font-size:28px;color:var(--goldb);font-weight:600}
+.fbox .lab{font-size:26px;color:rgba(243,239,227,.88);margin:0}
+#jum .lab:not(:first-of-type){margin-left:14px}
+body.occ #fbar{right:80px}
+body.occ .fbox b{font-size:48px}
+#occasion{top:240px;bottom:200px}
+#occasion p{font-size:32px}
+.o-day{font-size:30px}
+.o-day .ampm{font-size:.8em}
+
+/* portrait: header 40–164, clock to ~400, content 432–, boxes 1736–1856 */
+body.portrait .hdr{top:40px;height:124px}
+body.portrait .logo{height:124px}
+body.portrait .dates{font-size:26px}
+body.portrait #clock{top:196px;font-size:190px}
+body.portrait .col{top:432px;height:668px}
+body.portrait .side{top:1124px;bottom:208px}
+body.portrait .qr{width:250px;height:250px;padding:20px}
+body.portrait .qrtxt h3{font-size:46px}
+body.portrait #fbar{left:64px;right:64px;top:1736px;height:120px;gap:20px}
+body.portrait .fbox b{font-size:40px}
+body.portrait #occasion{top:440px;bottom:216px}
+
+/* even line lengths, no word left alone on a line */
+h1,.appeal h2,.app p{text-wrap:balance}
+.appeal p,.qrtxt p,#occasion p{text-wrap:pretty}

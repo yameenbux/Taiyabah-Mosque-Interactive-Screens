@@ -50,7 +50,7 @@
     if (!n) { setHTML("timeline", ""); return; }
     // Label width from the room between dots, so a seventh phase cannot
     // make neighbours collide; the type shrinks with it.
-    var w = Math.min(188, (W - 12 * (n - 1)) / n), f = w / 188;
+    var w = Math.min(188, (W - 12 * (n - 1)) / n), f = w / 188;  // up to five phases keep full size (24px dates)
     var xs = items.map(function (_, i) { return n === 1 ? W / 2 : w / 2 + i * (W - w) / (n - 1); });
     var act = -1;
     items.forEach(function (t, i) { if (t.status === "active") act = i; });
@@ -63,7 +63,7 @@
       var st = t.status || "upcoming";
       svg += '<circle cx="' + xs[i] + '" cy="24" r="' + (st === "active" ? 14 : 9) + '" fill="' + (st === "upcoming" ? "#3C0B2A" : "#DCBB63") + '" stroke="#DCBB63" stroke-width="2.5"/>';
       if (st === "active") svg += '<circle cx="' + xs[i] + '" cy="24" r="26" fill="none" stroke="rgba(220,187,99,.35)" stroke-width="2"/>';
-      labs += '<div class="lab ' + esc(st) + '" style="left:' + xs[i] + "px;width:" + w + 'px"><b style="font-size:' + Math.max(18, 28 * f) + 'px">' + esc(t.title) + '</b><span style="font-size:' + Math.max(14, 20 * f) + 'px">' + esc(t.date) + "</span></div>";
+      labs += '<div class="lab ' + esc(st) + '" style="left:' + xs[i] + "px;width:" + w + 'px"><b style="font-size:' + (n <= 5 ? 30 : Math.max(18, 30 * f)) + 'px">' + esc(t.title) + '</b><span style="font-size:' + (n <= 5 ? 24 : Math.max(14, 24 * f)) + 'px">' + esc(t.date) + "</span></div>";
     });
     setHTML("timeline", svg + "</svg>" + labs);
     var tl = document.getElementById("timeline"), h = 0;
