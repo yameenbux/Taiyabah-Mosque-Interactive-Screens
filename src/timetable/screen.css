@@ -1,47 +1,133 @@
 [hidden]{display:none!important}
-/* Timetable, design B. Landscape: arc across the top, five columns.
-   Portrait: the same, stacked, with the five prayers as rows. */
-#arcwrap{position:absolute;left:140px;right:140px;top:230px;height:240px}
-#arc{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-#arc text{font-family:var(--sans);font-size:18px;letter-spacing:3px;fill:var(--cream-60)}
-.pill{position:absolute;left:50%;top:104px;transform:translateX(-50%);display:flex;gap:30px;align-items:center;white-space:nowrap;background:rgba(243,239,227,.06);border:1px solid rgba(220,187,99,.35);border-radius:999px;padding:16px 46px}
-.pill:empty{display:none}
-.pill b{font-family:var(--serif);font-size:44px;font-weight:600}
-.pill .in{font-size:30px;color:var(--goldb);font-weight:600}
+/* Timetable, design B (final). The five prayer cards are the screen: a
+   header (logo, clock, dates on one centre line), the cards, and the
+   Jumuʿah bar. No arc, no pill, no star.
 
-#cards{position:absolute;left:80px;right:80px;top:522px;height:408px;display:grid;grid-template-columns:repeat(5,1fr);gap:22px}
-.card{border-radius:22px;background:var(--panel);border:1px solid var(--panel-line);padding:24px 16px 26px;text-align:center;display:flex;flex-direction:column;align-items:center}
-.card .ic{width:44px;height:44px;margin-bottom:8px;color:var(--goldb)}
-.card .nm{font-family:var(--serif);font-size:50px;font-weight:600;line-height:1.15}
-.card .ar{color:var(--goldb);font-size:34px;line-height:1.3}
-.card .k{font-size:15px;letter-spacing:.24em;color:var(--cream-55);font-weight:600;margin-top:14px;text-transform:uppercase}
-.card .b{font-size:34px;margin-top:4px;color:var(--cream-80)}
-.card .j{font-family:var(--serif);font-size:66px;font-weight:600;color:var(--goldb);line-height:1.1;margin-top:2px}
-.card .j.two{font-size:40px;line-height:1.2}
-.card .j.two .lab{font-family:var(--sans);font-size:20px;font-weight:500;color:var(--cream-60);margin-right:8px}
+   Landscape, 1920×1080, on an 8px grid with 80px sides:
+     header 40–208 · gap 32 · cards 240–888 · gap 24 · boxes 912–1032 · 48 below
+   Every part of a card has a fixed height, so each line sits at the same
+   height across all five cards, Friday's two Jumuʿah times included. */
+
+/* ---- header (overrides the shared frame for this screen) ---- */
+#clock{top:40px;font-size:168px}
+#clock .ampm{font-size:.26em}
+.hdr{top:64px;align-items:center;height:120px}
+.logo{height:120px}
+.dates{font-size:28px;line-height:1.5}
+
+/* ---- cards ---- */
+#cards{position:absolute;left:80px;right:80px;top:240px;height:648px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px}
+.card{border-radius:24px;background:var(--panel);border:1px solid var(--panel-line);padding:36px 16px 32px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.card .ic{width:56px;height:56px;flex:none;color:var(--goldb)}
+.card .who{display:flex;flex-direction:column;align-items:center;margin-top:16px}
+.card .nm{font-family:var(--serif);font-size:76px;font-weight:600;line-height:88px;height:88px;white-space:nowrap}
+.card .ar{color:var(--goldb);font-size:50px;line-height:64px;height:64px}
+.card .k{font-size:19px;line-height:24px;height:24px;letter-spacing:.24em;color:var(--cream-55);font-weight:600;text-transform:uppercase}
+.card .bk{margin-top:auto;display:flex;flex-direction:column;align-items:center}
+.card .b{font-size:50px;line-height:64px;height:64px;color:var(--cream-80);white-space:nowrap}
+.card .b .ampm{font-size:.56em}
+.card .jk{margin-top:auto;display:flex;flex-direction:column;align-items:center}
+.card .j{font-family:var(--serif);font-size:92px;font-weight:600;color:var(--goldb);line-height:116px;height:116px;white-space:nowrap}
+.card .j .ampm{font-size:.4em}
+.card .j.two{font-size:44px;line-height:54px;display:flex;flex-direction:column;justify-content:center;padding-top:4px}
+.card .j.two .lab{font-family:var(--sans);font-size:22px;font-weight:500;color:var(--cream-60);margin-right:10px}
+.card .cd{height:36px;line-height:36px;font-size:28px;font-weight:600;color:var(--goldb);white-space:nowrap}
 .card.past{opacity:.45}
 .card.isnext{background:linear-gradient(180deg,rgba(220,187,99,.20),rgba(220,187,99,.07));border:2px solid var(--goldb);box-shadow:0 0 60px rgba(220,187,99,.18)}
 
-#nodata{position:absolute;left:240px;right:240px;top:460px;text-align:center;font-family:var(--serif);font-size:52px;line-height:1.3;color:var(--goldb)}
-#tbar{left:80px;right:80px;bottom:44px;height:88px}
-#tbar #jum .mut{margin-right:24px}
-#sun{font-size:24px}
+/* ---- no data for the date ---- */
+#nodata{position:absolute;left:240px;right:240px;top:420px;text-align:center;font-family:var(--serif);font-size:56px;line-height:1.3;color:var(--goldb)}
 
-/* ---- portrait ---- */
-body.portrait #arcwrap{left:64px;right:64px;top:440px;height:300px}
-body.portrait .pill{top:auto;bottom:-40px;padding:14px 36px;gap:22px}
-body.portrait .pill b{font-size:40px}
-body.portrait #cards{left:64px;right:64px;top:850px;height:auto;grid-template-columns:1fr;gap:18px}
-body.portrait .card{flex-direction:row;align-items:center;text-align:left;padding:20px 34px;height:150px;gap:0}
-body.portrait .card .ic{margin:0 26px 0 0;flex:none}
-body.portrait .card .who{flex:1;display:flex;align-items:baseline;gap:18px}
-body.portrait .card .k{margin:0 10px 0 0}
-body.portrait .card .bk,body.portrait .card .jk{display:flex;flex-direction:column;align-items:flex-end}
-body.portrait .card .bk{width:200px}
-body.portrait .card .jk{width:280px}
-body.portrait .card .j{font-size:62px}
-body.portrait .card .j.two{font-size:34px}
+/* ---- the bottom: two boxes, Jumuʿah and the sun, on the cards' outer edges ---- */
+#bottom{position:absolute;left:80px;right:80px;top:912px;height:120px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.box{border-radius:20px;background:var(--gold-fill);border:1px solid var(--gold-line);display:flex;align-items:center;padding:0 40px;min-width:0}
+#jbox{flex-direction:column;align-items:flex-start;justify-content:center;gap:6px}
+#jbox .eyebrow{font-size:19px;line-height:24px}
+#jbox .times{font-size:28px;line-height:60px;white-space:nowrap;display:flex;align-items:baseline}
+#jbox .times b{font-family:var(--serif);font-size:52px;font-weight:600}
+#jbox .times b .ampm{font-size:.56em}
+#jbox .times .lab{color:var(--cream-60);margin:0 12px 0 40px}
+#jbox .times .lab:first-child{margin-left:0}
+#sbox{justify-content:space-evenly}
+.sunpart{display:flex;align-items:center;gap:20px}
+.sunpart svg{width:56px;height:56px;flex:none;color:var(--goldb)}
+.sunpart .k{font-size:19px;line-height:24px;letter-spacing:.24em;text-transform:uppercase;font-weight:600;color:var(--goldb)}
+.sunpart .t{font-family:var(--serif);font-size:46px;font-weight:600;line-height:58px;white-space:nowrap}
+.sunpart .t .ampm{font-size:.56em}
+
+/* ---- portrait, 1080×1920, 64px sides:
+     header 56–156, clock 196–416 · cards 456–1680 · boxes 1704–1856 ----
+   Each row is a grid with the same columns, so icons, names, Begins and
+   Jamāʿah each line up down the screen. */
+body.portrait #clock{top:196px;font-size:220px}
+body.portrait .hdr{top:56px;height:100px}
+body.portrait .logo{height:100px}
+body.portrait .dates{font-size:26px}
+body.portrait #cards{left:64px;right:64px;top:456px;height:1224px;grid-template-columns:1fr;grid-template-rows:repeat(5,1fr);gap:20px}
+body.portrait .card{display:grid;grid-template-columns:56px minmax(0,1fr) 196px 272px;grid-template-rows:26px 96px 32px;
+  column-gap:24px;row-gap:2px;align-content:center;align-items:baseline;text-align:left;padding:0 36px}
+body.portrait .card .ic{grid-column:1;grid-row:1/4;align-self:center}
+body.portrait .card .who{grid-column:2;grid-row:1/4;align-self:center;margin:0;align-items:flex-start}
+body.portrait .card .nm{font-size:68px;line-height:80px;height:80px}
+body.portrait .card .ar{font-size:44px;line-height:56px;height:56px}
+body.portrait .card .bk,body.portrait .card .jk{display:contents}
+body.portrait .card .k{grid-row:1;text-align:right;height:auto}
+body.portrait .card .bk .k{grid-column:3}
+body.portrait .card .jk .k{grid-column:4}
+body.portrait .card .b{grid-column:3;grid-row:2;text-align:right;font-size:44px;line-height:1.1;height:auto}
+body.portrait .card .j{grid-column:4;grid-row:2;text-align:right;font-size:84px;line-height:1.1;height:auto}
+body.portrait .card .j.two{font-size:40px;line-height:1.2;align-items:flex-end;padding-top:0}
+body.portrait .card .cd{grid-column:4;grid-row:3;text-align:right;height:32px;line-height:32px;font-size:26px}
 body.portrait #nodata{left:100px;right:100px;top:900px}
-body.portrait #tbar{left:64px;right:64px;bottom:60px;height:auto;flex-direction:column;align-items:flex-start;gap:12px;padding:24px 36px}
-#sun .ampm,.bar .lab+b .ampm{font-size:.7em}
-.card .b .ampm{font-size:.6em}
+body.portrait #bottom{left:64px;right:64px;top:1704px;height:152px;gap:20px}
+body.portrait .box{padding:0 28px}
+body.portrait #jbox .times b{font-size:42px}
+body.portrait #jbox .times .lab{font-size:24px;margin:0 8px 0 22px}
+body.portrait #jbox .times .lab:first-child{margin-left:0}
+body.portrait #sbox{flex-direction:column;align-items:flex-start;justify-content:center;gap:10px}
+body.portrait .sunpart{gap:16px}
+body.portrait .sunpart svg{width:44px;height:44px}
+body.portrait .sunpart > div{display:flex;align-items:baseline;gap:14px}
+body.portrait .sunpart .t{font-size:38px;line-height:48px}
+/* both boxes centre their contents */
+#jbox{align-items:center}
+#jbox .times{justify-content:center}
+/* portrait: the two sun lines share a label column, so their times line up */
+body.portrait #sbox{align-items:center}
+body.portrait .sunpart > div{display:grid;grid-template-columns:132px auto;align-items:baseline;column-gap:12px}
+body.portrait #sbox{display:grid;justify-content:center;align-content:center;justify-items:start}
+/* the same label-to-time rhythm in both boxes, so all three labels share a line */
+.sunpart .k{margin-bottom:6px}
+.sunpart .t{line-height:60px}
+body.portrait .sunpart .k{margin-bottom:0}
+body.portrait .sunpart .t{line-height:48px}
+
+/* ---- readable from the rows, for older eyes ----
+   Nothing under 24px of the 1080-line layout (about 14mm on a 49-inch TV);
+   labels at 26px and brighter; the countdown at 38px; a prayer that has
+   passed fades and loses its colour but stays at 4.5:1 contrast or better. */
+.card .k{font-size:26px;line-height:32px;height:32px;color:rgba(243,239,227,.82);letter-spacing:.18em}
+.card .cd{font-size:38px;line-height:48px;height:48px}
+.card.past{opacity:.74;filter:saturate(.35)}
+#jbox .eyebrow,.sunpart .k{font-size:26px;line-height:32px;letter-spacing:.18em}
+#jbox .times .lab{color:rgba(243,239,227,.85)}
+body.portrait .card{grid-template-rows:34px 96px 46px}
+body.portrait .card .k{font-size:24px;line-height:34px;height:auto}
+body.portrait .card .cd{font-size:34px;line-height:46px;height:46px}
+body.portrait #jbox .eyebrow,body.portrait .sunpart .k{font-size:24px}
+body.portrait .sunpart > div{grid-template-columns:150px auto}
+body.portrait .sunpart .t .ampm,body.portrait #jbox .times b .ampm{font-size:.64em}
+.card .j.two .lab{font-size:26px;color:rgba(243,239,227,.92)}
+.card .j.two .ampm{font-size:.56em}
+body.portrait .card .j.two .lab{font-size:24px}
+body.portrait .card .j.two .ampm{font-size:.62em}
+
+/* the JAMAAH label in bold and brighter than BEGINS (chosen 17 Nov) */
+.card .jk .k{font-weight:800;color:rgba(243,239,227,.95)}
+
+/* a larger logo, centred on the clock line (17 Nov) */
+.hdr{top:48px;height:152px}
+.logo{height:152px}
+body.portrait .hdr{top:40px;height:124px}
+body.portrait .logo{height:124px}

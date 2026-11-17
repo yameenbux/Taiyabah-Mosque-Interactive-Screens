@@ -43,10 +43,11 @@ couple of settings worth changing in each TV's own menu at the same time.
 
 Open `foyer-content.json` on GitHub (the pencil icon), change the text after any colon, leave the field names alone, and commit. Both foyer TVs read the file every ten minutes, so a change shows within about twenty minutes. You don't need to touch the TVs.
 
-- `newBuild`: the appeal (heading, phase, needs, timeline) and `give`, the donate link and its words. **The QR code is drawn from `give.otherAmountUrl`**, so changing that link changes the code. Scan it with a phone afterwards to check.
-- `app`: the words on the app card. The App Store and Google Play badges are fixed artwork and cannot be edited here.
+- `newBuild`: the appeal. The screen shows `eyebrow` and `phaseTag` on the gold line, `phaseTitle` as the big title (it sizes itself to fit one line), and `needs` on one line under it. **The QR code is drawn from `give.otherAmountUrl`**, so changing that link changes the code; scan it with a phone afterwards to check.
+- The progress bar: its dot sits at whichever `timeline` stage has `"status": "active"`, so moving to the next phase is one word changed. The three words under the bar are `progress.done`, `progress.now` and `progress.next`.
+- `app.label`: the words above the App Store and Google Play badges ("Download our app"). The badges are fixed artwork.
 - `occasions`: the Ramadan and Eid greetings. They switch on and off by themselves from the Hijri dates in the timetable. Set `"enabled": false` to turn one off; `durationDays` sets how many days an Eid greeting stays up.
-- Kept in the file but **not shown on the screens**: `newBuild.tagline` and the bank details. Nobody copies an account number off a TV.
+- Kept in the file but **not shown on the screens**: `heading`, `tagline`, `phaseDescription`, the timeline's own wording, and the bank details. Nobody copies an account number off a TV.
 
 If you break the JSON (a missing comma or a stray quote), GitHub usually warns you before you commit. If something does slip through, the screens don't go blank: they keep showing the last good words, or the copy built into the page.
 

@@ -17,7 +17,7 @@ All four pages are single, self-contained HTML files (fonts and images embedded 
 
 **`timetable.html`** / **`timetablevertical.html`**: Salah times for the prayer hall (×2) and downstairs (×2), landscape and portrait. Design B: the clock, an arc across the day from Fajr to Isha with a gold dot at "now", the next jamāʿah and how long until it, and the day's five prayers with their beginning and jamāʿah times. Prayers whose jamāʿah has passed fade. On a Friday, Zuhr becomes Jumuʿah with both times, labelled 1st and 2nd. Every year of prayer times in `data/` is built into the file, so once loaded it needs no network.
 
-**`foyer.html`** / **`foyervertical.html`**: the foyer (×2), landscape and portrait. The New Build appeal, a large donate QR code, and a card saying the app is on the App Store and Google Play. During Ramadan and for the days of each Eid it shows the greeting instead, switching on and off by itself from the Hijri dates in the timetable. A bar along the bottom shows the next jamāʿah and Jumuʿah.
+**`foyer.html`** / **`foyervertical.html`**: the foyer (×2), landscape and portrait. The New Build appeal in one centred column: the current phase, what it needs, one progress bar, and a large donate QR code, over three boxes (next jamāʿah, Jumuʿah, and "Download our app" with the store badges). During Ramadan and for the days of each Eid it shows the greeting instead, switching on and off by itself from the Hijri dates in the timetable. A bar along the bottom shows the next jamāʿah and Jumuʿah.
 
 **`foyer-content.json`**: the foyer's words, the donate link and the app card. Edit it on GitHub and the foyer TVs pick it up within about twenty minutes. See SETUP.md.
 
@@ -52,7 +52,8 @@ These run for months on TVs nobody is looking after.
 - **A 2am reload, but only if the network can serve the page.** If the Wi-Fi is down, the screen keeps what it has and tries again every fifteen minutes, rather than showing the browser's error page. The reload is also how an update reaches the TVs.
 - **A stall watchdog.** If the TV's browser froze the tab and has just woken it, the page reloads (the same guarded way) instead of showing a clock that stopped.
 - **A slow drift** of a few pixels every 150 seconds, against burn-in.
-- **Fit to screen.** Each page is laid out at 1920×1080 (or 1080×1920) and scaled down to the TV, never up, so nothing is ever cut off.
+- **Fit and fill.** Each page is laid out at 1920×1080 (or 1080×1920) and scaled to the TV, up or down, keeping its proportions: a 4K TV is filled edge to edge, and nothing is ever cut off. The tests check 720p, 1080p, 4K and a screen a little short of 16:9.
+- **Readable from the rows.** No text is under 24px of the layout (about 14mm on a 49-inch TV), the key times have at least 7:1 contrast and everything else at least 4.5:1, including prayers that have passed. The tests enforce all three.
 - **The foyer never goes blank.** If `foyer-content.json` cannot be reached, it shows the copy built into the page.
 - **No data, no guess.** On a date with no prayer times the timetable says so ("Please use the printed timetable"). It never shows a time it is not sure of.
 

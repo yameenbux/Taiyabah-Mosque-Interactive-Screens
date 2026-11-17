@@ -1,73 +1,102 @@
 [hidden]{display:none!important}
-/* Foyer, design B. Left: the appeal and the timeline. Right: Give (the only
-   QR code) and the app card. The bar runs under the left column. During
-   Ramadan and Eid the greeting takes the screen and the bar runs full width. */
-#newbuild{position:absolute;inset:0}
-.col{position:absolute;left:80px;top:210px;width:964px;bottom:150px}
-/* .fit is scaled down by fitColumn() if a long edit to foyer-content.json
-   would not otherwise fit: the screen shrinks the text, never clips it. */
-.fit{transform-origin:top left;width:964px}
-h1{font-family:var(--serif);font-size:64px;font-weight:600;line-height:1.08;letter-spacing:-.01em;margin-top:14px}
-.appeal{margin-top:30px;padding:30px 36px;border-radius:22px;background:linear-gradient(180deg,rgba(220,187,99,.16),rgba(220,187,99,.05));border:2px solid var(--goldb);box-shadow:0 0 60px rgba(220,187,99,.14)}
-.appeal h2{font-family:var(--serif);font-size:52px;font-weight:600;margin-top:10px;line-height:1.1}
-.appeal p{font-size:25px;color:var(--cream-80);margin-top:10px;line-height:1.45}
-.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.chips span{border:1px solid rgba(220,187,99,.45);color:var(--goldb);border-radius:999px;padding:8px 20px;font-size:22px}
-#timeline{position:relative;margin-top:26px;min-height:120px}
-#timeline svg{position:absolute;left:0;top:0;width:100%;height:60px;overflow:visible}
-#timeline .lab{position:absolute;top:58px;transform:translateX(-50%);text-align:center}
-#timeline .lab b{display:block;font-family:var(--serif);font-size:28px;font-weight:600;line-height:1.2}
-#timeline .lab span{display:block;font-size:20px;color:var(--cream-60);margin-top:6px}
-#timeline .lab.active b{color:var(--goldb)}
-#timeline .lab.upcoming{opacity:.55}
+/* Foyer, as signed off on 17 November: one centred column, one message.
+   The appeal, a single progress bar, and the give panel (the donate QR is
+   the largest thing after the clock), over three equal boxes: the next
+   jamāʿah, Jumuʿah and the app. During Ramadan and Eid the greeting takes
+   the column and the boxes stay.
 
-.side{position:absolute;left:1100px;right:80px;top:210px;bottom:44px;display:flex;flex-direction:column;gap:22px}
-.card{border-radius:22px;background:var(--panel);border:1px solid var(--panel-line)}
-.give{flex:1;padding:30px 36px 34px;display:flex;flex-direction:column}
-.give .eyebrow{font-size:19px}
-.qrrow{flex:1;display:flex;align-items:center;gap:32px;margin-top:20px}
-.qr{width:380px;height:380px;flex:none;border-radius:20px;background:var(--card);padding:30px}
+   The same header as the timetable (larger logo, no star) and the same
+   readability rules: nothing under 24px of the layout, 4.5:1 contrast.
+
+   Landscape 1920×1080, 80px sides, 8px grid:
+     header 40–208 · column 240–888 · boxes 912–1032 · 48 below
+   Portrait 1080×1920, 64px sides:
+     header 40–164, clock to ~390 · column 436–1560 · app 1592–1704 ·
+     boxes 1728–1856 */
+
+/* ---- header ---- */
+#clock{top:40px;font-size:168px}
+#clock .ampm{font-size:.26em}
+.hdr{top:48px;height:152px;align-items:center}
+.logo{height:152px}
+.dates{font-size:28px;line-height:1.5}
+.eyebrow{font-size:24px;letter-spacing:.18em}
+
+/* ---- the New Build column ---- */
+#newbuild{position:absolute;left:80px;right:80px;top:240px;height:648px;display:flex;flex-direction:column;align-items:center;text-align:center}
+#intro{width:100%;display:flex;flex-direction:column;align-items:center}
+#phase-title{font-family:var(--serif);font-size:88px;font-weight:600;line-height:1.05;margin-top:10px;letter-spacing:-.01em}
+#needs{font-size:30px;line-height:1.35;color:rgba(243,239,227,.85);margin-top:8px;text-wrap:balance;max-width:1400px}
+
+#progress{width:1100px;margin-top:28px}
+#progress .track{position:relative;height:10px;border-radius:10px;background:rgba(243,239,227,.16)}
+#progress .fill{position:absolute;left:0;top:0;bottom:0;border-radius:10px;background:var(--goldb)}
+#progress .dot{position:absolute;top:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:var(--goldb);box-shadow:0 0 0 8px rgba(220,187,99,.25)}
+#progress .pl{display:flex;justify-content:space-between;margin-top:16px;font-size:26px;color:rgba(243,239,227,.85);white-space:nowrap}
+#progress #pl-now{color:var(--goldb);font-weight:600}
+
+#give{display:flex;align-items:center;gap:52px;margin-top:28px;padding:22px 52px;border-radius:28px;
+  background:linear-gradient(180deg,rgba(220,187,99,.20),rgba(220,187,99,.06));border:2px solid var(--goldb);text-align:left}
+.qr{width:270px;height:270px;flex:none;border-radius:20px;background:var(--card);padding:22px}
 .qr svg{width:100%;height:100%;display:block}
-.qrtxt h3{font-family:var(--serif);font-size:52px;font-weight:600;line-height:1.08}
-.qrtxt p{font-size:25px;line-height:1.45;margin-top:14px;color:var(--cream-80)}
-.app{padding:20px 32px 22px}
-.app h3{font-family:var(--serif);font-size:32px;font-weight:600;margin-top:6px}
-.app p{font-size:19px;margin-top:6px;color:rgba(243,239,227,.7)}
-.badges{display:flex;align-items:center;gap:22px;margin-top:14px}
+.qrtxt h2{font-family:var(--serif);font-size:60px;font-weight:600;line-height:1.05;margin-top:8px;max-width:600px;text-wrap:balance}
+.qrtxt p{font-size:26px;line-height:1.4;margin-top:12px;color:rgba(243,239,227,.85);max-width:560px;text-wrap:pretty}
+
+/* ---- the app box, third of the bottom row ---- */
+#appbox{position:absolute;right:80px;top:912px;width:calc((1760px - 48px) / 3);height:120px;border-radius:20px;border:1px solid rgba(243,239,227,.14);background:rgba(243,239,227,.05);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.badges{display:flex;align-items:center;gap:16px}
 .badge{display:block;width:auto}
-.badge.ap{height:62px}
+.badge.ap{height:52px}
 /* Google's badge carries its own clear space inside the image, so it is drawn
    taller to read the same size as Apple's. Both are scaled whole, never altered. */
-.badge.gp{height:92px;margin:-15px 0}
+.badge.gp{height:77px;margin:-12px 0}
 
-#fbar{left:80px;right:876px;bottom:44px;padding:18px 28px;font-size:22px}
-#fbar b{font-size:32px}
-#fbar .in{font-size:26px;margin-left:12px}
-#fbar .eyebrow{font-size:15px;margin-right:14px}
-#fbar .ampm{font-size:.7em}
-body.occ #fbar{right:80px;padding:20px 40px;font-size:24px}
-body.occ #fbar b{font-size:38px}
+/* ---- the next jamāʿah and Jumuʿah boxes ---- */
+#fbar{position:absolute;left:80px;width:calc((1760px - 48px) / 3 * 2 + 24px);top:912px;height:120px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.fbox{border-radius:20px;background:var(--gold-fill);border:1px solid var(--gold-line);display:flex;flex-wrap:wrap;align-content:center;align-items:baseline;justify-content:center;column-gap:10px;row-gap:4px;padding:0 20px;white-space:nowrap;min-width:0}
+.fbox .eyebrow{flex-basis:100%;text-align:center;margin:0;line-height:30px}
+.fbox b{font-family:var(--serif);font-size:46px;font-weight:600;line-height:56px}
+.fbox b .ampm{font-size:.6em}
+.fbox .in{font-size:30px;color:var(--goldb);font-weight:600}
+.fbox .lab{font-size:26px;color:rgba(243,239,227,.88);margin:0}
+#jum .lab:not(:first-of-type){margin-left:14px}
+body.occ #fbar{width:auto;right:80px}
+body.occ #appbox{display:none}
 
-#occasion{position:absolute;left:120px;right:120px;top:240px;bottom:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+/* ---- Ramadan and Eid ---- */
+#occasion{position:absolute;left:120px;right:120px;top:240px;bottom:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:visible}
+.o-in{display:flex;flex-direction:column;align-items:center;width:100%}
 #occasion .o-ar{font-size:150px;color:var(--goldb);line-height:1.45;margin-bottom:36px}
-#occasion h1{font-size:110px;margin-top:0}
-#occasion p{font-size:30px;line-height:1.5;color:var(--cream-80);max-width:1100px;margin-top:22px}
-.o-day{margin-top:34px;border:1px solid rgba(220,187,99,.45);border-radius:999px;padding:12px 32px;font-size:26px;color:var(--goldb)}
+#occasion h1{font-family:var(--serif);font-size:110px;font-weight:600;line-height:1.08;margin-top:0}
+#occasion p{font-size:32px;line-height:1.5;color:var(--cream-80);max-width:1100px;margin-top:22px;text-wrap:pretty}
+.o-day{margin-top:34px;border:1px solid rgba(220,187,99,.45);border-radius:999px;padding:12px 32px;font-size:30px;color:var(--goldb)}
+.o-day .ampm{font-size:.8em}
 
 /* ---- portrait ---- */
-body.portrait .col{left:64px;width:952px;top:400px;bottom:auto;height:690px}
-body.portrait .fit{width:952px}
-body.portrait .side{left:64px;right:64px;top:1110px;bottom:226px}
-body.portrait .qr{width:270px;height:270px;padding:22px}
-body.portrait .qrtxt h3{font-size:50px}
-body.portrait #fbar{left:64px;right:64px;bottom:60px;flex-direction:column;align-items:flex-start;gap:10px;padding:20px 32px}
-body.portrait #occasion{left:64px;right:64px;top:420px;bottom:220px}
+body.portrait .hdr{top:40px;height:124px;left:64px;right:64px}
+body.portrait .logo{height:124px}
+body.portrait .dates{font-size:26px}
+body.portrait #clock{top:196px;font-size:190px}
+body.portrait #newbuild{left:64px;right:64px;top:436px;height:1124px}
+body.portrait #phase-title{font-size:80px}
+body.portrait #needs{font-size:28px;max-width:860px}
+body.portrait #progress{width:100%;margin-top:34px}
+body.portrait #progress .pl{font-size:24px}
+body.portrait #give{flex:1;width:100%;flex-direction:column;justify-content:center;gap:0;margin-top:40px;padding:32px 40px 36px;text-align:center}
+body.portrait .qr{width:450px;height:450px;order:2;margin-top:24px;padding:30px}
+body.portrait .qrtxt{display:contents}
+body.portrait .qrtxt .eyebrow{order:1}
+body.portrait .qrtxt h2{order:3;font-size:62px;margin-top:28px;max-width:none}
+body.portrait .qrtxt p{order:4;max-width:820px;margin-top:14px}
+body.portrait #appbox{left:64px;right:64px;width:auto;top:1592px;height:112px;flex-direction:row;justify-content:space-between;padding:0 36px}
+body.portrait .badge.ap{height:56px}
+body.portrait .badge.gp{height:83px;margin:-13px 0}
+body.portrait #fbar{left:64px;right:64px;width:auto;top:1728px;height:128px;gap:24px}
+body.portrait .fbox b{font-size:40px}
+body.portrait .fbox .in{font-size:26px}
+body.portrait .fbox .lab{font-size:24px}
+body.portrait #occasion{left:64px;right:64px;top:440px;bottom:216px}
 body.portrait #occasion .o-ar{font-size:130px}
 body.portrait #occasion h1{font-size:96px}
-body.portrait #occasion p{font-size:30px}
-body.portrait .app{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;column-gap:24px;align-items:center}
-body.portrait .app>.eyebrow,body.portrait .app>h3,body.portrait .app>p{grid-column:1}
-body.portrait .app .badges{grid-column:2;grid-row:1/4;flex-direction:column;align-items:center;gap:14px;margin-top:0}
-.o-day .ampm{font-size:.75em}
-.o-in{display:flex;flex-direction:column;align-items:center;width:100%}
-#occasion{overflow:visible}
+body.portrait.occ #fbar{top:1728px}

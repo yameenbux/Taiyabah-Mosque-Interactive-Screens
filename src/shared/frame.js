@@ -49,12 +49,14 @@ function renderFrame(now, opts) {
   return rec;
 }
 
-/* Scale the fixed-size layout down to fit the TV; never up. */
+/* Scale the fixed-size layout to fill the TV, up or down, keeping its
+ * proportions. A 4K TV whose browser reports 3840x2160 is filled edge to edge
+ * rather than showing a half-size screen in the middle. */
 function fitToViewport() {
   var c = document.getElementById("content");
   if (!c) return;
-  var s = Math.min(1, innerWidth / c.offsetWidth, innerHeight / c.offsetHeight);
-  c.style.transform = s < 0.999 ? "scale(" + s + ")" : "none";
+  var s = Math.min(innerWidth / c.offsetWidth, innerHeight / c.offsetHeight);
+  c.style.transform = Math.abs(s - 1) > 0.001 ? "scale(" + s + ")" : "none";
 }
 
 /* Reload, but only if the network can serve this page again. Wi-Fi down at

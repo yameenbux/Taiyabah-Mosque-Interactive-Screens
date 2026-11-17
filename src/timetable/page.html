@@ -19,13 +19,14 @@
 <div class="ground"></div>
 <div class="stage">
  <div id="content">
-  <div class="star" data-deco><svg viewBox="0 0 100 100"><polygon fill="currentColor" points="50,2 57.3,32.4 83.9,16.1 67.6,42.7 98,50 67.6,57.3 83.9,83.9 57.3,67.6 50,98 42.7,67.6 16.1,83.9 32.4,57.3 2,50 32.4,42.7 16.1,16.1 42.7,32.4"/></svg></div>
   <div id="clock"></div>
   <div class="hdr">{{LOGO}}<div class="dates"><span id="greg"></span><span id="hijri"></span></div></div>
-  <div id="arcwrap"><svg id="arc"></svg><div id="next" class="pill"></div></div>
   <div id="cards"></div>
   <div id="nodata" hidden>Prayer times for this date are not loaded. Please use the printed timetable.</div>
-  <div class="bar" id="tbar"><span id="jum"></span><span id="sun" class="mut"></span></div>
+  <div id="bottom">
+   <div class="box" id="jbox"><div class="eyebrow">Jumuʿah</div><div class="times" id="jtimes"></div></div>
+   <div class="box" id="sbox"></div>
+  </div>
  </div>
 </div>
 <script>{{DATA}}</script>
