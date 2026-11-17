@@ -52,7 +52,8 @@ These run for months on TVs nobody is looking after.
 - **A 2am reload, but only if the network can serve the page.** If the Wi-Fi is down, the screen keeps what it has and tries again every fifteen minutes, rather than showing the browser's error page. The reload is also how an update reaches the TVs.
 - **A stall watchdog.** If the TV's browser froze the tab and has just woken it, the page reloads (the same guarded way) instead of showing a clock that stopped.
 - **A slow drift** of a few pixels every 150 seconds, against burn-in.
-- **Fit to screen.** Each page is laid out at 1920×1080 (or 1080×1920) and scaled down to the TV, never up, so nothing is ever cut off.
+- **Fit and fill.** Each page is laid out at 1920×1080 (or 1080×1920) and scaled to the TV, up or down, keeping its proportions: a 4K TV is filled edge to edge, and nothing is ever cut off. The tests check 720p, 1080p, 4K and a screen a little short of 16:9.
+- **Readable from the rows.** No text is under 24px of the layout (about 14mm on a 49-inch TV), the key times have at least 7:1 contrast and everything else at least 4.5:1, including prayers that have passed. The tests enforce all three.
 - **The foyer never goes blank.** If `foyer-content.json` cannot be reached, it shows the copy built into the page.
 - **No data, no guess.** On a date with no prayer times the timetable says so ("Please use the printed timetable"). It never shows a time it is not sure of.
 

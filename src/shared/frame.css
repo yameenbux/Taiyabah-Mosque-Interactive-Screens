@@ -1,8 +1,8 @@
 [hidden]{display:none!important}
 /* The frame every screen shares: plum ground, star, header, the drifting
    stage, and the next-jamāʿah / Jumuʿah bar. Laid out at a fixed reference
-   size (1920×1080, or 1080×1920 portrait) and scaled down to the TV by
-   fitToViewport(), never up. */
+   size (1920×1080, or 1080×1920 portrait) and scaled to fill the TV by
+   fitToViewport(), up or down, keeping its proportions. */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--deep)}
 body{font-family:var(--sans);color:var(--cream);-webkit-font-smoothing:antialiased;cursor:none}

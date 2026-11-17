@@ -102,3 +102,23 @@ body.portrait #sbox{display:grid;justify-content:center;align-content:center;jus
 .sunpart .t{line-height:60px}
 body.portrait .sunpart .k{margin-bottom:0}
 body.portrait .sunpart .t{line-height:48px}
+
+/* ---- readable from the rows, for older eyes ----
+   Nothing under 24px of the 1080-line layout (about 14mm on a 49-inch TV);
+   labels at 26px and brighter; the countdown at 38px; a prayer that has
+   passed fades and loses its colour but stays at 4.5:1 contrast or better. */
+.card .k{font-size:26px;line-height:32px;height:32px;color:rgba(243,239,227,.82);letter-spacing:.18em}
+.card .cd{font-size:38px;line-height:48px;height:48px}
+.card.past{opacity:.74;filter:saturate(.35)}
+#jbox .eyebrow,.sunpart .k{font-size:26px;line-height:32px;letter-spacing:.18em}
+#jbox .times .lab{color:rgba(243,239,227,.85)}
+body.portrait .card{grid-template-rows:34px 96px 46px}
+body.portrait .card .k{font-size:24px;line-height:34px;height:auto}
+body.portrait .card .cd{font-size:34px;line-height:46px;height:46px}
+body.portrait #jbox .eyebrow,body.portrait .sunpart .k{font-size:24px}
+body.portrait .sunpart > div{grid-template-columns:150px auto}
+body.portrait .sunpart .t .ampm,body.portrait #jbox .times b .ampm{font-size:.64em}
+.card .j.two .lab{font-size:26px;color:rgba(243,239,227,.92)}
+.card .j.two .ampm{font-size:.56em}
+body.portrait .card .j.two .lab{font-size:24px}
+body.portrait .card .j.two .ampm{font-size:.62em}

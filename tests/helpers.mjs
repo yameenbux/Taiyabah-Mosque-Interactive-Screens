@@ -63,3 +63,36 @@ export async function decodeQR(page, selector = "#qr") {
   const q = require_("jsqr")(new Uint8ClampedArray(png.data), png.width, png.height);
   return q && q.data;
 }
+
+/* Every visible piece of text in #content with its size (layout px) and its
+   contrast against what is behind it, opacity and card fills included.
+   The ground is approximated by the plum at the middle of its gradient. */
+export async function textAudit(page) {
+  return page.evaluate(() => {
+    const rgb = (s) => { const m = s.match(/[\d.]+/g).map(Number); return { r: m[0], g: m[1], b: m[2], a: m.length > 3 ? m[3] : 1 }; };
+    const lin = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+    const L = (c) => 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
+    const mix = (f, bg, a) => ({ r: f.r * a + bg.r * (1 - a), g: f.g * a + bg.g * (1 - a), b: f.b * a + bg.b * (1 - a) });
+    const PLUM = { r: 0x3C, g: 0x0B, b: 0x2A };
+    const out = [];
+    for (const el of document.querySelectorAll("#content *")) {
+      if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+      if (el.closest("[hidden]") || !el.getClientRects().length) continue;
+      const cs = getComputedStyle(el); let op = 1, bg = PLUM, sat = 1;
+      for (let p = el; p && p.id !== "content"; p = p.parentElement) {
+        const ps = getComputedStyle(p); op *= parseFloat(ps.opacity);
+        const f = ps.filter.match(/saturate\(([\d.]+)\)/); if (f) sat *= parseFloat(f[1]);
+        const pb = rgb(ps.backgroundColor); if (pb.a > 0 && p !== el && bg === PLUM) bg = mix(pb, PLUM, pb.a);
+      }
+      let fg = rgb(cs.color);
+      if (sat < 1) { const g = 0.2126 * fg.r + 0.7152 * fg.g + 0.0722 * fg.b; fg = { r: g + (fg.r - g) * sat, g: g + (fg.g - g) * sat, b: g + (fg.b - g) * sat, a: fg.a }; }
+      const ink = mix(fg, bg, fg.a * op);
+      const contrast = (Math.max(L(ink), L(bg)) + 0.05) / (Math.min(L(ink), L(bg)) + 0.05);
+      const card = el.closest(".card");
+      out.push({ text: el.textContent.trim().slice(0, 20), cls: el.className || el.tagName, px: parseFloat(cs.fontSize), contrast,
+        past: !!(card && card.classList.contains("past")),
+        key: !!el.closest(".card .j, #clock, #jbox .times b, .sunpart .t") });
+    }
+    return out;
+  });
+}

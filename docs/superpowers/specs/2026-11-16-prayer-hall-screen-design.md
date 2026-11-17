@@ -168,8 +168,8 @@ format.
 - The stall watchdog: if a tick arrives more than 15 s late, or the tab
   becomes visible after a long gap, reload, using the same guarded reload.
 - Slow burn-in drift, about a 150-second cycle and a few pixels.
-- Fit-to-viewport: scale down, never up, so nothing is ever clipped at an odd
-  TV resolution.
+- Fit-to-viewport: scale to fill, up or down, keeping proportions, so nothing
+  is clipped and a 4K TV is filled (changed 17 Nov: "never up" left 4K TVs half-filled).
 - F key or double-click toggles fullscreen.
 - The TV's own clock is trusted. `SETUP.md` already tells staff to keep it
   network-synced.

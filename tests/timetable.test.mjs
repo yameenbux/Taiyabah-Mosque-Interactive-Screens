@@ -192,3 +192,40 @@ for (const [file, width, height] of FILES) {
     });
   }
 }
+
+/* Readable from the rows, for older eyes. Every piece of text is at least
+   24px of the 1080-line layout (about 14mm tall on a 49-inch TV), the key
+   times have a contrast of at least 7:1, everything else at least 4.5:1,
+   and a prayer that has passed fades but stays readable. */
+import { textAudit } from "./helpers.mjs";
+for (const [file, width, height] of FILES) {
+  for (const when of ["2026-11-16T13:05:00", "2026-11-20T12:00:00", "2026-11-16T19:45:00"]) {
+    test(`${file} is readable at ${when}`, async () => {
+      const { page, ctx } = await openAt(browser, srv.base, file, when, { width, height });
+      const bad = [];
+      for (const t of await textAudit(page)) {
+        if (t.px < 24) bad.push(`"${t.text}" is ${t.px}px`);
+        const need = t.key && !t.past ? 7 : 4.5;
+        if (t.contrast < need) bad.push(`"${t.text}"${t.past ? " (passed)" : ""} contrast ${t.contrast.toFixed(1)} < ${need}`);
+      }
+      const cd = await page.$$eval(".card .cd", (els) => els.filter((e) => e.textContent.trim()).map((e) => parseFloat(getComputedStyle(e).fontSize)));
+      for (const px of cd) if (px < 34) bad.push(`the countdown is ${px}px`);
+      assert.deepEqual([...new Set(bad)], []);
+      await ctx.close();
+    });
+  }
+}
+
+/* Fill the TV whatever the browser reports: 4K, 1080p, 720p, or a little
+   short of 16:9 because of a browser bar. Scaled up as well as down. */
+for (const [file, w, h] of [["timetable.html", 3840, 2160], ["timetable.html", 1280, 720], ["timetable.html", 1920, 1040],
+                            ["timetablevertical.html", 2160, 3840], ["timetablevertical.html", 720, 1280]]) {
+  test(`${file} fills ${w}x${h}`, async () => {
+    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-16T13:05:00", { width: w, height: h });
+    const r = await page.evaluate(() => document.getElementById("content").getBoundingClientRect().toJSON());
+    const fill = Math.max(r.width / w, r.height / h);
+    assert.ok(fill > 0.99, `fills only ${(fill * 100).toFixed(0)}% of the screen`);
+    assert.ok(r.left >= -1 && r.top >= -1 && r.right <= w + 1 && r.bottom <= h + 1, "runs off the screen");
+    await ctx.close();
+  });
+}
