@@ -277,3 +277,19 @@ for (const [file, width, height, logoMin] of [["foyer.html", 1920, 1080, 150], [
     await ctx.close();
   });
 }
+
+/* The heading sits on one line, as large as fits (and never tiny). A long
+   edit to it in foyer-content.json shrinks it to a floor, then wraps. */
+for (const [file, width, height] of FILES) {
+  test(`${file} heading on one line`, async () => {
+    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-16T13:05:00", { width, height });
+    const r = await page.evaluate(() => {
+      const h = document.getElementById("nb-heading"), cs = getComputedStyle(h);
+      return { lines: Math.round(h.getBoundingClientRect().height / parseFloat(cs.lineHeight)), px: parseFloat(cs.fontSize), over: h.scrollWidth > h.clientWidth + 1 };
+    });
+    assert.equal(r.lines, 1, `heading takes ${r.lines} lines`);
+    assert.ok(r.px >= 44, `heading is ${r.px}px`);
+    assert.ok(!r.over, "heading runs past its column");
+    await ctx.close();
+  });
+}

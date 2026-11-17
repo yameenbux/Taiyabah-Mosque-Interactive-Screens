@@ -95,10 +95,21 @@
     if (need > have + 1) { el.style.transformOrigin = origin; el.style.transform = "scale(" + (have / need) + ")"; }
   }
 
+  /* The heading on one line, as large as fits: from 56px down to 40px. Below
+   * that, a long edited heading wraps rather than becoming hard to read. */
+  function fitHeading() {
+    var h = document.getElementById("nb-heading");
+    h.style.fontSize = ""; h.style.whiteSpace = "nowrap";
+    var room = h.parentNode.clientWidth, px = 56;
+    while (px > 40 && h.scrollWidth > room) { px -= 1; h.style.fontSize = px + "px"; }
+    if (h.scrollWidth > room) { h.style.whiteSpace = ""; }
+  }
+
   function renderNewBuild(c) {
     var nb = c.newBuild || {}, give = nb.give || {}, app = c.app || {};
     text("nb-eyebrow", nb.eyebrow || "The New Build");
     text("nb-heading", nb.heading);
+    fitHeading();
     text("phase-tag", nb.phaseTag);
     text("phase-title", nb.phaseTitle);
     text("phase-desc", nb.phaseDescription);
