@@ -246,3 +246,28 @@ for (const [file, width, height] of FILES) {
     await ctx.close();
   });
 }
+
+/* A bigger logo, clear of the clock, the dates and the cards. */
+for (const [file, width, height, min] of [["timetable.html", 1920, 1080, 150], ["timetablevertical.html", 1080, 1920, 122]]) {
+  test(`${file} logo is larger and clear of everything`, async () => {
+    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-20T12:00:00", { width, height });
+    const r = await page.evaluate(() => {
+      const b = (s) => document.querySelector(s).getBoundingClientRect();
+      const ink = (s) => { const g = document.createRange(); g.selectNodeContents(document.querySelector(s)); return g.getBoundingClientRect(); };
+      // the clock's drawn digits, not its line box (which has empty space above them)
+      const tn = document.querySelector("#clock .tn"), mark = document.createElement("span");
+      mark.style.cssText = "display:inline-block;width:0;height:0;vertical-align:baseline";
+      tn.appendChild(mark); const baseline = mark.getBoundingClientRect().top; mark.remove();
+      const cx = document.createElement("canvas").getContext("2d"); cx.font = getComputedStyle(tn).font;
+      const m = cx.measureText(tn.textContent), r = ink("#clock .tn");
+      const clock = { left: r.left, right: r.right, top: baseline - m.actualBoundingBoxAscent, bottom: baseline + m.actualBoundingBoxDescent };
+      return { logo: b(".logo").toJSON(), clock, dates: ink(".dates").toJSON(), cards: b("#cards").toJSON() };
+    });
+    const apart = (a, c, gap) => a.right + gap <= c.left || c.right + gap <= a.left || a.bottom + gap <= c.top || c.bottom + gap <= a.top;
+    assert.ok(r.logo.height >= min, `logo is ${Math.round(r.logo.height)}px tall`);
+    assert.ok(apart(r.logo, r.clock, 32), "logo crowds the clock");
+    assert.ok(apart(r.logo, r.dates, 32), "logo crowds the dates");
+    assert.ok(r.logo.bottom + 24 <= r.cards.top, "logo crowds the cards");
+    await ctx.close();
+  });
+}
