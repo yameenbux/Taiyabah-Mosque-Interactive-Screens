@@ -17,6 +17,8 @@ for (const [file, width, height] of FILES) {
     const cds = await page.$$eval(".card .cd", (els) => els.map((e) => [e.closest(".card").className, e.textContent.trim()]).filter((x) => x[1]));
     assert.deepEqual(cds, [["card asr isnext", "in 1h 54m"]], "the countdown is in the next card, and only there");
     assert.equal(await page.locator("#arc, #arcwrap, #next, .pill, .star").count(), 0, "no arc, pill or star");
+    const jum = await page.textContent("#jum");
+    assert.match(jum, /1st/); assert.doesNotMatch(jum, /Friday|November|\b20\b/, "the Jumuʿah bar carries no date");
     assert.equal((await page.textContent(".card.isnext .nm")).trim(), "Asr");
     assert.equal(await page.locator("#clock .sec").count(), 0, "no seconds on the clock");
     assert.match(await page.textContent("#clock"), /^1:05\s*pm$/);

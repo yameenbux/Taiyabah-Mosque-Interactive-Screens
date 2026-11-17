@@ -34,7 +34,7 @@
   }
 
   function tick(now) {
-    var rec = renderFrame(now);
+    var rec = renderFrame(now, { short: true });   // the Jumuʿah bar carries no date
     var have = !!rec;
     document.getElementById("nodata").hidden = have;
     document.getElementById("cards").hidden = !have;
