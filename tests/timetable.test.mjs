@@ -13,9 +13,10 @@ const FILES = [["timetable.html", 1920, 1080], ["timetablevertical.html", 1080, 
 for (const [file, width, height] of FILES) {
   test(`${file} at 13:05 on a Monday`, async () => {
     const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-16T13:05:00", { width, height });
-    const next = await page.textContent("#next");
-    assert.match(next, /Asr/); assert.match(next, /3:00/); assert.match(next, /in 1h 54m/);
     assert.equal(await page.locator(".card.past").count(), 2);
+    const cds = await page.$$eval(".card .cd", (els) => els.map((e) => [e.closest(".card").className, e.textContent.trim()]).filter((x) => x[1]));
+    assert.deepEqual(cds, [["card asr isnext", "in 1h 54m"]], "the countdown is in the next card, and only there");
+    assert.equal(await page.locator("#arc, #arcwrap, #next, .pill, .star").count(), 0, "no arc, pill or star");
     assert.equal((await page.textContent(".card.isnext .nm")).trim(), "Asr");
     assert.equal(await page.locator("#clock .sec").count(), 0, "no seconds on the clock");
     assert.match(await page.textContent("#clock"), /^1:05\s*pm$/);
@@ -91,52 +92,50 @@ for (const [file, width, height] of VIEWS) {
   }
 }
 
-/* Short winter days and long summer evenings squeeze some begin times
-   together; their labels on the arc must still be readable. */
+/* Design B, final: the cards are the screen. Every label and time sits on the
+   same line across the five cards (landscape) or in the same column down the
+   five rows (portrait), on an ordinary day and on a Friday, and no time wraps
+   or touches its neighbour. */
 for (const [file, width, height] of FILES) {
-  for (const when of ["2027-06-20T23:30:00", "2026-12-21T12:00:00", "2026-11-20T12:00:00"]) {
-    test(`${file} arc labels don't touch each other, the line or a dot on ${when.slice(0, 10)}`, async () => {
+  for (const when of ["2026-11-16T13:05:00", "2026-11-20T12:00:00", "2026-11-16T19:45:00", "2027-06-20T13:00:00"]) {
+    test(`${file} lines up cleanly at ${when}`, async () => {
       const { page, ctx } = await openAt(browser, srv.base, file, when, { width, height });
-      const found = await page.evaluate(() => {
-        const svg = document.getElementById("arc"), m = svg.getScreenCTM();
-        const pt = (x, y) => { const p = svg.createSVGPoint(); p.x = x; p.y = y; return p.matrixTransform(m); };
-        const texts = [...svg.querySelectorAll("text")].map((e) => ({ t: e.textContent, r: e.getBoundingClientRect() }));
-        const pr = document.getElementById("next").getBoundingClientRect();
-        const obstacles = [{ what: "pill", x0: pr.left, x1: pr.right, y0: pr.top, y1: pr.bottom }];
-        // Where each dot, and the sun or moon, actually is on screen.
-        for (const c of svg.querySelectorAll("circle, [data-now]")) {
-          const r = c.getBoundingClientRect();
-          obstacles.push({ what: c.hasAttribute("data-now") ? c.getAttribute("data-now") : "dot", x0: r.left, x1: r.right, y0: r.top, y1: r.bottom });
-        }
-        for (const pl of svg.querySelectorAll("polyline"))
-          for (const xy of pl.getAttribute("points").trim().split(/\s+/)) {
-            const [x, y] = xy.split(",").map(Number), p = pt(x, y);
-            obstacles.push({ what: "line", x0: p.x - 2, x1: p.x + 2, y0: p.y - 2, y1: p.y + 2 });
+      const r = await page.evaluate((portrait) => {
+        const bad = [], cards = [...document.querySelectorAll(".card")];
+        const box = (el) => el.getBoundingClientRect();
+        const ink = (el) => { const g = document.createRange(); g.selectNodeContents(el); return g.getBoundingClientRect(); };
+        const same = (sel, side) => {
+          // measured from each card's own edge, so rows that sit lower still compare
+          const v = cards.map((c) => [...c.querySelectorAll(sel)].map((e) => Math.round(box(e)[side] - box(c)[side])));
+          for (let i = 1; i < v.length; i++) for (let k = 0; k < v[0].length; k++)
+            if (Math.abs(v[i][k] - v[0][k]) > 1) bad.push(`${sel} ${side} differs: ${cards[0].className} ${v[0][k]} vs ${cards[i].className} ${v[i][k]}`);
+        };
+        if (portrait) { same(".ic", "left"); same(".nm", "left"); same(".bk", "left"); same(".jk", "right"); same(".k", "top"); }
+        else { for (const sel of [".ic", ".nm", ".ar", ".k", ".b", ".jk", ".cd"]) same(sel, "top"); }
+        if (cards.length !== 5) bad.push(cards.length + " cards");
+        for (const c of cards) {
+          for (const part of [".ic", ".nm", ".ar", ".bk", ".jk", ".k", ".b", ".j", ".cd"]) if (!c.querySelector(part)) bad.push(part + " missing in " + c.className);
+          const cb = box(c);
+          for (const t of c.querySelectorAll(".b, .j > div, .j:not(.two)")) {
+            const fs = parseFloat(getComputedStyle(t).fontSize), r = ink(t);
+            if (r.height > fs * 1.6) bad.push("a time wraps in " + c.className);
+            if (r.left < cb.left + 10 || r.right > cb.right - 10) bad.push("a time leaves " + c.className);
           }
-        const bad = [];
-        texts.forEach((a, i) => {
-          texts.forEach((b, k) => { if (k > i && a.r.left < b.r.right + 6 && b.r.left < a.r.right + 6 && a.r.top < b.r.bottom && b.r.top < a.r.bottom) bad.push(a.t + "/" + b.t); });
-          for (const o of obstacles) if (a.r.left < o.x1 && o.x0 < a.r.right && a.r.top < o.y1 && o.y0 < a.r.bottom) { bad.push(a.t + " on a " + o.what); break; }
-        });
-        return { n: texts.length, bad };
-      });
-      assert.equal(found.n, 6);
-      assert.deepEqual(found.bad, []);
-      await ctx.close();
-    });
-  }
-}
-
-/* The arc marks "now" with the sky as it is: the moon until sunrise, the sun
-   until Maghrib, the moon again after. Sunrise and Maghrib stay plain dots. */
-for (const [file, width, height] of FILES) {
-  for (const [when, sky] of [["2026-11-16T07:10:00", "moon"], ["2026-11-16T07:40:00", "sun"], ["2026-11-16T13:05:00", "sun"],
-                             ["2026-11-16T16:15:00", "sun"], ["2026-11-16T16:17:00", "moon"], ["2026-11-16T19:45:00", "moon"]]) {
-    test(`${file} shows the ${sky} at ${when.slice(11, 16)}`, async () => {
-      const { page, ctx } = await openAt(browser, srv.base, file, when, { width, height });
-      const marks = await page.$$eval("#arc [data-now]", (els) => els.map((e) => e.getAttribute("data-now")));
-      assert.deepEqual(marks, [sky]);
-      assert.equal(await page.locator("#arc [data-mark]").count(), 0, "sunrise and Maghrib stay plain dots");
+          // within one card the two labels share a line, and so do the two times
+          if (portrait) {
+            const [kb, kj] = [...c.querySelectorAll(".k")].map(box);
+            if (Math.abs(kb.top - kj.top) > 1) bad.push(`labels not on one line in ${c.className}: ${Math.round(kb.top)} vs ${Math.round(kj.top)}`);
+            const base = (el) => { const r = ink(el.matches(".two") ? el.firstElementChild : el), fs = parseFloat(getComputedStyle(el.matches(".two") ? el.firstElementChild : el).fontSize); return r.bottom - fs * 0.22; };
+            const bb = base(c.querySelector(".b")), jb = base(c.querySelector(".j"));
+            if (Math.abs(bb - jb) > 6) bad.push(`times not on one baseline in ${c.className}: ${Math.round(bb)} vs ${Math.round(jb)}`);
+          }
+          const b = ink(c.querySelector(".b")), j = ink(c.querySelector(".j"));
+          if (b.right > j.left - 16 && b.left < j.right && b.bottom > j.top && b.top < j.bottom) bad.push("begins touches jamaah in " + c.className);
+          if (c.scrollHeight > c.clientHeight + 1) bad.push("contents overflow " + c.className);
+        }
+        return bad;
+      }, width < height);
+      assert.deepEqual(r, []);
       await ctx.close();
     });
   }
