@@ -229,3 +229,20 @@ for (const [file, w, h] of [["timetable.html", 3840, 2160], ["timetable.html", 1
     await ctx.close();
   });
 }
+
+/* The JAMĀʿAH label is bold and brighter than BEGINS, so the eye goes to the
+   time people come for. The times themselves keep their weight. */
+for (const [file, width, height] of FILES) {
+  test(`${file} puts JAMĀʿAH in bold`, async () => {
+    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-16T13:05:00", { width, height });
+    const w = await page.evaluate(() => {
+      const c = document.querySelector(".card.asr"), st = (el) => getComputedStyle(el);
+      return { jam: +st(c.querySelector(".jk .k")).fontWeight, beg: +st(c.querySelector(".bk .k")).fontWeight,
+               time: +st(c.querySelector(".j")).fontWeight };
+    });
+    assert.ok(w.jam >= 800, `JAMĀʿAH label weight ${w.jam}`);
+    assert.ok(w.jam > w.beg, "JAMĀʿAH is not heavier than BEGINS");
+    assert.equal(w.time, 600, "the jamāʿah times keep their weight");
+    await ctx.close();
+  });
+}
