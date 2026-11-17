@@ -44,49 +44,45 @@
     } catch (e) { box.innerHTML = ""; shownQR = null; }
   }
 
-  /* Evenly spaced dots on a gold line, each label centred under its dot. */
-  function drawTimeline(items) {
-    var W = PORTRAIT ? 952 : 964, n = items.length;
-    if (!n) { setHTML("timeline", ""); return; }
-    // Label width from the room between dots, so a seventh phase cannot
-    // make neighbours collide; the type shrinks with it.
-    var w = Math.min(188, (W - 12 * (n - 1)) / n), f = w / 188;  // up to five phases keep full size (24px dates)
-    var xs = items.map(function (_, i) { return n === 1 ? W / 2 : w / 2 + i * (W - w) / (n - 1); });
-    var act = -1;
-    items.forEach(function (t, i) { if (t.status === "active") act = i; });
-    var upto = act >= 0 ? act : items.filter(function (t) { return t.status === "done"; }).length - 1;
-    var svg = '<svg viewBox="0 0 ' + W + ' 60" preserveAspectRatio="none">';
-    if (upto > 0) svg += '<line x1="' + xs[0] + '" y1="24" x2="' + xs[upto] + '" y2="24" stroke="#DCBB63" stroke-width="4"/>';
-    if (upto < n - 1) svg += '<line x1="' + xs[Math.max(upto, 0)] + '" y1="24" x2="' + xs[n - 1] + '" y2="24" stroke="rgba(243,239,227,.25)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>';
-    var labs = "";
-    items.forEach(function (t, i) {
-      var st = t.status || "upcoming";
-      svg += '<circle cx="' + xs[i] + '" cy="24" r="' + (st === "active" ? 14 : 9) + '" fill="' + (st === "upcoming" ? "#3C0B2A" : "#DCBB63") + '" stroke="#DCBB63" stroke-width="2.5"/>';
-      if (st === "active") svg += '<circle cx="' + xs[i] + '" cy="24" r="26" fill="none" stroke="rgba(220,187,99,.35)" stroke-width="2"/>';
-      labs += '<div class="lab ' + esc(st) + '" style="left:' + xs[i] + "px;width:" + w + 'px"><b style="font-size:' + (n <= 5 ? 30 : Math.max(18, 30 * f)) + 'px">' + esc(t.title) + '</b><span style="font-size:' + (n <= 5 ? 24 : Math.max(14, 24 * f)) + 'px">' + esc(t.date) + "</span></div>";
-    });
-    setHTML("timeline", svg + "</svg>" + labs);
-    var tl = document.getElementById("timeline"), h = 0;
-    for (var k = 0; k < tl.children.length; k++) h = Math.max(h, tl.children[k].offsetTop + tl.children[k].offsetHeight);
-    tl.style.height = h + "px";
+  /* One progress bar: the dot sits at the active stage, as a share of the
+   * way from the first stage to the last. Its three labels come from
+   * newBuild.progress when the committee sets them, else from the timeline. */
+  function drawProgress(items, words) {
+    var n = items.length, act = -1, done = 0;
+    items.forEach(function (t, i) { if (t.status === "active") act = i; if (t.status === "done") done++; });
+    var at = n > 1 ? (act >= 0 ? act : Math.max(0, done - 1)) / (n - 1) : 1;
+    var pct = (at * 100).toFixed(2) + "%";
+    var bar = document.querySelector("#progress .track");
+    bar.querySelector(".fill").style.width = pct;
+    bar.querySelector(".dot").style.left = pct;
+    words = words || {};
+    var upcoming = items.filter(function (t) { return t.status === "upcoming"; });
+    text("pl-done", words.done || (done ? done + (done === 1 ? " stage" : " stages") + " complete" : ""));
+    text("pl-now", words.now || (act >= 0 ? items[act].date : ""));
+    text("pl-next", words.next || (upcoming.length ? upcoming[upcoming.length - 1].title : ""));
   }
 
-  /* Shrink the left column's contents (never clip them) if an edit to
-   * foyer-content.json makes them taller than the space. */
+  /* The title on one line, as large as fits the width: from the design size
+   * down to a floor, then it wraps rather than becoming hard to read. */
+  function fitTitle() {
+    var h = document.getElementById("phase-title"), max = PORTRAIT ? 80 : 88, min = PORTRAIT ? 56 : 64;
+    h.style.fontSize = max + "px"; h.style.whiteSpace = "nowrap";
+    var room = document.getElementById("intro").clientWidth, px = max;
+    while (px > min && h.scrollWidth > room) { px -= 1; h.style.fontSize = px + "px"; }
+    if (h.scrollWidth > room) h.style.whiteSpace = "";
+  }
+
+  /* Shrink the column between the header and the bottom boxes (never clip
+   * it) if a long edit to foyer-content.json makes it taller than its room. */
   function fitColumn() {
-    var col = document.getElementById("nbcol"), fit = document.getElementById("nbfit"), W = PORTRAIT ? 952 : 964;
-    fit.style.transform = "none"; fit.style.width = W + "px";
-    var k = 1;
-    for (var i = 0; i < 12 && fit.scrollHeight * k > col.clientHeight; i++) {
-      k -= 0.04;
-      fit.style.width = W / k + "px";
-    }
-    if (k < 1) fit.style.transform = "scale(" + k + ")";
+    var nb = document.getElementById("newbuild");
+    nb.style.transform = "none";
+    var need = nb.scrollHeight, have = nb.clientHeight;
+    if (need > have + 1) { nb.style.transformOrigin = "top center"; nb.style.transform = "scale(" + (have / need) + ")"; }
   }
 
   /* Shrink `el` (never clip it) when its contents need more room than
-   * `box` (default: itself) has. Used for the Give/app column and the
-   * greeting, after fitColumn did the same for the left column. */
+   * `box` (default: itself) has. Used for the Ramadan and Eid greeting. */
   function fitBox(el, origin, box) {
     if (!el || el.offsetParent === null) return;
     box = box || el;
@@ -95,32 +91,17 @@
     if (need > have + 1) { el.style.transformOrigin = origin; el.style.transform = "scale(" + (have / need) + ")"; }
   }
 
-  /* The heading on one line, as large as fits: from 56px down to 40px. Below
-   * that, a long edited heading wraps rather than becoming hard to read. */
-  function fitHeading() {
-    var h = document.getElementById("nb-heading");
-    h.style.fontSize = ""; h.style.whiteSpace = "nowrap";
-    var room = h.parentNode.clientWidth, px = 56;
-    while (px > 40 && h.scrollWidth > room) { px -= 1; h.style.fontSize = px + "px"; }
-    if (h.scrollWidth > room) { h.style.whiteSpace = ""; }
-  }
-
   function renderNewBuild(c) {
     var nb = c.newBuild || {}, give = nb.give || {}, app = c.app || {};
-    text("nb-eyebrow", nb.eyebrow || "The New Build");
-    text("nb-heading", nb.heading);
-    fitHeading();
-    text("phase-tag", nb.phaseTag);
+    text("nb-eyebrow", [nb.eyebrow || "The New Build", nb.phaseTag].filter(Boolean).join(" · "));
     text("phase-title", nb.phaseTitle);
-    text("phase-desc", nb.phaseDescription);
-    setHTML("needs", (nb.needs || []).map(function (s) { return "<span>" + esc(s) + "</span>"; }).join(""));
-    drawTimeline(nb.timeline || []);
+    fitTitle();
+    text("needs", (nb.needs || []).join(" · "));
+    drawProgress(nb.timeline || [], nb.progress);
     text("qr-label", give.scanLabel || "Scan to give any amount");
     text("qr-sub", give.giftAidNote);
     if (give.otherAmountUrl) drawQR(give.otherAmountUrl);
-    text("app-eyebrow", app.eyebrow);
-    text("app-heading", app.heading);
-    text("app-line", app.line);
+    text("app-label", app.label || "Download our app");
     fitColumn();
   }
 
@@ -141,7 +122,6 @@
     } else if (tick.dirty || tick.last !== T.dayKey(now)) {
       try { renderNewBuild(CONTENT); } catch (e) { if (CONTENT !== window.TT_CONTENT) { CONTENT = window.TT_CONTENT; renderNewBuild(CONTENT); } }
     }
-    fitBox(document.getElementById("side"), "top center");
     fitBox(document.getElementById("oin"), "center center", document.getElementById("occasion"));
     tick.dirty = false; tick.last = a ? null : T.dayKey(now);
     fitToViewport();

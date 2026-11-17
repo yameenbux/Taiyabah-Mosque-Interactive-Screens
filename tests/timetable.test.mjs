@@ -258,7 +258,7 @@ for (const [file, width, height, min] of [["timetable.html", 1920, 1080, 150], [
       const tn = document.querySelector("#clock .tn"), mark = document.createElement("span");
       mark.style.cssText = "display:inline-block;width:0;height:0;vertical-align:baseline";
       tn.appendChild(mark); const baseline = mark.getBoundingClientRect().top; mark.remove();
-      const cx = document.createElement("canvas").getContext("2d"); cx.font = getComputedStyle(tn).font;
+      const cx = document.createElement("canvas").getContext("2d"); { const fs = getComputedStyle(tn); cx.font = `${fs.fontStyle} ${fs.fontWeight} ${fs.fontSize} ${fs.fontFamily}`; }
       const m = cx.measureText(tn.textContent), r = ink("#clock .tn");
       const clock = { left: r.left, right: r.right, top: baseline - m.actualBoundingBoxAscent, bottom: baseline + m.actualBoundingBoxDescent };
       return { logo: b(".logo").toJSON(), clock, dates: ink(".dates").toJSON(), cards: b("#cards").toJSON() };

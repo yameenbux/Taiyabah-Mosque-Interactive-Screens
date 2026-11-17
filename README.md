@@ -17,7 +17,7 @@ All four pages are single, self-contained HTML files (fonts and images embedded 
 
 **`timetable.html`** / **`timetablevertical.html`**: Salah times for the prayer hall (×2) and downstairs (×2), landscape and portrait. Design B: the clock, an arc across the day from Fajr to Isha with a gold dot at "now", the next jamāʿah and how long until it, and the day's five prayers with their beginning and jamāʿah times. Prayers whose jamāʿah has passed fade. On a Friday, Zuhr becomes Jumuʿah with both times, labelled 1st and 2nd. Every year of prayer times in `data/` is built into the file, so once loaded it needs no network.
 
-**`foyer.html`** / **`foyervertical.html`**: the foyer (×2), landscape and portrait. The New Build appeal, a large donate QR code, and a card saying the app is on the App Store and Google Play. During Ramadan and for the days of each Eid it shows the greeting instead, switching on and off by itself from the Hijri dates in the timetable. A bar along the bottom shows the next jamāʿah and Jumuʿah.
+**`foyer.html`** / **`foyervertical.html`**: the foyer (×2), landscape and portrait. The New Build appeal in one centred column: the current phase, what it needs, one progress bar, and a large donate QR code, over three boxes (next jamāʿah, Jumuʿah, and "Download our app" with the store badges). During Ramadan and for the days of each Eid it shows the greeting instead, switching on and off by itself from the Hijri dates in the timetable. A bar along the bottom shows the next jamāʿah and Jumuʿah.
 
 **`foyer-content.json`**: the foyer's words, the donate link and the app card. Edit it on GitHub and the foyer TVs pick it up within about twenty minutes. See SETUP.md.
 

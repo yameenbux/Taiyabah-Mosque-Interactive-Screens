@@ -1,5 +1,5 @@
 {
-  "_instructions": "Edit the text values below directly on GitHub (pencil icon on this file → edit → commit). Don't touch the field names (the part before each colon), only the text after it. The foyer screens re-read this file every ten minutes, so a change here reaches both foyer TVs within about twenty minutes (GitHub takes a few minutes to publish it) without touching the TVs. Keep this a valid JSON file — if GitHub shows a red warning when you commit, something's broken (usually a missing comma or a stray quote mark) and the screens will keep showing the built-in copy instead of your edit. The donate QR code is drawn from newBuild.give.otherAmountUrl, so changing that link changes the code. Not shown on the screens, kept for anything else that reads this file: newBuild.tagline, newBuild.give.bankHeading, newBuild.give.bank, newBuild.give.note.",
+  "_instructions": "Edit the text values below directly on GitHub (pencil icon on this file → edit → commit). Don't touch the field names (the part before each colon), only the text after it. The foyer screens re-read this file every ten minutes, so a change here reaches both foyer TVs within about twenty minutes (GitHub takes a few minutes to publish it) without touching the TVs. Keep this a valid JSON file — if GitHub shows a red warning when you commit, something's broken (usually a missing comma or a stray quote mark) and the screens will keep showing the built-in copy instead of your edit. The donate QR code is drawn from newBuild.give.otherAmountUrl, so changing that link changes the code. newBuild.progress holds the three words under the progress bar; the dot moves to whichever timeline stage is marked \"active\". Not shown on the screens, kept for anything else that reads this file: newBuild.heading, newBuild.tagline, newBuild.phaseDescription, the timeline's own wording, newBuild.give.bankHeading, newBuild.give.bank, newBuild.give.note.",
   "newBuild": {
     "eyebrow": "The New Build",
     "heading": "Building a lasting home for Taiyabah Masjid.",
@@ -42,6 +42,11 @@
         "status": "upcoming"
       }
     ],
+    "progress": {
+      "done": "Phases 1 & 2 complete",
+      "now": "Now · Phase 3.3",
+      "next": "Full facilities"
+    },
     "give": {
       "scanLabel": "Scan to give any amount",
       "otherAmountUrl": "https://www.taiyabahmasjid.com/product/dome-donation/",
@@ -79,8 +84,6 @@
     }
   },
   "app": {
-    "eyebrow": "The Taiyabah Masjid app",
-    "heading": "Now available on the app stores",
-    "line": "Search “Taiyabah Masjid” · prayer times, notices, live radio"
+    "label": "Download our app"
   }
 }
