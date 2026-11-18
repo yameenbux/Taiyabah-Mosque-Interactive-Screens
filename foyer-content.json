@@ -49,7 +49,7 @@
     },
     "give": {
       "scanLabel": "Scan to give any amount",
-      "otherAmountUrl": "https://www.taiyabahmasjid.com/product/dome-donation/",
+      "otherAmountUrl": "https://buy.stripe.com/6oU3cvbDK1Hy2x8g3If3a05",
       "giftAidNote": "If you're a UK taxpayer, please add Gift Aid — it adds 25p to every £1 at no cost to you.",
       "bankHeading": "Or transfer directly",
       "bank": {

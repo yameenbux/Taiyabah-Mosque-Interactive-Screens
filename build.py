@@ -175,6 +175,20 @@ def build_page(screen, body_class, days, content):
     return MARKER + "\n" + page
 
 
+# The foyer's donate QR must open a Stripe checkout that takes money. It once
+# pointed at a page on the old website for weeks without anyone noticing.
+DONATE_LINK = re.compile(r"^https://(buy|donate)\.stripe\.com/[A-Za-z0-9]+$")
+
+
+def check_donate_link(content):
+    try:
+        url = content["newBuild"]["give"]["otherAmountUrl"]
+    except (KeyError, TypeError):
+        fail("foyer-content.json has no newBuild.give.otherAmountUrl for the donate QR")
+    if not isinstance(url, str) or not DONATE_LINK.match(url):
+        fail(f"the donate QR link must be a Stripe checkout link (https://buy.stripe.com/...), not {url!r}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default=os.path.join(ROOT, "data"))
@@ -182,13 +196,14 @@ def main():
     ap.add_argument("--out", default=ROOT, help="where to write the pages (tests build elsewhere)")
     args = ap.parse_args()
     days = load_days(args.data)
-    if args.check_only:
-        print(f"data ok: {len(days)} days, {next(iter(days))} to {next(reversed(days))}")
-        return
     try:
         content = json.loads(read(ROOT, "foyer-content.json"))
     except ValueError as e:
         fail(f"foyer-content.json is not valid JSON: {e}")
+    check_donate_link(content)
+    if args.check_only:
+        print(f"data ok: {len(days)} days, {next(iter(days))} to {next(reversed(days))}")
+        return
     for out, screen, cls in SCREENS:
         html = build_page(screen, cls, days, content)
         with open(os.path.join(args.out, out), "w", encoding="utf-8") as f:

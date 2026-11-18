@@ -6,6 +6,7 @@
 (function () {
   var PORTRAIT = document.body.classList.contains("portrait");
   var CONTENT = window.TT_CONTENT, shownQR = null;
+  var STRIPE = /^https:\/\/(buy|donate)\.stripe\.com\/[A-Za-z0-9]+$/;
 
   function text(id, s) { var el = document.getElementById(id); if (el && el.textContent !== (s || "")) el.textContent = s || ""; }
 
@@ -100,7 +101,10 @@
     drawProgress(nb.timeline || [], nb.progress);
     text("qr-label", give.scanLabel || "Scan to give any amount");
     text("qr-sub", give.giftAidNote);
-    if (give.otherAmountUrl) drawQR(give.otherAmountUrl);
+    // Only a Stripe checkout link becomes the QR code. A link edited on GitHub
+    // goes straight to the TVs without passing the build's check, so anything
+    // else falls back to the link built into the page, which did pass it.
+    drawQR(STRIPE.test(give.otherAmountUrl) ? give.otherAmountUrl : window.TT_CONTENT.newBuild.give.otherAmountUrl);
     text("app-label", app.label || "Download our app");
     fitColumn();
   }

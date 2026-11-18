@@ -46,6 +46,27 @@ for (const [file, width, height] of FILES) {
     await ctx.close();
   });
 
+  test(`${file} donate QR opens a Stripe checkout`, async () => {
+    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-16T13:05:00", { width, height });
+    assert.match(await decodeQR(page), /^https:\/\/(buy|donate)\.stripe\.com\/[A-Za-z0-9]+$/);
+    await ctx.close();
+  });
+
+  test(`${file} ignores a donate link edited to something that is not Stripe`, async () => {
+    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-16T13:05:00", { width, height, route: withContent((c) => { c.newBuild.give.otherAmountUrl = "https://www.taiyabahmasjid.com/product/dome-donation/"; c.newBuild.phaseTitle = "Carpets and lighting"; }) });
+    await page.waitForFunction(() => document.getElementById("phase-title").textContent === "Carpets and lighting");
+    assert.equal(await decodeQR(page), CONTENT.newBuild.give.otherAmountUrl, "the QR took a link that does not take money");
+    await ctx.close();
+  });
+
+  test(`${file} takes a new Stripe link edited on GitHub`, async () => {
+    const next = "https://buy.stripe.com/test0000000000000000";
+    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-16T13:05:00", { width, height, route: withContent((c) => { c.newBuild.give.otherAmountUrl = next; }) });
+    await page.waitForTimeout(300);
+    assert.equal(await decodeQR(page), next);
+    await ctx.close();
+  });
+
   test(`${file} in Ramadan`, async () => {
     const { page, ctx } = await openAt(browser, srv.base, file, "2027-02-18T13:05:00", { width, height });
     assert.equal(await page.isVisible("#occasion"), true);
