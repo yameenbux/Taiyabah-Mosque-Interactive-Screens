@@ -5,7 +5,7 @@
 Bolton Central Islamic Society · Registered charity 1041569
 31a Draycott Street, Bolton BL1 8HD
 
-Companion to the [website](https://yameenbux.github.io/Taiyabah-Mosque-Website-Rebrand/) and the [prayer times app](https://yameenbux.github.io/Taiyabah-Mosque-App/)
+Companion to the [website](https://taiyabahwebsite.ysbdesigns.uk/) and the [prayer times app](https://taiyabahapp.ysbdesigns.uk/)
 
 ## About
 
@@ -80,12 +80,12 @@ Commit, and every TV has the new year after its next 2am reload. `build.py` refu
 GitHub Pages, from this repo's root on `main`. A push to `main` reaches every TV at its next 2am reload, so test before merging. The four addresses are unchanged:
 
 ```
-https://yameenbux.github.io/Taiyabah-Mosque-Interactive-Screens/timetable.html
-https://yameenbux.github.io/Taiyabah-Mosque-Interactive-Screens/timetablevertical.html
-https://yameenbux.github.io/Taiyabah-Mosque-Interactive-Screens/foyer.html
-https://yameenbux.github.io/Taiyabah-Mosque-Interactive-Screens/foyervertical.html
+https://taiyabahscreens.ysbdesigns.uk/timetable.html
+https://taiyabahscreens.ysbdesigns.uk/timetablevertical.html
+https://taiyabahscreens.ysbdesigns.uk/foyer.html
+https://taiyabahscreens.ysbdesigns.uk/foyervertical.html
 ```
 
 ## Credits
 
-Built for Bolton Central Islamic Society, sharing its design system with the [website](https://yameenbux.github.io/Taiyabah-Mosque-Website-Rebrand/) and the [app](https://yameenbux.github.io/Taiyabah-Mosque-App/). Prayer times, the Taiyabah Masjid name, and the masjid's logo belong to the charity.
+Built for Bolton Central Islamic Society, sharing its design system with the [website](https://taiyabahwebsite.ysbdesigns.uk/) and the [app](https://taiyabahapp.ysbdesigns.uk/). Prayer times, the Taiyabah Masjid name, and the masjid's logo belong to the charity.

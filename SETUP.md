@@ -18,11 +18,14 @@ foyervertical.html           → foyer display — portrait TVs
 foyer-content.json            → editable text for both foyer pages — see section 3
 ```
 
-Once pushed, they'll be reachable at something like:
-`https://yameenbux.github.io/<repo-name>/timetable.html`
-`https://yameenbux.github.io/<repo-name>/foyer.html`
-(and the same with `vertical` appended for the portrait screens, e.g.
-`timetablevertical.html`)
+They are served at the masjid's screens address (the `CNAME` file sets it,
+and a DNS CNAME record for `taiyabahscreens` points at `yameenbux.github.io`):
+`https://taiyabahscreens.ysbdesigns.uk/timetable.html`
+`https://taiyabahscreens.ysbdesigns.uk/timetablevertical.html`
+`https://taiyabahscreens.ysbdesigns.uk/foyer.html`
+`https://taiyabahscreens.ysbdesigns.uk/foyervertical.html`
+Old `github.io` links forward to these automatically. Do not delete the
+`CNAME` file: without it the address stops working.
 
 ## 2. Point each TV at the right page
 
@@ -78,9 +81,3 @@ The prayer times for every year in `data/` are built into all four pages, and th
 4. Commit and push to `main`. Every TV has the new year after its next 2am reload.
 
 2026 and 2027 are both built in now. Do this for 2028 before December 2027.
-
-## 6. Custom domain, later
-
-Whenever you're ready: add a `CNAME` file to the repo with your domain in
-it, and point a DNS `A`/`CNAME` record at GitHub Pages. Doesn't change
-anything about the structure above — just moves the base URL.
