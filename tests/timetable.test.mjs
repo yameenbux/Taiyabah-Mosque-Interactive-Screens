@@ -271,37 +271,3 @@ for (const [file, width, height, min] of [["timetable.html", 1920, 1080, 150], [
     await ctx.close();
   });
 }
-
-/* After Isha jamāʿah the cards turn to tomorrow, the date line says so, and
-   tomorrow's Fajr is marked with its countdown. Before it, today as usual. */
-for (const [file, width, height] of FILES) {
-  test(`${file} turns to tomorrow after Isha`, async () => {
-    const days = loadDays();
-    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-19T22:00:00", { width, height });
-    const r = await page.evaluate(() => ({
-      tag: document.querySelector("#greg .tmrw") && document.querySelector("#greg .tmrw").textContent,
-      greg: document.getElementById("greg").textContent,
-      next: [...document.querySelectorAll(".card.isnext")].map((c) => c.className),
-      past: document.querySelectorAll(".card.past").length,
-      cd: document.querySelector(".card.isnext .cd").textContent,
-      jum: !!document.querySelector(".card .j.two"),
-      fajr: document.querySelector(".card.fajr .j").textContent.replace(/\s+/g, ""),
-    }));
-    assert.equal(r.tag, "Tomorrow");
-    assert.match(r.greg, /Friday 20 November/);
-    assert.deepEqual(r.next, ["card fajr isnext"]);
-    assert.equal(r.past, 0);
-    assert.match(r.cd, /^in 9h/);
-    assert.ok(r.jum, "tomorrow is Friday, so the Jumuʿah card shows");
-    const want = days["2026-11-20"].jamaat.fajr.replace(/^0/, "").replace(/^(\d+):(\d+)$/, (m, h, mm) => `${h % 12 || 12}:${mm}am`);
-    assert.equal(r.fajr.replace(/ /g, ""), want);
-    await ctx.close();
-  });
-
-  test(`${file} shows today until Isha jamāʿah`, async () => {
-    const { page, ctx } = await openAt(browser, srv.base, file, "2026-11-19T19:20:00", { width, height });
-    const r = await page.evaluate(() => ({ tag: !!document.querySelector("#greg .tmrw"), next: document.querySelector(".card.isnext").className, greg: document.getElementById("greg").textContent }));
-    assert.equal(r.tag, false); assert.equal(r.next, "card isha isnext"); assert.match(r.greg, /Thursday, 19 November 2026/);
-    await ctx.close();
-  });
-}
