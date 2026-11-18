@@ -44,6 +44,18 @@
 
   function tick(now) {
     var rec = renderFrame(now, { short: true });
+    var n = T.nextJamaah(DAYS, now);
+    // After Isha jamāʿah the next one is tomorrow's Fajr, so the cards turn to
+    // tomorrow and say so in the date line: the date and the cards always
+    // describe the same day, and there is always a next prayer marked.
+    var day = now;
+    if (n && T.dayKey(n.at) !== T.dayKey(now) && DAYS[T.dayKey(n.at)]) {
+      day = n.at;
+      rec = DAYS[T.dayKey(day)];
+      setHTML("greg", '<span class="tmrw">Tomorrow</span>' + esc(day.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })));
+      setHTML("hijri", esc(rec.hijri));
+    }
+    document.body.classList.toggle("tomorrow", day !== now);
     var have = !!rec;
     document.getElementById("nodata").hidden = have;
     document.getElementById("cards").hidden = !have;
@@ -52,13 +64,10 @@
     document.getElementById("jbox").hidden = !j;
     if (j) setHTML("jtimes", '<span class="lab">1st</span><b>' + fmtTime(j.first) + '</b><span class="lab">2nd</span><b>' + fmtTime(j.second) + "</b>");
     if (have) {
-      var n = T.nextJamaah(DAYS, now);
-      // Only today's next jamāʿah is marked: after Isha the next one is
-      // tomorrow's Fajr, and the cards still show today.
-      var nextKey = n && T.dayKey(n.at) === T.dayKey(now) ? n.key : null;
+      var nextKey = n && T.dayKey(n.at) === T.dayKey(day) ? n.key : null;
       var countdown = nextKey ? T.countdown(n.at - now) : "";
-      var passed = T.passedKeys(DAYS, now);
-      setHTML("cards", T.slotsFor(DAYS, now).map(function (s) { return card(s, rec, passed, nextKey, countdown); }).join(""));
+      var passed = day === now ? T.passedKeys(DAYS, now) : new Set();
+      setHTML("cards", T.slotsFor(DAYS, day).map(function (s) { return card(s, rec, passed, nextKey, countdown); }).join(""));
       setHTML("sbox", sunPart("sunrise", "Sunrise", rec.begins.sunrise) + sunPart("sunset", "Sunset", rec.begins.maghrib));
     }
     fitToViewport();

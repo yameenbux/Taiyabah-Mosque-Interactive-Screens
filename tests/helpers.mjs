@@ -82,7 +82,7 @@ export async function textAudit(page) {
       for (let p = el; p && p.id !== "content"; p = p.parentElement) {
         const ps = getComputedStyle(p); op *= parseFloat(ps.opacity);
         const f = ps.filter.match(/saturate\(([\d.]+)\)/); if (f) sat *= parseFloat(f[1]);
-        const pb = rgb(ps.backgroundColor); if (pb.a > 0 && p !== el && bg === PLUM) bg = mix(pb, PLUM, pb.a);
+        const pb = rgb(ps.backgroundColor); if (pb.a > 0 && bg === PLUM) bg = mix(pb, PLUM, pb.a);  // nearest fill, the text's own included
       }
       let fg = rgb(cs.color);
       if (sat < 1) { const g = 0.2126 * fg.r + 0.7152 * fg.g + 0.0722 * fg.b; fg = { r: g + (fg.r - g) * sat, g: g + (fg.g - g) * sat, b: g + (fg.b - g) * sat, a: fg.a }; }
