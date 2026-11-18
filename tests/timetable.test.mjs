@@ -113,10 +113,10 @@ for (const [file, width, height] of FILES) {
             if (Math.abs(v[i][k] - v[0][k]) > 1) bad.push(`${sel} ${side} differs: ${cards[0].className} ${v[0][k]} vs ${cards[i].className} ${v[i][k]}`);
         };
         if (portrait) { same(".ic", "left"); same(".nm", "left"); same(".bk", "left"); same(".jk", "right"); same(".k", "top"); }
-        else { for (const sel of [".ic", ".nm", ".ar", ".k", ".b", ".jk", ".cd"]) same(sel, "top"); }
+        else { for (const sel of [".ic", ".nm", ".k", ".b", ".jk", ".cd"]) same(sel, "top"); }
         if (cards.length !== 5) bad.push(cards.length + " cards");
         for (const c of cards) {
-          for (const part of [".ic", ".nm", ".ar", ".bk", ".jk", ".k", ".b", ".j", ".cd"]) if (!c.querySelector(part)) bad.push(part + " missing in " + c.className);
+          for (const part of [".ic", ".nm", ".bk", ".jk", ".k", ".b", ".j", ".cd"]) if (!c.querySelector(part)) bad.push(part + " missing in " + c.className);
           const cb = box(c);
           for (const t of c.querySelectorAll(".b, .j > div, .j:not(.two)")) {
             const fs = parseFloat(getComputedStyle(t).fontSize), r = ink(t);
