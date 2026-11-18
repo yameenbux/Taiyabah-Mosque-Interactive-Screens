@@ -4,7 +4,7 @@
  *
  * Every card has the same parts in the same order, so that each line sits
  * at the same height across all five (or in the same column down all five
- * rows in portrait): icon, name, Arabic name, Begins, Jamāʿah, and a
+ * rows in portrait): icon, name, Begins, Jamāʿah, and a
  * countdown line that is empty except on the card whose jamāʿah is next. */
 "use strict";
 (function () {
@@ -36,7 +36,7 @@
       ? '<div class="j two"><div><span class="lab">1st</span>' + fmtTime(rec.jummah.first) + '</div><div><span class="lab">2nd</span>' + fmtTime(rec.jummah.second) + "</div></div>"
       : '<div class="j">' + fmtTime(rec.jamaat[slot.key]) + "</div>";
     return '<div class="' + cls + '">' + icon(slot.key) +
-      '<div class="who"><div class="nm">' + nameHTML(slot.en) + '</div><div class="ar" lang="ar">' + slot.ar + "</div></div>" +
+      '<div class="who"><div class="nm">' + nameHTML(slot.en) + "</div></div>" +
       '<div class="bk"><div class="k">Begins</div><div class="b">' + fmtTime(rec.begins[slot.key]) + "</div></div>" +
       '<div class="jk"><div class="k">Jamāʿah</div>' + jam + '<div class="cd">' + (isNext ? countdown : "") + "</div></div>" +
       "</div>";
