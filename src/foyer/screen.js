@@ -10,24 +10,9 @@
 
   function text(id, s) { var el = document.getElementById(id); if (el && el.textContent !== (s || "")) el.textContent = s || ""; }
 
-  function parseHijri(s) {
-    var m = /^(\d+)\s+(.+?)\s+(\d+)\s+AH$/.exec(s || "");
-    return m ? { day: +m[1], month: m[2] } : null;
-  }
-
-  /* Same rules as the foyer has always had: Ramadan for the month; each Eid
-   * from its first day for durationDays; enabled:false turns one off. */
-  function activeOccasion(content, days, now) {
-    var occ = content.occasions || {};
-    for (var back = 0; back <= 6; back++) {
-      var p = parseHijri((days[T.dayKey(T.addDays(now, -back))] || {}).hijri);
-      if (!p) continue;
-      if (back === 0 && p.month === "Ramadan" && occ.ramadan && occ.ramadan.enabled !== false) return { o: occ.ramadan, ramadanDay: p.day };
-      if (p.day === 1 && p.month === "Shawwal" && occ.eidFitr && occ.eidFitr.enabled !== false && back < (occ.eidFitr.durationDays || 1)) return { o: occ.eidFitr };
-      if (p.day === 10 && p.month === "Dhul Hijjah" && occ.eidAdha && occ.eidAdha.enabled !== false && back < (occ.eidAdha.durationDays || 1)) return { o: occ.eidAdha };
-    }
-    return null;
-  }
+  /* activeOccasion() now lives in shared/occasion.js — the timetable screen
+   * asks the same question, and one rule reading one set of dates is safer
+   * than two copies that could drift apart on when Eid starts. */
 
   /* The donate QR code: one crisp vector path, ink on cream, its quiet zone
    * coming from the tile's padding. */
@@ -155,6 +140,14 @@
 
   tick.dirty = true;
   startReliability(tick);
-  load();
-  setInterval(load, 10 * 60 * 1000);
+  wirePreview(function (draft) {
+    if (!wellFormed(draft)) return false;
+    CONTENT = draft; tick.dirty = true; return true;
+  }, function () { tick(new Date()); });
+  // In preview mode the admin editor is the only source of CONTENT — the
+  // live file would otherwise race the draft it just posted.
+  if (!inPreview()) {
+    load();
+    setInterval(load, 10 * 60 * 1000);
+  }
 })();
