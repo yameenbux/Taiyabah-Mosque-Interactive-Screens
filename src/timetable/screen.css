@@ -38,6 +38,22 @@
 /* ---- no data for the date ---- */
 #nodata{position:absolute;left:240px;right:240px;top:420px;text-align:center;font-family:var(--serif);font-size:56px;line-height:1.3;color:var(--goldb)}
 
+/* ---- the Ramadan / Eid greeting, in the cards' own box ----
+   Same trade the foyer already makes: the greeting takes over the content
+   that would otherwise be here (there, the appeal; here, the five cards),
+   while the Jumuʿah and sun times in #bottom keep showing regardless — see
+   src/timetable/screen.js's tick(). Sized for a box this close to the
+   foyer's own occasion area in height, so the same type sizes read the same
+   way on both screens. */
+#occasion{position:absolute;left:80px;right:80px;top:240px;height:648px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;overflow:visible}
+.o-in{display:flex;flex-direction:column;align-items:center;width:100%}
+#occasion .o-ar{font-size:140px;color:var(--goldb);line-height:1.4;margin-bottom:32px}
+#occasion h1{font-family:var(--serif);font-size:100px;font-weight:600;line-height:1.08;margin-top:0}
+#occasion p{font-size:30px;line-height:1.5;color:var(--cream-80);max-width:1200px;margin-top:20px;text-wrap:pretty}
+.o-day{margin-top:30px;border:1px solid rgba(220,187,99,.45);border-radius:999px;padding:11px 30px;font-size:28px;color:var(--goldb)}
+.o-day .ampm{font-size:.8em}
+
 /* ---- the bottom: two boxes, Jumuʿah and the sun, on the cards' outer edges ---- */
 #bottom{position:absolute;left:80px;right:80px;top:912px;height:120px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
 .box{border-radius:20px;background:var(--gold-fill);border:1px solid var(--gold-line);display:flex;align-items:center;padding:0 40px;min-width:0}
@@ -78,6 +94,9 @@ body.portrait .card .j{grid-column:4;grid-row:2;text-align:right;font-size:84px;
 body.portrait .card .j.two{font-size:40px;line-height:1.2;align-items:flex-end;padding-top:0}
 body.portrait .card .cd{grid-column:4;grid-row:3;text-align:right;height:32px;line-height:32px;font-size:26px}
 body.portrait #nodata{left:100px;right:100px;top:900px}
+body.portrait #occasion{left:64px;right:64px;top:456px;height:1224px}
+body.portrait #occasion .o-ar{font-size:120px}
+body.portrait #occasion h1{font-size:88px}
 body.portrait #bottom{left:64px;right:64px;top:1704px;height:152px;gap:20px}
 body.portrait .box{padding:0 28px}
 body.portrait #jbox .times b{font-size:42px}

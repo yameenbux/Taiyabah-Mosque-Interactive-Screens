@@ -52,10 +52,15 @@ test("embedded data equals data/", async () => {
   await ctx.close();
 });
 
-test("no network beyond the page itself", async () => {
+// The times themselves still need no network — every year is baked into the
+// page. foyer-content.json is now read too, the same way the foyer reads
+// it: it is where the Ramadan/Eid greeting this screen now shares with the
+// foyer comes from, and the only way that greeting can be switched on
+// without rebuilding and waiting for the 2am reload.
+test("the timetable asks the network only for its page and the shared greeting", async () => {
   const { page, ctx, requests } = await openAt(browser, srv.base, "timetable.html", "2026-11-16T13:05:00");
   await page.waitForTimeout(500);
-  assert.deepEqual(requests, [srv.base + "timetable.html"]);
+  assert.deepEqual([...new Set(requests.map((u) => u.split("?")[0]))].sort(), [srv.base + "foyer-content.json", srv.base + "timetable.html"]);
   await ctx.close();
 });
 

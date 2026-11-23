@@ -151,7 +151,7 @@ def build_page(screen, body_class, days, content):
         read(shared, "frame.css"),
         read(SRC, screen, "screen.css"),
     ])
-    js_files = [os.path.join(shared, "times.js"), os.path.join(shared, "frame.js")]
+    js_files = [os.path.join(shared, "times.js"), os.path.join(shared, "occasion.js"), os.path.join(shared, "frame.js")]
     if screen == "foyer":
         js_files.insert(0, os.path.join(shared, "qrcode.js"))
     js_files.append(os.path.join(SRC, screen, "screen.js"))

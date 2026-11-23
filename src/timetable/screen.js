@@ -8,6 +8,10 @@
  * countdown line that is empty except on the card whose jamāʿah is next. */
 "use strict";
 (function () {
+  var CONTENT = window.TT_CONTENT;
+
+  function text(id, s) { var el = document.getElementById(id); if (el && el.textContent !== (s || "")) el.textContent = s || ""; }
+
   var ICON = {
     fajr: '<path d="M8 34h32M14 28a10 10 0 0 1 20 0M24 10v6M12 16l3 3M36 16l-3 3"/>',
     zuhr: '<circle cx="24" cy="24" r="8"/><path d="M24 6v5M24 37v5M6 24h5M37 24h5M11 11l3.5 3.5M33.5 33.5L37 37M37 11l-3.5 3.5M14.5 33.5L11 37"/>',
@@ -42,16 +46,46 @@
       "</div>";
   }
 
+  /* A volunteer edits foyer-content.json on GitHub. Valid JSON in the wrong
+   * shape must not break a screen that was working fine without it — the
+   * five prayer cards are load-bearing, the greeting is not — so a
+   * malformed file just means no greeting shows, same as the foyer's own
+   * wellFormed() guards it against blanking the appeal. */
+  function isObj(x) { return !!x && typeof x === "object" && !Array.isArray(x); }
+  function occasionsWellFormed(c) { return isObj(c) && isObj(c.occasions); }
+
+  function load() {
+    fetch("foyer-content.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (json) { if (occasionsWellFormed(json)) CONTENT = json; })
+      .catch(function () { /* keep the last good copy, or the one built in */ });
+  }
+
   function tick(now) {
     var rec = renderFrame(now, { short: true });
     var have = !!rec;
-    document.getElementById("nodata").hidden = have;
-    document.getElementById("cards").hidden = !have;
+
+    var a = null;
+    try { a = activeOccasion(CONTENT, DAYS, now); } catch (e) { a = null; }
+
+    document.getElementById("occasion").hidden = !a;
+    document.getElementById("nodata").hidden = have || !!a;
+    document.getElementById("cards").hidden = !have || !!a;
     document.getElementById("sbox").hidden = !have;
     var j = T.nextJumuah(DAYS, now);
     document.getElementById("jbox").hidden = !j;
     if (j) setHTML("jtimes", '<span class="lab">1st</span><b>' + fmtTime(j.first) + '</b><span class="lab">2nd</span><b>' + fmtTime(j.second) + "</b>");
-    if (have) {
+    if (a) {
+      text("o-arabic", a.o.arabic);
+      text("o-title", a.o.title);
+      text("o-message", a.o.message);
+      // a.ramadanDay is only ever set when today itself matched (see
+      // activeOccasion's back===0 check), so `rec` is guaranteed here.
+      var day = document.getElementById("oday");
+      day.hidden = !a.ramadanDay;
+      if (a.ramadanDay) setHTML("oday", "Day " + a.ramadanDay + " of Ramadan · Maghrib " + fmtTime(rec.begins.maghrib));
+    }
+    if (have && !a) {
       var n = T.nextJamaah(DAYS, now);
       // Only today's next jamāʿah is marked: after Isha the next one is
       // tomorrow's Fajr, and the cards still show today.
@@ -59,10 +93,20 @@
       var countdown = nextKey ? T.countdown(n.at - now) : "";
       var passed = T.passedKeys(DAYS, now);
       setHTML("cards", T.slotsFor(DAYS, now).map(function (s) { return card(s, rec, passed, nextKey, countdown); }).join(""));
-      setHTML("sbox", sunPart("sunrise", "Sunrise", rec.begins.sunrise) + sunPart("sunset", "Sunset", rec.begins.maghrib));
     }
+    if (have) setHTML("sbox", sunPart("sunrise", "Sunrise", rec.begins.sunrise) + sunPart("sunset", "Sunset", rec.begins.maghrib));
     fitToViewport();
   }
 
   startReliability(tick);
+  wirePreview(function (draft) {
+    if (!occasionsWellFormed(draft)) return false;
+    CONTENT = draft; return true;
+  }, function () { tick(new Date()); });
+  // In preview mode the admin editor is the only source of CONTENT — the
+  // live file would otherwise race the draft it just posted.
+  if (!inPreview()) {
+    load();
+    setInterval(load, 10 * 60 * 1000);
+  }
 })();

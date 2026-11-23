@@ -6,6 +6,12 @@
 
   Built by build.py from src/timetable/ and src/shared/. Fonts, logo and every
   year of prayer times are inside this file: once loaded it needs no network.
+
+  The Ramadan and Eid greeting (if the masjid has one switched on) is baked
+  in the same way as the foyer's, and re-read from foyer-content.json every
+  ten minutes the same way too — see src/shared/occasion.js. It replaces the
+  five prayer cards, the same trade the foyer already makes for its own
+  appeal content; the Jumuʿah and sun times below keep showing regardless.
 -->
 <html lang="en">
 <head>
@@ -23,13 +29,21 @@
   <div class="hdr">{{LOGO}}<div class="dates"><span id="greg"></span><span id="hijri"></span></div></div>
   <div id="cards"></div>
   <div id="nodata" hidden>Prayer times for this date are not loaded. Please use the printed timetable.</div>
+
+  <div id="occasion" hidden><div class="o-in" id="oin">
+   <div class="o-ar ar" id="o-arabic" lang="ar" dir="rtl"></div>
+   <h1 id="o-title"></h1>
+   <p id="o-message"></p>
+   <div class="o-day" id="oday" hidden></div>
+  </div></div>
+
   <div id="bottom">
    <div class="box" id="jbox"><div class="eyebrow">Jumuʿah</div><div class="times" id="jtimes"></div></div>
    <div class="box" id="sbox"></div>
   </div>
  </div>
 </div>
-<script>{{DATA}}</script>
+<script>{{DATA}}{{CONTENT}}</script>
 <script>{{JS}}</script>
 </body>
 </html>
