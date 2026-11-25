@@ -151,8 +151,12 @@ def build_page(screen, body_class, days, content):
         read(shared, "frame.css"),
         read(SRC, screen, "screen.css"),
     ])
-    js_files = [os.path.join(shared, "times.js"), os.path.join(shared, "occasion.js"), os.path.join(shared, "frame.js")]
+    js_files = [os.path.join(shared, "times.js"), os.path.join(shared, "frame.js")]
     if screen == "foyer":
+        #  occasion.js is the Ramadan/Eid rule — the foyer is the only
+        #  screen that shows the greeting, so it is the only one that needs
+        #  the shared module in its bundle.
+        js_files.insert(0, os.path.join(shared, "occasion.js"))
         js_files.insert(0, os.path.join(shared, "qrcode.js"))
     js_files.append(os.path.join(SRC, screen, "screen.js"))
     js = "\n;\n".join(read(p) for p in js_files)
